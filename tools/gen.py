@@ -168,6 +168,8 @@ footer{font-size:12px;color:var(--muted);max-width:74ch;display:grid;gap:6px}
 .rec p{margin:0;flex:1}
 .rec .by{display:block;font-size:11.5px;color:var(--muted);margin-bottom:2px}
 .copy{flex:none;font:inherit;font-size:12px;color:var(--muted);background:none;border:1px solid var(--line);border-radius:6px;padding:2px 8px;cursor:pointer}
+.dlg-guide{font-size:12.5px;color:var(--muted);margin:0 0 4px}
+.dlg-guide b{color:var(--fg);font-weight:600}
 .dlg-note{font-size:12px;color:var(--muted);margin-top:14px}
 
 </style>
@@ -362,11 +364,11 @@ JS = r'''<script>
     if(acts.length) h+='<h3>'+esc(sv.name)+' 활동<small>이 칸에 맞춘 과목 활동</small></h3><ul>'+acts.map(function(a){return '<li>'+esc(a[0])+a[1].map(function(c){return chip(c,'')}).join('')+'</li>'}).join('')+'</ul>';
     h+='<h3>주제탐구 활동 예시<small>탐구 질문 → 과정 → 산출물</small></h3>'+d.ex.map(function(e){
       return '<div class="ex"><h4>'+esc(e.t)+'</h4><p class="q">'+esc(e.q)+'</p><ol>'+e.s.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol><p class="o">산출물: '+esc(e.o)+'</p></div>'}).join('');
-    var recs=acts.slice(0,2).map(function(a){return {by:sv.name+' · '+a[0],t:d.tpl.split('{s}').join(sv.name).split('{a}').join(a[0])}});
-    recs=recs.concat(d.rec.map(function(t){return {by:'과목 공통 예시',t:t}}));
-    h+='<h3>학교생활기록부 기재 예시<small>과목별 세부능력 및 특기사항</small></h3>'+recs.map(function(r){
+    var recs=acts.slice(0,2).map(function(a){return {by:sv.name+' · '+a[0]+' (과목 활동에 맞춘 틀)',t:d.tpl.split('{s}').join(sv.name).split('{a}').join(a[0])}});
+    recs=recs.concat(d.rec.map(function(t,i){return {by:'사례 가정: '+d.ex[i].t+' 탐구를 수행한 학생',t:t}}));
+    h+='<h3>학교생활기록부 기재 예시<small>과목별 세부능력 및 특기사항</small></h3><p class="dlg-guide">각 예시는 위 탐구를 실제로 수행한 학생을 가정해 <b>활동 동기·과정 → 구체적 행동과 결과(수치·발견) → 교사의 역량 평가 → 성장과 후속 활동</b> 순서로 썼습니다.</p>'+recs.map(function(r){
       return '<div class="rec"><p><span class="by">'+esc(r.by)+'</span>'+esc(r.t)+'</p><button type="button" class="copy" data-t="'+esc(r.t)+'">복사</button></div>'}).join('');
-    h+='<p class="dlg-note">기재 예시는 문장 틀입니다. 학생이 실제로 한 활동과 교사가 관찰한 모습으로 바꿔 쓰고, 기재 금지·유의 사항은 해당 학년도 「학교생활기록부 기재요령」을 따르세요.</p>';
+    h+='<p class="dlg-note">사례와 수치는 가정한 것입니다. 학생이 실제로 한 활동과 교사가 관찰한 모습으로 바꿔 쓰고, 기재 금지·유의 사항은 해당 학년도 「학교생활기록부 기재요령」을 따르세요.</p>';
     document.getElementById('dlg-body').innerHTML=h;hideTip();
     if(dlg.showModal){if(!dlg.open)dlg.showModal();}else dlg.setAttribute('open','');
     document.getElementById('dlg-body').scrollTop=0;dlg.scrollTop=0;
