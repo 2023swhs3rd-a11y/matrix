@@ -2,7 +2,7 @@
 # PRETENDARD_WOFF2=<PretendardVariable.woff2 경로>를 주면 글꼴을 넣은 미리보기용 matrix.html도 만든다.
 import sys, html, json, os, base64, subprocess, datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from data import PROCESSES, KNOWLEDGE, CELLS, PATHS, TOPIC_TEMPLATES
+from data import PROCESSES, KNOWLEDGE, CELLS, PATHS, TOPIC_TEMPLATES, TOPIC_LENS, TOPIC_RELATED
 from subjects import SUBJECTS as _S1
 from subjects_common2 import SUBJECTS_COMMON2
 from subjects_general import SUBJECTS_GENERAL
@@ -158,7 +158,7 @@ def payload():
             "standards": [[full(c), t, cells] for c, t, cells in s["standards"]],
             "cells": {k: {"acts": [[a, [full(c) for c in cs.split(',') if c]] for a, cs in acts]} for k, acts in s["cells"].items()},
         })
-    return {"processes": PROCESSES, "knowledge": KNOWLEDGE, "common": common, "subjects": subs, "topic": TOPIC_TEMPLATES,
+    return {"processes": PROCESSES, "knowledge": KNOWLEDGE, "common": common, "subjects": subs, "topic": TOPIC_TEMPLATES, "lens": TOPIC_LENS, "related": TOPIC_RELATED,
             "names": {k[0] + p[0]: cell_name(k[0] + p[0]) for k in KNOWLEDGE for p in PROCESSES}}
 
 def body():
@@ -264,7 +264,14 @@ JS = r'''<script>
     var q=tq.value.trim();if(!q){tq.focus();return;}
     location.hash='q='+encodeURIComponent(q)+(tf.value?'&f='+encodeURIComponent(tf.value):'');});
   function tokens(q){return q.split(/[\s,·/]+/).filter(function(x){return x.length>=2})}
-  function score(text,ts){var n=0;ts.forEach(function(t){if(text.indexOf(t)>=0)n++});return n}
+  // 연관어: 주제어와 같거나 서로 포함하는 사전 항목의 관련 개념. 흔한 낱말일수록 가중치를 낮춘다
+  var LAREAS=['국어','수학','영어','사회','과학'], DF={};
+  function df(w){if(DF[w]==null){var n=0;DATA.subjects.forEach(function(s){s.standards.forEach(function(x){if(x[1].indexOf(w)>=0)n++})});DF[w]=n}return DF[w]}
+  function related(ts){var out=[];ts.forEach(function(t){
+    var ks=DATA.related[t]?[t]:Object.keys(DATA.related).filter(function(k){return t.length>=2&&k.length>=2&&(k.indexOf(t)>=0||t.indexOf(k)>=0)});
+    ks.forEach(function(k){DATA.related[k].forEach(function(w){if(ts.indexOf(w)<0&&out.indexOf(w)<0)out.push(w)})})});return out}
+  function score(text,ts,rel){var n=0;ts.forEach(function(t){if(text.indexOf(t)>=0)n+=3});
+    (rel||[]).forEach(function(w){if(text.indexOf(w)>=0){var d=df(w);n+=d<=10?1:d<=40?0.6:0.3}});return n}
   function fullChip(c){return '<span class="ref" tabindex="0" data-code="'+esc(c)+'" aria-label="'+esc(c+' '+(TEXT[c]||''))+'">'+esc(c)+'</span>'}
   function renderTopic(h){
     var p=new URLSearchParams(h), q=(p.get('q')||'').trim(), f=p.get('f')||'';
@@ -272,26 +279,30 @@ JS = r'''<script>
     Object.keys(atab).forEach(function(k){atab[k].setAttribute('aria-selected','false')});
     views.forEach(function(x){btn[x.id].setAttribute('aria-pressed','false')});
     clearMarks();document.body.className=RCLS[f]?'a-'+RCLS[f]:'';
-    var ts=tokens(q);if(!ts.length&&q)ts=[q];
+    var ts=tokens(q);if(!ts.length&&q)ts=[q];var rel=related(ts);
     var subs=DATA.subjects.filter(function(s){return !f||ROW[s.area]===f});
     var stds=[],acts=[];
     subs.forEach(function(s){
-      s.standards.forEach(function(x){var n=score(x[1],ts);if(n)stds.push({s:s,x:x,n:n})});
-      Object.keys(s.cells).forEach(function(k){s.cells[k].acts.forEach(function(a){var n=score(a[0],ts);if(n)acts.push({s:s,k:k,a:a[0],n:n})})});
+      s.standards.forEach(function(x){var n=score(x[1],ts,rel);if(n>=0.6)stds.push({s:s,x:x,n:n,d:score(x[1],ts)>0})});
+      Object.keys(s.cells).forEach(function(k){s.cells[k].acts.forEach(function(a){var n=score(a[0],ts,rel);if(n>=1)acts.push({s:s,k:k,a:a[0],n:n})})});
     });
     stds.sort(function(a,b){return b.n-a.n});acts.sort(function(a,b){return b.n-a.n});
-    var byCell={},actCell={};
+    var byCell={},actCell={},aw={};
+    stds.slice(0,40).forEach(function(r){var a=ROW[r.s.area];aw[a]=(aw[a]||0)+r.n});
+    var order=LAREAS.slice().sort(function(a,b){return (aw[b]||0)-(aw[a]||0)});
     stds.forEach(function(r){var c=r.x[2][0];(byCell[c]=byCell[c]||[]).push(r)});
     acts.forEach(function(r){(actCell[r.k]=actCell[r.k]||[]).push(r)});
     Object.keys(DATA.names).forEach(function(k){
       var td=document.getElementById('c-'+k);
-      var h='<span class="code">'+k+'</span><ul>'+DATA.topic[k].map(function(t){return '<li><span class="tpl">추천</span>'+esc(t.split('{t}').join(q))+'</li>'}).join('')+'</ul>';
+      var i=Object.keys(DATA.names).indexOf(k), L=f?[[f,DATA.lens[f][k]],['',DATA.topic[k][i%2]]]:[[order[0],DATA.lens[order[0]][k]],[order[1+i%4],DATA.lens[order[1+i%4]][k]]];
+      var h='<span class="code">'+k+'</span><ul>'+L.map(function(x){return '<li><span class="tpl">'+(x[0]||'추천')+'</span>'+esc(x[1].split('{t}').join(q))+'</li>'}).join('')+'</ul>';
       if(actCell[k])h+='<div class="rel"><b>과목 활동</b>'+actCell[k].slice(0,2).map(function(r){return esc(r.a)+' (<a href="#'+r.s.id+'">'+esc(r.s.name)+'</a>)'}).join(' · ')+'</div>';
       if(byCell[k])h+='<div class="stds"><b>성취기준</b> '+byCell[k].slice(0,3).map(function(r){return fullChip(r.x[0])}).join('')+'</div>';
       td.innerHTML=h;
     });
     var sec=document.getElementById('std-section');
-    note.textContent='‘'+q+'’'+(f?' ('+f+')':'')+'에 맞춰 칸마다 활동 틀을 추천했습니다. '+(stds.length?'주제어가 들어간 성취기준 '+stds.length+'개와 과목 활동 '+acts.length+'개를 찾아 함께 표시했습니다. 성취기준은 주된 칸에 놓았습니다.':'주제어가 들어간 성취기준은 찾지 못했습니다. 더 짧거나 다른 낱말로 찾아보세요.');
+    var nd=stds.filter(function(r){return r.d}).length;
+    note.textContent='‘'+q+'’'+(f?' ('+f+')':'')+'에 맞춰 칸마다 '+(f?f+' 관점의':'교과별 관점의')+' 활동을 추천했습니다. '+(rel.length?'연관어 '+rel.slice(0,8).join('·')+(rel.length>8?' 등':'')+'도 함께 찾았습니다. ':'')+(stds.length?'관련 성취기준 '+stds.length+'개'+(nd?'(주제어 직접 포함 '+nd+'개)':'(주제어가 직접 들어간 것은 없어 연관어로 찾음)')+'와 과목 활동 '+acts.length+'개를 관련도 순으로 표시했습니다. 성취기준은 주된 칸에 놓았습니다.':'관련 성취기준은 찾지 못했습니다. 더 짧거나 다른 낱말로 찾아보세요.');
     if(stds.length){
       sec.hidden=false;document.getElementById('std-title').textContent='‘'+q+'’ 관련 성취기준';
       document.getElementById('std-body').innerHTML=stds.slice(0,40).map(function(r){var s=r.x;
