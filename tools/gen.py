@@ -1,6 +1,6 @@
 # index.html, README.md, subjects/*.md 생성 스크립트 (tools 폴더에서 python3 gen.py)
 # PRETENDARD_WOFF2=<PretendardVariable.woff2 경로>를 주면 글꼴을 넣은 미리보기용 matrix.html도 만든다.
-import sys, html, json, os, base64, subprocess
+import sys, html, json, os, base64, subprocess, datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from data import PROCESSES, KNOWLEDGE, CELLS, PATHS
 from subjects import SUBJECTS as _S1
@@ -149,7 +149,9 @@ def body():
 <li><b>단계 배치:</b> 주된 칸의 왼쪽이나 위쪽 칸에서 시작해 2~4칸을 이어 탐구 경로를 만듭니다. 성취기준이 없는 칸의 활동은 기초 다지기나 성찰 활동으로 덧붙이면 됩니다.</li>
 <li><b>평가 정렬:</b> 주된 칸의 활동 결과물을 수행평가 대상으로 삼으면 성취기준, 활동, 평가가 같은 칸에 맞춰집니다.</li>
 </ol></section>''')
-    o.append('<footer><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목과 2·3학년 일반선택 과목. 공개 정리 자료에서 옮겼으므로 국가교육과정정보센터(NCIC) 원문과 대조해 사용하세요. 통합과학1은 원문을 확인한 성취기준만 실었고, 현대사회와 윤리는 아직 넣지 않았습니다.</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p></footer>')
+    stamp = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M')
+    total = sum(len(x['standards']) for x in SUBJECTS)
+    o.append(f'<footer><p id="version">업데이트 {stamp} (KST) · 과목 {len(SUBJECTS)}개 · 성취기준 {total}개</p><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목과 2·3학년 일반선택 과목. 공개 정리 자료에서 옮겼으므로 국가교육과정정보센터(NCIC) 원문과 대조해 사용하세요. 통합과학1은 원문을 확인한 성취기준만 실었고, 현대사회와 윤리는 아직 넣지 않았습니다.</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p></footer>')
     o.append('</div>')
     o.append('<script>var DATA=' + json.dumps(payload(), ensure_ascii=False) + ';</script>')
     o.append(JS)
