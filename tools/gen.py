@@ -2,7 +2,7 @@
 # PRETENDARD_WOFF2=<PretendardVariable.woff2 경로>를 주면 글꼴을 넣은 미리보기용 matrix.html도 만든다.
 import sys, html, json, os, base64, subprocess, datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from data import PROCESSES, KNOWLEDGE, CELLS, PATHS, TOPIC_TEMPLATES, TOPIC_LENS, TOPIC_RELATED
+from data import PROCESSES, KNOWLEDGE, CELLS, PATHS, TOPIC_TEMPLATES, TOPIC_LENS, TOPIC_RELATED, CELL_DETAIL
 from subjects import SUBJECTS as _S1
 from subjects_common2 import SUBJECTS_COMMON2
 from subjects_general import SUBJECTS_GENERAL
@@ -141,6 +141,35 @@ table.st{border-collapse:collapse;width:100%;min-width:640px;background:var(--su
 footer a{color:var(--fg);text-underline-offset:2px}
 footer .links b{color:var(--fg);margin-right:4px}
 footer{font-size:12px;color:var(--muted);max-width:74ch;display:grid;gap:6px}
+.part{font-size:12px;color:var(--muted);margin-top:6px}
+.part b{display:inline-block;font-size:11px;font-weight:700;color:var(--accent-ink);background:var(--accent);border-radius:4px;padding:0 5px;margin-right:4px}
+.mx tbody td{cursor:pointer}
+.mx tbody td:hover{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--accent) 40%,transparent)}
+.more{display:block;margin-top:8px;font:inherit;font-size:12px;font-weight:600;color:var(--accent);background:none;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:6px;padding:3px 8px;cursor:pointer}
+.more:hover{background:var(--chip)}
+.more:focus-visible,.dlg-x:focus-visible,.copy:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dlg{width:min(760px,calc(100vw - 32px));max-height:calc(100vh - 48px);padding:0;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--fg);box-shadow:0 18px 48px rgba(0,0,0,.25)}
+.dlg::backdrop{background:rgba(15,20,28,.45)}
+.dlg-head{position:sticky;top:0;display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:18px 20px 12px;background:var(--surface);border-bottom:1px solid var(--line)}
+.dlg-head h2{margin:2px 0 0;font-size:19px}
+.dlg-head p{margin:4px 0 0;font-size:13px;color:var(--muted)}
+.dlg-x{flex:none;font:inherit;font-size:22px;line-height:1;width:36px;height:36px;border-radius:8px;border:1px solid var(--line);background:none;color:var(--fg);cursor:pointer}
+.dlg-body{padding:6px 20px 20px}
+.dlg-body h3{font-size:15px;margin:18px 0 8px}
+.dlg-body h3 small{font-weight:500;color:var(--muted);margin-left:6px;font-size:12px}
+.callout{border-left:4px solid var(--accent);background:var(--chip);border-radius:8px;padding:10px 12px;font-size:13.5px;margin-top:14px}
+.callout ul{margin:6px 0 0;padding-left:18px;display:grid;gap:3px}
+.ex{border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-top:10px}
+.ex h4{margin:0;font-size:14.5px}
+.ex .q{margin:4px 0 6px;font-size:13.5px;color:var(--accent);font-weight:600}
+.ex ol{margin:0;padding-left:18px;font-size:13.5px;display:grid;gap:2px}
+.ex .o{margin:6px 0 0;font-size:12.5px;color:var(--muted)}
+.rec{display:flex;gap:8px;align-items:flex-start;border:1px dashed var(--line);border-radius:10px;padding:10px 12px;margin-top:8px;font-size:13.5px;line-height:1.6}
+.rec p{margin:0;flex:1}
+.rec .by{display:block;font-size:11.5px;color:var(--muted);margin-bottom:2px}
+.copy{flex:none;font:inherit;font-size:12px;color:var(--muted);background:none;border:1px solid var(--line);border-radius:6px;padding:2px 8px;cursor:pointer}
+.dlg-note{font-size:12px;color:var(--muted);margin-top:14px}
+
 </style>
 """
 
@@ -158,8 +187,14 @@ def payload():
             "standards": [[full(c), t, cells] for c, t, cells in s["standards"]],
             "cells": {k: {"acts": [[a, [full(c) for c in cs.split(',') if c]] for a, cs in acts]} for k, acts in s["cells"].items()},
         })
-    return {"processes": PROCESSES, "knowledge": KNOWLEDGE, "common": common, "subjects": subs, "topic": TOPIC_TEMPLATES, "lens": TOPIC_LENS, "related": TOPIC_RELATED,
+    return {"processes": PROCESSES, "knowledge": KNOWLEDGE, "common": common, "subjects": subs, "topic": TOPIC_TEMPLATES, "lens": TOPIC_LENS, "related": TOPIC_RELATED, "detail": CELL_DETAIL,
             "names": {k[0] + p[0]: cell_name(k[0] + p[0]) for k in KNOWLEDGE for p in PROCESSES}}
+
+def cell_extra(k):
+    # 기억·이해·적용 칸은 수업 참여 활동을 함께 보이고, 모든 칸에 상세 보기 단추
+    part = CELL_DETAIL[k]["part"]
+    h = f'<div class="part"><b>수업 참여</b> {E(part[0])}</div>' if part else ''
+    return h + f'<button type="button" class="more" data-cell="{k}" aria-haspopup="dialog">탐구 예시 · 기재 예시</button>'
 
 def body():
     o = ['<div class="wrap">', '<header>',
@@ -177,10 +212,11 @@ def body():
         for pc, *_ in PROCESSES:
             acts, out = CELLS[kc][pc]
             lis = ''.join(f'<li>{E(a)}</li>' for a in acts)
-            o.append(f'<td class="p{pc}" id="c-{kc}{pc}"><span class="code">{kc}{pc}</span><ul>{lis}</ul><div class="out"><b>산출물</b> {E(out)}</div></td>')
+            o.append(f'<td class="p{pc}" id="c-{kc}{pc}"><span class="code">{kc}{pc}</span><ul>{lis}</ul><div class="out"><b>산출물</b> {E(out)}</div>{cell_extra(kc + pc)}</td>')
         o.append('</tr>')
     o.append('</tbody></table></div>')
-    o.append('<p class="axis">오른쪽으로 갈수록 고차원 사고, 아래로 갈수록 추상적인 지식입니다. 칸 색이 진할수록 인지 부담이 큰 활동입니다. 활동 옆 번호는 관련 성취기준이며, 마우스를 올리면 원문이 나옵니다.</p></section>')
+    o.append('<p class="axis">오른쪽으로 갈수록 고차원 사고, 아래로 갈수록 추상적인 지식입니다. 칸 색이 진할수록 인지 부담이 큰 활동입니다. 활동 옆 번호는 관련 성취기준이며, 마우스를 올리면 원문이 나옵니다. 칸을 누르면 구체적인 주제탐구 예시와 학교생활기록부 기재 예시를 볼 수 있습니다. 기억·이해·적용 칸에는 수업 참여 활동을 함께 적었습니다.</p></section>')
+    o.append('<dialog class="dlg" id="cell-dlg" aria-labelledby="dlg-title"><div class="dlg-head"><div><span class="code" id="dlg-code"></span><h2 id="dlg-title"></h2><p id="dlg-sub"></p></div><button type="button" class="dlg-x" id="dlg-x" aria-label="닫기">×</button></div><div class="dlg-body" id="dlg-body"></div></dialog>')
     o.append('<section id="std-section" hidden><h2 id="std-title">성취기준 배치</h2><p class="lead" style="margin-bottom:12px">성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 칸을 정했습니다. 테두리가 진한 칸이 주된 칸입니다. 칸 번호를 누르면 표에서 위치를 보여 줍니다.</p><div class="scroller"><table class="st"><thead><tr><th scope="col">코드</th><th scope="col">성취기준</th><th scope="col">칸</th></tr></thead><tbody id="std-body"></tbody></table></div></section>')
     o.append('<section><h2>탐구 경로 예시</h2><p class="lead" style="margin-bottom:16px">한 학기 탐구를 몇 칸의 순서로 묶은 예시입니다. 경로를 누르면 표에 해당 칸이 표시되고, 과목을 바꿔도 같은 칸의 과목별 활동을 볼 수 있습니다.</p><div class="paths">')
     for i, (name, steps, desc) in enumerate(PATHS):
@@ -192,6 +228,7 @@ def body():
 <li><b>활동 고르기:</b> 그 칸의 과목별 활동을 고르거나, 전 과목 공통 활동을 과목 내용에 맞게 바꿉니다.</li>
 <li><b>단계 배치:</b> 주된 칸의 왼쪽이나 위쪽 칸에서 시작해 2~4칸을 이어 탐구 경로를 만듭니다. 성취기준이 없는 칸의 활동은 기초 다지기나 성찰 활동으로 덧붙이면 됩니다.</li>
 <li><b>평가 정렬:</b> 주된 칸의 활동 결과물을 수행평가 대상으로 삼으면 성취기준, 활동, 평가가 같은 칸에 맞춰집니다.</li>
+<li><b>기초 단계도 기록하기:</b> 기억·이해·적용 칸의 활동은 질문하기, 자기 말로 설명하기, 정확히 기록하기, 모둠 역할 수행처럼 수업 참여 과정으로 학교생활기록부에 남길 수 있습니다. 칸을 누르면 수업 참여 활동과 기재 예시가 나옵니다.</li>
 </ol></section>''')
     stamp = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M')
     total = sum(len(x['standards']) for x in SUBJECTS)
@@ -275,7 +312,7 @@ JS = r'''<script>
   function fullChip(c){return '<span class="ref" tabindex="0" data-code="'+esc(c)+'" aria-label="'+esc(c+' '+(TEXT[c]||''))+'">'+esc(c)+'</span>'}
   function renderTopic(h){
     var p=new URLSearchParams(h), q=(p.get('q')||'').trim(), f=p.get('f')||'';
-    tq.value=q;tf.value=f;cur=null;buildPanel();
+    tq.value=q;tf.value=f;cur=null;curView=null;buildPanel();
     Object.keys(atab).forEach(function(k){atab[k].setAttribute('aria-selected','false')});
     views.forEach(function(x){btn[x.id].setAttribute('aria-pressed','false')});
     clearMarks();document.body.className=RCLS[f]?'a-'+RCLS[f]:'';
@@ -298,7 +335,7 @@ JS = r'''<script>
       var h='<span class="code">'+k+'</span><ul>'+L.map(function(x){return '<li><span class="tpl">'+(x[0]||'추천')+'</span>'+esc(x[1].split('{t}').join(q))+'</li>'}).join('')+'</ul>';
       if(actCell[k])h+='<div class="rel"><b>과목 활동</b>'+actCell[k].slice(0,2).map(function(r){return esc(r.a)+' (<a href="#'+r.s.id+'">'+esc(r.s.name)+'</a>)'}).join(' · ')+'</div>';
       if(byCell[k])h+='<div class="stds"><b>성취기준</b> '+byCell[k].slice(0,3).map(function(r){return fullChip(r.x[0])}).join('')+'</div>';
-      td.innerHTML=h;
+      td.innerHTML=h+extra(k);
     });
     var sec=document.getElementById('std-section');
     var nd=stds.filter(function(r){return r.d}).length;
@@ -310,9 +347,40 @@ JS = r'''<script>
           return '<button type="button" class="std-cell'+(i===0?' main':'')+'" data-cells="'+c+'">'+c+'<span>'+esc(DATA.names[c])+'</span></button>'}).join('')+'</td></tr>'}).join('');
     } else sec.hidden=true;
   }
+  // 칸 상세: 수업 참여 · 주제탐구 예시 · 학교생활기록부 기재 예시
+  var curView=null, dlg=document.getElementById('cell-dlg');
+  function extra(k){var p=DATA.detail[k].part;
+    return (p.length?'<div class="part"><b>수업 참여</b> '+esc(p[0])+'</div>':'')+'<button type="button" class="more" data-cell="'+k+'" aria-haspopup="dialog">탐구 예시 · 기재 예시</button>'}
+  function openDetail(k){
+    var d=DATA.detail[k], kn=DATA.knowledge.filter(function(x){return x[0]===k[0]})[0], pr=DATA.processes.filter(function(x){return x[0]===k[1]})[0];
+    document.getElementById('dlg-code').textContent=k;
+    document.getElementById('dlg-title').textContent=DATA.names[k];
+    document.getElementById('dlg-sub').textContent=kn[1]+'('+kn[3]+') × '+pr[1]+'('+pr[4]+')';
+    var h='';
+    if(d.part.length) h+='<div class="callout"><b>기초 단계도 중요한 수업 참여입니다.</b> '+pr[1]+' 단계의 활동은 결과물보다 참여 과정(질문하기, 자기 말로 설명하기, 정확히 기록하기, 모둠 역할 수행)이 학생의 배움을 보여 줍니다. 수업 중 이렇게 참여하게 해 보세요.<ul>'+d.part.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>';
+    var sv=curView&&curView.standards?curView:null, acts=sv&&sv.cells[k]?sv.cells[k].acts:[];
+    if(acts.length) h+='<h3>'+esc(sv.name)+' 활동<small>이 칸에 맞춘 과목 활동</small></h3><ul>'+acts.map(function(a){return '<li>'+esc(a[0])+a[1].map(function(c){return chip(c,'')}).join('')+'</li>'}).join('')+'</ul>';
+    h+='<h3>주제탐구 활동 예시<small>탐구 질문 → 과정 → 산출물</small></h3>'+d.ex.map(function(e){
+      return '<div class="ex"><h4>'+esc(e.t)+'</h4><p class="q">'+esc(e.q)+'</p><ol>'+e.s.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol><p class="o">산출물: '+esc(e.o)+'</p></div>'}).join('');
+    var recs=acts.slice(0,2).map(function(a){return {by:sv.name+' · '+a[0],t:d.tpl.split('{s}').join(sv.name).split('{a}').join(a[0])}});
+    recs=recs.concat(d.rec.map(function(t){return {by:'과목 공통 예시',t:t}}));
+    h+='<h3>학교생활기록부 기재 예시<small>과목별 세부능력 및 특기사항</small></h3>'+recs.map(function(r){
+      return '<div class="rec"><p><span class="by">'+esc(r.by)+'</span>'+esc(r.t)+'</p><button type="button" class="copy" data-t="'+esc(r.t)+'">복사</button></div>'}).join('');
+    h+='<p class="dlg-note">기재 예시는 문장 틀입니다. 학생이 실제로 한 활동과 교사가 관찰한 모습으로 바꿔 쓰고, 기재 금지·유의 사항은 해당 학년도 「학교생활기록부 기재요령」을 따르세요.</p>';
+    document.getElementById('dlg-body').innerHTML=h;hideTip();
+    if(dlg.showModal){if(!dlg.open)dlg.showModal();}else dlg.setAttribute('open','');
+    document.getElementById('dlg-body').scrollTop=0;dlg.scrollTop=0;
+  }
+  function closeDetail(){if(dlg.close)dlg.close();else dlg.removeAttribute('open')}
+  document.getElementById('dlg-x').addEventListener('click',closeDetail);
+  dlg.addEventListener('click',function(e){
+    if(e.target===dlg){closeDetail();return;}
+    var c=e.target.closest('.copy');if(c){var t=c.dataset.t;
+      try{navigator.clipboard.writeText(t).then(function(){c.textContent='복사됨'},function(){c.textContent='복사 실패'})}catch(err){c.textContent='복사 실패'}}
+  });
   function render(){
     var hh=(location.hash||'').slice(1);if(hh.indexOf('q=')===0){renderTopic(hh);return;}
-    var id=(location.hash||'').slice(1); var v=views.filter(function(x){return x.id===id})[0]||views[0];
+    var id=(location.hash||'').slice(1); var v=views.filter(function(x){return x.id===id})[0]||views[0];curView=v;
     cur=v.area?ROW[v.area]:null;buildPanel();
     views.forEach(function(x){btn[x.id].setAttribute('aria-pressed',x===v?'true':'false')});
     clearMarks();
@@ -325,7 +393,7 @@ JS = r'''<script>
         return '<li>'+esc(a[0])+a[1].map(function(c){return chip(c,'')}).join('')+'</li>'}).join('')+'</ul>';
       if(!v.standards) h+='<div class="out"><b>산출물</b> '+esc(cell.out)+'</div>';
       else if(byCell[k]) h+='<div class="stds"><b>성취기준</b> '+byCell[k].map(function(x){return chip(x.code,x.main?' main':'')}).join('')+'</div>';
-      td.innerHTML=h;
+      td.innerHTML=h+extra(k);
     });
     var sec=document.getElementById('std-section');
     if(v.standards){
@@ -339,6 +407,8 @@ JS = r'''<script>
   }
   document.addEventListener('click',function(e){
     var r=e.target.closest('.ref[data-code]');if(r){showTip(r);return;}
+    var m=e.target.closest('.more');if(m){openDetail(m.dataset.cell);return;}
+    var td=e.target.closest('.mx tbody td');if(td&&!e.target.closest('a,button')&&!(window.getSelection&&String(window.getSelection()).length)){openDetail(td.id.slice(2));return;}
     var b=e.target.closest('.std-cell');if(b){mark([b.dataset.cells]);return;}
     var p=e.target.closest('.path');if(p){var on=p.getAttribute('aria-pressed')!=='true';clearMarks();
       if(on){mark(p.dataset.cells.split(' '));p.setAttribute('aria-pressed','true');}}
