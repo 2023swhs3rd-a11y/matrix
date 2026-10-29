@@ -131,7 +131,13 @@ open('index.html','w').write('<!doctype html>\n<html lang="ko">\n<head>\n<meta c
 
 # README
 r = ['# 블룸의 개정 교육목표 분류 활용 학생 탐구활동 추천 매트릭스', '',
-     'Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 추천 탐구활동과 산출물을 넣은 기본형입니다. 보기 좋은 표는 [`index.html`](index.html)을 브라우저로 열어 확인하세요.', '',
+     'Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 추천 탐구활동과 산출물을 넣은 기본형입니다. 웹 페이지로 보려면 아래 바로가기를 이용하세요.', '',
+     '## 바로가기', '',
+     '| 보기 | 링크 |', '|---|---|',
+     '| 웹 페이지 (GitHub Pages) | https://2023swhs3rd-a11y.github.io/matrix/ |',
+     '| 웹 미리보기 (Pages 설정 전에도 열림) | https://htmlpreview.github.io/?https://github.com/2023swhs3rd-a11y/matrix/blob/main/index.html |',
+     '| HTML 원본 | [index.html](index.html) |',
+     '| 아래 매트릭스 표 | [매트릭스](#매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [활용 안내](#활용-안내) |', '',
      '## 두 축', '', '| 인지 과정 | 뜻 | 하위 과정 |', '|---|---|---|']
 for c,ko,en,d,v in PROCESSES: r.append(f'| {c}. {ko} ({en}) | {d} | {v} |')
 r += ['', '| 지식 차원 | 하위 유형 |', '|---|---|']
