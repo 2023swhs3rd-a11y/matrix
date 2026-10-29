@@ -61,6 +61,12 @@ table.mx{border-collapse:collapse;width:100%;min-width:1080px;table-layout:fixed
 .code{font-size:11px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:.04em}
 .mx ul{margin:4px 0 8px;padding-left:16px;display:grid;gap:4px}
 .ref{display:inline-block;font-size:11px;font-variant-numeric:tabular-nums;color:var(--accent);background:var(--chip);border-radius:4px;padding:0 5px;margin-left:4px;white-space:nowrap}
+.ref[data-code]{cursor:help}
+.ref:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.stds .ref{margin:0 4px 0 0}
+.stds .ref.main{font-weight:700;box-shadow:inset 0 0 0 1px var(--accent)}
+.tip{position:fixed;z-index:20;max-width:min(360px,calc(100vw - 32px));background:var(--fg);color:var(--bg);font-size:13px;line-height:1.5;padding:8px 10px;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.18);pointer-events:none}
+.tip b{display:block;font-size:11px;letter-spacing:.03em;opacity:.75;margin-bottom:2px}
 .out,.stds{font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px;margin-top:6px}
 .out b,.stds b{font-weight:600;color:var(--fg)}
 .mx td.on{outline:3px solid var(--hl);outline-offset:-3px}
@@ -123,7 +129,7 @@ def body():
             o.append(f'<td class="p{pc}" id="c-{kc}{pc}"><span class="code">{kc}{pc}</span><ul>{lis}</ul><div class="out"><b>산출물</b> {E(out)}</div></td>')
         o.append('</tr>')
     o.append('</tbody></table></div>')
-    o.append('<p class="axis">오른쪽으로 갈수록 고차원 사고, 아래로 갈수록 추상적인 지식입니다. 칸 색이 진할수록 인지 부담이 큰 활동입니다. 활동 옆 번호는 관련 성취기준입니다.</p></section>')
+    o.append('<p class="axis">오른쪽으로 갈수록 고차원 사고, 아래로 갈수록 추상적인 지식입니다. 칸 색이 진할수록 인지 부담이 큰 활동입니다. 활동 옆 번호는 관련 성취기준이며, 마우스를 올리면 원문이 나옵니다.</p></section>')
     o.append('<section id="std-section" hidden><h2 id="std-title">성취기준 배치</h2><p class="lead" style="margin-bottom:12px">성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 칸을 정했습니다. 테두리가 진한 칸이 주된 칸입니다. 칸 번호를 누르면 표에서 위치를 보여 줍니다.</p><div class="scroller"><table class="st"><thead><tr><th scope="col">코드</th><th scope="col">성취기준</th><th scope="col">칸</th></tr></thead><tbody id="std-body"></tbody></table></div></section>')
     o.append('<section><h2>탐구 경로 예시</h2><p class="lead" style="margin-bottom:16px">한 학기 탐구를 몇 칸의 순서로 묶은 예시입니다. 경로를 누르면 표에 해당 칸이 표시되고, 과목을 바꿔도 같은 칸의 과목별 활동을 볼 수 있습니다.</p><div class="paths">')
     for i, (name, steps, desc) in enumerate(PATHS):
@@ -145,6 +151,19 @@ def body():
 JS = r'''<script>
 (function(){
   var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  var short=function(c){return c.replace(/^\d+\D+(\d-)?/,'')};
+  var TEXT={}; DATA.subjects.forEach(function(s){s.standards.forEach(function(x){TEXT[x[0]]=x[1]})});
+  var chip=function(c,cls){return '<span class="ref'+cls+'" tabindex="0" data-code="'+esc(c)+'" aria-label="'+esc(c+' '+(TEXT[c]||''))+'">'+esc(short(c))+'</span>'};
+  var tip=document.createElement('div');tip.className='tip';tip.hidden=true;tip.setAttribute('role','tooltip');document.body.appendChild(tip);
+  function showTip(el){var c=el.dataset.code;tip.innerHTML='<b>['+esc(c)+']</b>'+esc(TEXT[c]||'');tip.hidden=false;
+    var r=el.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;
+    var x=Math.min(Math.max(16,r.left+r.width/2-w/2),window.innerWidth-w-16),y=r.top-h-8;if(y<8)y=r.bottom+8;
+    tip.style.left=x+'px';tip.style.top=y+'px';}
+  function hideTip(){tip.hidden=true}
+  document.addEventListener('mouseover',function(e){var el=e.target.closest('.ref[data-code]');if(el)showTip(el)});
+  document.addEventListener('mouseout',function(e){if(e.target.closest('.ref[data-code]'))hideTip()});
+  document.addEventListener('focusin',function(e){var el=e.target.closest('.ref[data-code]');if(el)showTip(el)});
+  document.addEventListener('focusout',hideTip);window.addEventListener('scroll',hideTip,true);
   var tabs=document.getElementById('tabs'), note=document.getElementById('subject-note');
   var views=[{id:'common',name:'전 과목 공통',area:''}].concat(DATA.subjects);
   views.forEach(function(v){
@@ -165,15 +184,15 @@ JS = r'''<script>
     Object.keys(DATA.names).forEach(function(k){
       var td=document.getElementById('c-'+k), cell=v.standards?v.cells[k]:DATA.common[k];
       var h='<span class="code">'+k+'</span><ul>'+cell.acts.map(function(a){
-        return '<li>'+esc(a[0])+a[1].map(function(c){return '<span class="ref">'+esc(c.replace(/^10[^-]+-/,''))+'</span>'}).join('')+'</li>'}).join('')+'</ul>';
+        return '<li>'+esc(a[0])+a[1].map(function(c){return chip(c,'')}).join('')+'</li>'}).join('')+'</ul>';
       if(!v.standards) h+='<div class="out"><b>산출물</b> '+esc(cell.out)+'</div>';
-      else if(byCell[k]) h+='<div class="stds"><b>성취기준</b> '+byCell[k].map(function(x){var c=esc(x.code.replace(/^10[^-]+-/,''));return x.main?'<b>'+c+'</b>':c}).join(', ')+'</div>';
+      else if(byCell[k]) h+='<div class="stds"><b>성취기준</b> '+byCell[k].map(function(x){return chip(x.code,x.main?' main':'')}).join('')+'</div>';
       td.innerHTML=h;
     });
     var sec=document.getElementById('std-section');
     if(v.standards){
       sec.hidden=false;
-      note.textContent=v.name+' 성취기준 '+v.standards.length+'개를 칸에 배치했습니다. 활동 옆 번호는 성취기준 코드의 뒷자리입니다(예: '+v.standards[0][0].replace(/^10[^-]+-/,'')+' → '+v.standards[0][0]+').';
+      note.textContent=v.name+' 성취기준 '+v.standards.length+'개를 칸에 배치했습니다. 활동 옆 번호는 성취기준 코드의 뒷자리이고, 마우스를 올리거나 누르면 성취기준 원문이 나옵니다(예: '+short(v.standards[0][0])+' → '+v.standards[0][0]+').';
       document.getElementById('std-title').textContent=v.name+' 성취기준 배치';
       document.getElementById('std-body').innerHTML=v.standards.map(function(s){
         return '<tr><td class="c">['+esc(s[0])+']</td><td>'+esc(s[1])+'</td><td class="k">'+s[2].map(function(c,i){
@@ -181,6 +200,7 @@ JS = r'''<script>
     } else { sec.hidden=true; note.textContent='과목 공통으로 쓸 수 있는 기본 활동과 산출물입니다. 과목을 고르면 성취기준에 맞춘 활동으로 바뀝니다.'; }
   }
   document.addEventListener('click',function(e){
+    var r=e.target.closest('.ref[data-code]');if(r){showTip(r);return;}
     var b=e.target.closest('.std-cell');if(b){mark([b.dataset.cells]);return;}
     var p=e.target.closest('.path');if(p){var on=p.getAttribute('aria-pressed')!=='true';clearMarks();
       if(on){mark(p.dataset.cells.split(' '));p.setAttribute('aria-pressed','true');}}
