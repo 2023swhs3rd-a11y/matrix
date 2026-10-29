@@ -1,6 +1,6 @@
 # 블룸의 개정 교육목표 분류 활용 학생 탐구활동 추천 매트릭스
 
-Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 탐구활동을 추천합니다. **2022 개정 교육과정** 고1 공통과목 6개와 2·3학년 일반선택 16과목은 성취기준을 칸에 배치하고 과목별 활동을 따로 정리했습니다.
+Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 탐구활동을 추천합니다. **2022 개정 교육과정** 고1 공통과목 14개(과학탐구실험 포함)와 2·3학년 일반선택 16과목은 성취기준을 칸에 배치하고 과목별 활동을 따로 정리했습니다.
 
 ## 바로가기
 
@@ -9,7 +9,7 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | 웹 페이지 (GitHub Pages) | https://2023swhs3rd-a11y.github.io/matrix/ |
 | 웹 미리보기 (Pages 설정 전에도 열림) | https://htmlpreview.github.io/?https://github.com/2023swhs3rd-a11y/matrix/blob/main/index.html |
 | HTML 원본 | [index.html](index.html) |
-| 고1 공통 | [공통국어1](subjects/kor.md) · [공통수학1](subjects/math.md) · [공통영어1](subjects/eng.md) · [통합사회1](subjects/soc.md) · [통합과학1](subjects/sci.md) · [한국사1](subjects/his.md) |
+| 고1 공통 | [공통국어1](subjects/kor.md) · [공통국어2](subjects/kor2.md) · [공통수학1](subjects/math.md) · [공통수학2](subjects/math2.md) · [공통영어1](subjects/eng.md) · [공통영어2](subjects/eng2.md) · [통합사회1](subjects/soc.md) · [통합사회2](subjects/soc2.md) · [통합과학1](subjects/sci.md) · [통합과학2](subjects/sci2.md) · [한국사1](subjects/his.md) · [한국사2](subjects/his2.md) · [과학탐구실험1](subjects/lab1.md) · [과학탐구실험2](subjects/lab2.md) |
 | 일반선택 | [화법과 언어](subjects/hwaeon.md) · [독서와 작문](subjects/dokjak.md) · [문학](subjects/lit.md) · [대수](subjects/alg.md) · [미적분Ⅰ](subjects/calc1.md) · [확률과 통계](subjects/prob.md) · [영어Ⅰ](subjects/eng1.md) · [영어Ⅱ](subjects/eng2.md) · [영어 독해와 작문](subjects/engrw.md) · [세계시민과 지리](subjects/wgeo.md) · [세계사](subjects/whis.md) · [사회와 문화](subjects/socul.md) · [물리학](subjects/phys.md) · [화학](subjects/chem.md) · [생명과학](subjects/bio.md) · [지구과학](subjects/earth.md) |
 | 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [활용 안내](#활용-안내) |
 
@@ -36,11 +36,19 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | 구분 | 과목 | 성취기준 수 | 성취기준이 가장 많이 모인 칸 |
 |---|---|---|---|
 | 고1 공통 | [공통국어1](subjects/kor.md) | 14 | B5(개념적·평가) 2개, C3(절차적·적용) 2개 |
+| 고1 공통 | [공통국어2](subjects/kor2.md) | 15 | B5(개념적·평가) 3개, C3(절차적·적용) 2개 |
 | 고1 공통 | [공통수학1](subjects/math.md) | 19 | B2(개념적·이해) 7개, C3(절차적·적용) 7개 |
+| 고1 공통 | [공통수학2](subjects/math2.md) | 20 | C3(절차적·적용) 8개, B2(개념적·이해) 6개 |
 | 고1 공통 | [공통영어1](subjects/eng.md) | 16 | B2(개념적·이해) 4개, B4(개념적·분석) 3개 |
+| 고1 공통 | [공통영어2](subjects/eng2.md) | 17 | B2(개념적·이해) 4개, C3(절차적·적용) 3개 |
 | 고1 공통 | [통합사회1](subjects/soc.md) | 14 | A3(사실적·적용) 4개, B2(개념적·이해) 2개 |
+| 고1 공통 | [통합사회2](subjects/soc2.md) | 16 | B2(개념적·이해) 5개, B6(개념적·창안) 5개 |
 | 고1 공통 | [통합과학1](subjects/sci.md) | 16 | B2(개념적·이해) 8개, A3(사실적·적용) 2개 |
+| 고1 공통 | [통합과학2](subjects/sci2.md) | 15 | B2(개념적·이해) 7개, B4(개념적·분석) 3개 |
 | 고1 공통 | [한국사1](subjects/his.md) | 13 | B2(개념적·이해) 4개, B4(개념적·분석) 4개 |
+| 고1 공통 | [한국사2](subjects/his2.md) | 13 | B2(개념적·이해) 6개, B4(개념적·분석) 4개 |
+| 고1 공통 | [과학탐구실험1](subjects/lab1.md) | 6 | C3(절차적·적용) 3개, B2(개념적·이해) 1개 |
+| 고1 공통 | [과학탐구실험2](subjects/lab2.md) | 6 | C3(절차적·적용) 2개, C6(절차적·창안) 1개 |
 | 일반선택 | [화법과 언어](subjects/hwaeon.md) | 15 | D3(메타인지·적용) 3개, B4(개념적·분석) 2개 |
 | 일반선택 | [독서와 작문](subjects/dokjak.md) | 15 | B6(개념적·창안) 2개, D5(메타인지·평가) 1개 |
 | 일반선택 | [문학](subjects/lit.md) | 12 | B2(개념적·이해) 3개, B4(개념적·분석) 3개 |

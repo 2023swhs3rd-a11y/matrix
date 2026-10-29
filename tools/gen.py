@@ -4,7 +4,11 @@ import sys, html, json, os, base64, subprocess, datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from data import PROCESSES, KNOWLEDGE, CELLS, PATHS
 from subjects import SUBJECTS as _S1
+from subjects_common2 import SUBJECTS_COMMON2
 from subjects_general import SUBJECTS_GENERAL
+# 고1 공통은 1학기 과목 바로 뒤에 같은 교과의 2학기 과목을 두고, 과학탐구실험은 끝에 둔다
+_PAIR = {s['id']: s for s in SUBJECTS_COMMON2}
+_S1 = [x for s in _S1 for x in (s, _PAIR.pop(s['id'] + '2', None)) if x] + list(_PAIR.values())
 for _s in _S1: _s.setdefault('group', '고1 공통')
 SUBJECTS = _S1 + SUBJECTS_GENERAL
 GROUPS = list(dict.fromkeys(s['group'] for s in SUBJECTS))
@@ -271,7 +275,7 @@ LINKS = ['## 바로가기', '',
  '| 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [활용 안내](#활용-안내) |', '']
 
 r = ['# 블룸의 개정 교육목표 분류 활용 학생 탐구활동 추천 매트릭스', '',
-     'Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 탐구활동을 추천합니다. **2022 개정 교육과정** 고1 공통과목 6개와 2·3학년 일반선택 16과목은 성취기준을 칸에 배치하고 과목별 활동을 따로 정리했습니다.', ''] + LINKS
+     'Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 탐구활동을 추천합니다. **2022 개정 교육과정** 고1 공통과목 14개(과학탐구실험 포함)와 2·3학년 일반선택 16과목은 성취기준을 칸에 배치하고 과목별 활동을 따로 정리했습니다.', ''] + LINKS
 r += ['## 두 축', '', '| 인지 과정 | 뜻 | 하위 과정 |', '|---|---|---|']
 for c, ko, en, d, v in PROCESSES: r.append(f'| {c}. {ko} ({en}) | {d} | {v} |')
 r += ['', '| 지식 차원 | 하위 유형 |', '|---|---|']
