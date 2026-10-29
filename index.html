@@ -9,50 +9,67 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
-/* 레이아웃: 상단 머리말 → 4×6 매트릭스(가로 스크롤 컨테이너) → 탐구 경로 예시 → 활용 안내 */
+/* 레이아웃: 머리말 → 과목 탭 → 4×6 매트릭스(가로 스크롤) → 과목 성취기준 목록 → 탐구 경로 → 활용 안내 */
 :root{
   --bg:#f6f7f9; --surface:#ffffff; --fg:#1d2430; --muted:#5b6575; --line:#d9dee6;
-  --accent:#2f5d8a;
+  --accent:#2f5d8a; --accent-ink:#ffffff; --chip:#e7eef6;
   --l1:#eef3f8; --l2:#e3ecf5; --l3:#d6e4f1; --l4:#c8dbec; --l5:#b9d1e8; --l6:#a9c6e3;
   --hl:#f2c14e;
   --display:"Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --body:"Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#12161c; --surface:#1a2029; --fg:#e4e8ee; --muted:#9aa4b2; --line:#2c3542; --accent:#8fb8e0;
+  --bg:#12161c; --surface:#1a2029; --fg:#e4e8ee; --muted:#9aa4b2; --line:#2c3542; --accent:#8fb8e0; --accent-ink:#0f1620; --chip:#223042;
   --l1:#18212c; --l2:#1b2632; --l3:#1e2b39; --l4:#213041; --l5:#243649; --l6:#283c52; --hl:#d9a93a; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#12161c; --surface:#1a2029; --fg:#e4e8ee; --muted:#9aa4b2; --line:#2c3542; --accent:#8fb8e0;
+  --bg:#12161c; --surface:#1a2029; --fg:#e4e8ee; --muted:#9aa4b2; --line:#2c3542; --accent:#8fb8e0; --accent-ink:#0f1620; --chip:#223042;
   --l1:#18212c; --l2:#1b2632; --l3:#1e2b39; --l4:#213041; --l5:#243649; --l6:#283c52; --hl:#d9a93a; color-scheme:dark}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.6;word-break:keep-all;overflow-wrap:break-word}
-.wrap{max-width:1280px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:40px}
-header{display:grid;gap:10px;max-width:70ch}
+.wrap{max-width:1280px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:36px}
+.wrap>*{min-width:0}
+header{display:grid;gap:10px;max-width:72ch}
 .eyebrow{font-size:12px;letter-spacing:.08em;color:var(--accent);font-weight:600}
 h1{font-family:var(--display);font-weight:800;letter-spacing:-.02em;font-size:clamp(26px,4vw,38px);line-height:1.25;margin:0;text-wrap:balance}
 h2{font-family:var(--display);font-weight:700;letter-spacing:-.01em;font-size:22px;margin:0 0 4px;text-wrap:balance}
 p{margin:0}
 .lead{color:var(--muted)}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tab{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 14px;cursor:pointer}
+.tab small{font-weight:400;color:var(--muted);margin-left:4px}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tab[aria-selected="true"] small{color:inherit;opacity:.8}
+.tab:focus-visible,.std-cell:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.subject-note{font-size:13px;color:var(--muted);margin-top:10px}
 .scroller{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
-table{border-collapse:collapse;width:100%;min-width:1080px;table-layout:fixed}
-th,td{border:1px solid var(--line);vertical-align:top;text-align:left;padding:12px}
-thead th{background:var(--surface);font-weight:600}
-thead th .ko{display:block;font-family:var(--display);font-size:18px}
-thead th .en,.dim .en{font-size:11px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
-thead th .def{display:block;font-weight:400;font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45}
-thead th .vb{display:block;font-weight:500;font-size:12px;color:var(--accent);margin-top:6px}
+table.mx{border-collapse:collapse;width:100%;min-width:1080px;table-layout:fixed}
+.mx th,.mx td{border:1px solid var(--line);vertical-align:top;text-align:left;padding:12px}
+.mx thead th{background:var(--surface);font-weight:600}
+.mx thead th .ko{display:block;font-family:var(--display);font-size:18px;font-weight:700}
+.en{font-size:11px;letter-spacing:.06em;color:var(--muted);text-transform:uppercase}
+.mx thead th .def{display:block;font-weight:400;font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45}
+.mx thead th .vb{display:block;font-weight:500;font-size:12px;color:var(--accent);margin-top:6px}
 .corner{width:150px;font-size:12px;color:var(--muted);font-weight:500}
 .dim{background:var(--surface)}
 .dim .ko{display:block;font-family:var(--display);font-size:17px;font-weight:700}
 .dim .def{display:block;font-size:12px;color:var(--muted);margin-top:4px;line-height:1.45}
-td{font-size:13.5px}
-td.p1{background:var(--l1)} td.p2{background:var(--l2)} td.p3{background:var(--l3)}
-td.p4{background:var(--l4)} td.p5{background:var(--l5)} td.p6{background:var(--l6)}
-.code{font-size:11px;font-weight:600;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:.04em}
-td ul{margin:4px 0 8px;padding-left:16px;display:grid;gap:4px}
-.out{font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px}
-.out b{font-weight:600;color:var(--fg)}
-td.on{outline:3px solid var(--hl);outline-offset:-3px}
+.mx td{font-size:13.5px}
+.mx td.p1{background:var(--l1)} .mx td.p2{background:var(--l2)} .mx td.p3{background:var(--l3)}
+.mx td.p4{background:var(--l4)} .mx td.p5{background:var(--l5)} .mx td.p6{background:var(--l6)}
+.code{font-size:11px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.mx ul{margin:4px 0 8px;padding-left:16px;display:grid;gap:4px}
+.ref{display:inline-block;font-size:11px;font-variant-numeric:tabular-nums;color:var(--accent);background:var(--chip);border-radius:4px;padding:0 5px;margin-left:4px;white-space:nowrap}
+.out,.stds{font-size:12px;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px;margin-top:6px}
+.out b,.stds b{font-weight:600;color:var(--fg)}
+.mx td.on{outline:3px solid var(--hl);outline-offset:-3px}
 .axis{font-size:12px;color:var(--muted);margin-top:8px}
+table.st{border-collapse:collapse;width:100%;min-width:640px;background:var(--surface)}
+.st th,.st td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top;font-size:14px}
+.st th{font-size:12px;color:var(--muted);font-weight:600}
+.st td.c{white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:600;color:var(--accent);font-size:13px}
+.st td.k{white-space:nowrap}
+.std-cell{font:inherit;font-size:12px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:4px;padding:1px 7px;margin:0 4px 4px 0;cursor:pointer}
+.std-cell.main{border-color:var(--accent)}
+.std-cell span{font-weight:400;color:var(--muted);margin-left:3px}
 .paths{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
 .path{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:8px;text-align:left;font:inherit;color:inherit;cursor:pointer}
 .path:hover,.path[aria-pressed="true"]{border-color:var(--accent)}
@@ -61,20 +78,20 @@ td.on{outline:3px solid var(--hl);outline-offset:-3px}
 .steps{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;color:var(--accent)}
 .steps span.s{border:1px solid var(--line);border-radius:4px;padding:1px 6px;background:var(--bg)}
 .path p{font-size:13.5px;color:var(--muted)}
-.guide{display:grid;gap:10px;max-width:72ch}
+.guide{display:grid;gap:10px;max-width:74ch}
 .guide ol{margin:0;padding-left:20px;display:grid;gap:6px}
-footer{font-size:12px;color:var(--muted);max-width:72ch}
+footer{font-size:12px;color:var(--muted);max-width:74ch;display:grid;gap:6px}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header>
-<span class="eyebrow">BLOOM’S REVISED TAXONOMY · ANDERSON &amp; KRATHWOHL (2001)</span>
+<span class="eyebrow">BLOOM’S REVISED TAXONOMY × 2022 개정 교육과정</span>
 <h1>블룸의 개정 교육목표 분류로 보는 학생 탐구활동 추천 매트릭스</h1>
-<p class="lead">지식 차원 4가지와 인지 과정 차원 6가지를 교차한 24칸에 칸마다 추천 탐구활동과 산출물을 넣은 기본형입니다. 칸 번호(A1~D6)로 활동을 지정하고, 아래 탐구 경로를 눌러 활동 순서를 표에서 확인할 수 있습니다.</p>
+<p class="lead">지식 차원 4가지와 인지 과정 6가지를 교차한 24칸에 탐구활동을 추천합니다. 과목을 고르면 2022 개정 교육과정 성취기준을 칸에 배치하고, 그 성취기준에 맞춘 과목별 활동을 보여 줍니다.</p>
 </header>
-<section>
-<div class="scroller"><table>
+<section aria-label="과목 선택"><div class="tabs" role="tablist" id="tabs"></div><p class="subject-note" id="subject-note"></p></section>
+<section><div class="scroller"><table class="mx" id="mx">
 <thead><tr><th class="corner" scope="col">지식 차원 ↓ / 인지 과정 →</th>
 <th scope="col"><span class="en">1. Remember</span><span class="ko">기억</span><span class="def">장기기억에서 관련 지식을 인출하기</span><span class="vb">재인하기 · 회상하기</span></th>
 <th scope="col"><span class="en">2. Understand</span><span class="ko">이해</span><span class="def">말·글·그림으로 된 메시지의 의미 구성하기</span><span class="vb">해석 · 예시 · 분류 · 요약 · 추론 · 비교 · 설명</span></th>
@@ -116,28 +133,67 @@ footer{font-size:12px;color:var(--muted);max-width:72ch}
 <td class="p6" id="c-D6"><span class="code">D6</span><ul><li>다음 탐구를 위한 개인 학습 계획 세우기</li><li>탐구 포트폴리오와 성장 로드맵 설계</li></ul><div class="out"><b>산출물</b> 성장 계획서, 포트폴리오</div></td>
 </tr>
 </tbody></table></div>
-<p class="axis">오른쪽으로 갈수록 고차원 사고(인지 과정), 아래로 갈수록 추상적인 지식입니다. 칸 색이 진할수록 인지 부담이 큰 활동입니다.</p></section>
-<section><h2>탐구 경로 예시</h2><p class="lead" style="margin-bottom:16px">한 학기 탐구를 몇 칸의 순서로 묶은 예시입니다. 경로를 누르면 표에 해당 칸이 표시됩니다.</p><div class="paths">
+<p class="axis">오른쪽으로 갈수록 고차원 사고, 아래로 갈수록 추상적인 지식입니다. 칸 색이 진할수록 인지 부담이 큰 활동입니다. 활동 옆 번호는 관련 성취기준입니다.</p></section>
+<section id="std-section" hidden><h2 id="std-title">성취기준 배치</h2><p class="lead" style="margin-bottom:12px">성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 칸을 정했습니다. 테두리가 진한 칸이 주된 칸입니다. 칸 번호를 누르면 표에서 위치를 보여 줍니다.</p><div class="scroller"><table class="st"><thead><tr><th scope="col">코드</th><th scope="col">성취기준</th><th scope="col">칸</th></tr></thead><tbody id="std-body"></tbody></table></div></section>
+<section><h2>탐구 경로 예시</h2><p class="lead" style="margin-bottom:16px">한 학기 탐구를 몇 칸의 순서로 묶은 예시입니다. 경로를 누르면 표에 해당 칸이 표시되고, 과목을 바꿔도 같은 칸의 과목별 활동을 볼 수 있습니다.</p><div class="paths">
 <button type="button" class="path" id="path-0" aria-pressed="false" data-cells="A1 A2 B2 C3"><h3>입문형 탐구</h3><div class="steps"><span class="s">A1 사실적·기억</span><span aria-hidden="true">→</span><span class="s">A2 사실적·이해</span><span aria-hidden="true">→</span><span class="s">B2 개념적·이해</span><span aria-hidden="true">→</span><span class="s">C3 절차적·적용</span></div><p>용어와 사실을 익히고 개념을 이해한 뒤 정해진 절차로 탐구를 수행합니다. 탐구 경험이 적은 학생에게 맞습니다.</p></button>
 <button type="button" class="path" id="path-1" aria-pressed="false" data-cells="B2 B4 C4 C6"><h3>심화형 탐구</h3><div class="steps"><span class="s">B2 개념적·이해</span><span aria-hidden="true">→</span><span class="s">B4 개념적·분석</span><span aria-hidden="true">→</span><span class="s">C4 절차적·분석</span><span aria-hidden="true">→</span><span class="s">C6 절차적·창안</span></div><p>개념 구조를 분석하고 방법을 비교한 뒤 자신의 탐구를 설계합니다. 주제 탐구 보고서나 과제 연구에 맞습니다.</p></button>
 <button type="button" class="path" id="path-2" aria-pressed="false" data-cells="C3 C5 D4 D6"><h3>성찰형 탐구</h3><div class="steps"><span class="s">C3 절차적·적용</span><span aria-hidden="true">→</span><span class="s">C5 절차적·평가</span><span aria-hidden="true">→</span><span class="s">D4 메타인지·분석</span><span aria-hidden="true">→</span><span class="s">D6 메타인지·창안</span></div><p>탐구를 수행하고 과정을 평가한 뒤 자신의 탐구 방식을 돌아보고 다음 계획을 세웁니다. 학기말 정리 활동에 맞습니다.</p></button>
 </div></section>
 <section class="guide"><h2>활용 안내</h2><ol>
-<li><b>목표 진술:</b> 성취기준을 “명사(지식 차원) + 동사(인지 과정)”로 나누면 해당 칸이 정해집니다. 예: “광합성의 원리를 설명할 수 있다” → 개념적 지식 × 이해(B2).</li>
-<li><b>활동 선택:</b> 칸의 추천 활동 중 하나를 고르고 교과 주제에 맞게 바꿉니다. 같은 칸이면 교과가 달라도 활동 형태는 그대로 쓸 수 있습니다.</li>
-<li><b>단계 배치:</b> 왼쪽 위(A1)에서 오른쪽 아래(D6) 방향으로 2~4칸을 이어 탐구 경로를 만듭니다. 꼭 한 칸씩 순서대로 갈 필요는 없습니다.</li>
-<li><b>평가 정렬:</b> 산출물 칸에 적힌 결과물을 평가 대상으로 삼으면 목표, 활동, 평가가 같은 칸에 맞춰집니다.</li>
+<li><b>성취기준 찾기:</b> 과목을 고르고 아래 성취기준 목록에서 수업할 성취기준의 칸을 확인합니다. 예: “이차함수의 최대, 최소를 탐구하고, 이를 실생활과 연결하여…” → 개념적 지식 × 적용(B3).</li>
+<li><b>활동 고르기:</b> 그 칸의 과목별 활동을 고르거나, 전 과목 공통 활동을 과목 내용에 맞게 바꿉니다.</li>
+<li><b>단계 배치:</b> 주된 칸의 왼쪽이나 위쪽 칸에서 시작해 2~4칸을 이어 탐구 경로를 만듭니다. 성취기준이 없는 칸의 활동은 기초 다지기나 성찰 활동으로 덧붙이면 됩니다.</li>
+<li><b>평가 정렬:</b> 주된 칸의 활동 결과물을 수행평가 대상으로 삼으면 성취기준, 활동, 평가가 같은 칸에 맞춰집니다.</li>
 </ol></section>
-<footer>참고: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing: A Revision of Bloom’s Taxonomy of Educational Objectives.</i> Longman. 인지 과정 6단계의 마지막 단계(Create)는 국내 문헌에서 “창안” 또는 “창조”로 번역됩니다.</footer>
+<footer><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목. 원문은 국가교육과정정보센터(NCIC)에서 확인할 수 있습니다. 통합과학1은 원문을 확인한 성취기준만 실었습니다.</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p></footer>
 </div>
+<script>var DATA={"processes": [["1", "기억", "Remember", "장기기억에서 관련 지식을 인출하기", "재인하기 · 회상하기"], ["2", "이해", "Understand", "말·글·그림으로 된 메시지의 의미 구성하기", "해석 · 예시 · 분류 · 요약 · 추론 · 비교 · 설명"], ["3", "적용", "Apply", "주어진 상황에서 절차를 수행하거나 사용하기", "실행하기 · 시행하기"], ["4", "분석", "Analyze", "자료를 구성 요소로 나누고 관계와 구조 파악하기", "구별하기 · 조직하기 · 귀속하기"], ["5", "평가", "Evaluate", "준거와 기준에 비추어 판단하기", "점검하기 · 비판하기"], ["6", "창안", "Create", "요소를 엮어 새롭고 일관된 전체 만들기", "생성하기 · 계획하기 · 산출하기"]], "knowledge": [["A", "사실적 지식", "Factual", "용어, 구체적 사실과 요소"], ["B", "개념적 지식", "Conceptual", "분류·범주, 원리·일반화, 이론·모형·구조"], ["C", "절차적 지식", "Procedural", "기능·알고리즘, 기법·방법, 절차 사용 시기의 판단 준거"], ["D", "메타인지 지식", "Metacognitive", "전략적 지식, 인지 과제에 대한 지식, 자기 지식"]], "common": {"A1": {"acts": [["탐구 주제의 핵심 용어 플래시카드 만들어 짝 퀴즈", []], ["관련 사건·수치를 연표나 사실 목록으로 정리", []]], "out": "용어 카드, 사실 목록"}, "A2": {"acts": [["핵심 용어를 자기 말로 풀어 쓰고 예를 덧붙이기", []], ["기사·그래프에서 사실을 찾아 세 줄로 요약", []]], "out": "용어 풀이 노트, 자료 요약문"}, "A3": {"acts": [["관찰·측정·설문으로 사실 자료를 모아 기록표 작성", []], ["정해진 단위와 기호로 자료를 정리해 표 만들기", []]], "out": "관찰·측정 기록표"}, "A4": {"acts": [["같은 주제를 다룬 여러 출처의 사실을 대조해 일치·불일치 표시", []], ["자료 속 문장을 사실과 의견으로 구분", []]], "out": "출처 대조표"}, "A5": {"acts": [["출처·작성자·날짜를 점검하는 팩트체크 활동", []], ["수집한 수치의 정확성을 원자료와 다시 맞춰 보기", []]], "out": "팩트체크 보고서"}, "A6": {"acts": [["모은 사실로 인포그래픽이나 카드뉴스 제작", []], ["학급 공동 용어집이나 주제 데이터베이스 구축", []]], "out": "인포그래픽, 용어집"}, "B1": {"acts": [["교과 핵심 개념의 정의와 원리 회상하기", []], ["개념 이름과 정의 짝 맞추기 게임", []]], "out": "개념 정의 목록"}, "B2": {"acts": [["개념도(마인드맵)로 개념 간 관계 그리기", []], ["개념의 예시와 반례, 비유 만들기", []], ["원리로 일상 현상을 설명하기", []]], "out": "개념도, 설명 글"}, "B3": {"acts": [["배운 원리를 새로운 상황의 문제에 적용해 풀기", []], ["모형을 사용해 현상의 결과 예측하기", []]], "out": "적용 문제 풀이, 예측표"}, "B4": {"acts": [["벤 다이어그램이나 인과 지도로 개념 구조 분석", []], ["이론이 깔고 있는 가정과 한계 찾기", []]], "out": "인과 지도, 비교 다이어그램"}, "B5": {"acts": [["두 이론이나 모형을 설명력 기준으로 비교 평가", []], ["근거를 들어 주장하는 찬반 토론", []]], "out": "비교 평가표, 토론 논증문"}, "B6": {"acts": [["새로운 분류 체계나 설명 모형 제안", []], ["개념을 엮어 검증 가능한 가설 세우기", []]], "out": "자작 모형, 가설 진술문"}, "C1": {"acts": [["실험·조사 절차의 순서 회상하기", []], ["안전 수칙과 도구 사용법 체크리스트 작성", []]], "out": "절차 카드, 안전 체크리스트"}, "C2": {"acts": [["절차의 각 단계가 왜 필요한지 설명하기", []], ["탐구 절차를 순서도로 나타내기", []]], "out": "순서도, 절차 해설"}, "C3": {"acts": [["표준 실험이나 조사 절차를 그대로 수행", []], ["통계·코딩 도구로 자료 처리하기", []], ["설문이나 인터뷰 실시", []]], "out": "실험 결과, 자료 처리 결과"}, "C4": {"acts": [["여러 탐구 방법의 장단점 비교 분석", []], ["실험 설계에서 독립·종속·통제 변인 찾기", []]], "out": "방법 비교표, 변인 분석표"}, "C5": {"acts": [["실험 과정의 오차 원인과 타당도 평가", []], ["동료의 탐구 보고서를 루브릭으로 검토", []]], "out": "오차 분석, 동료 검토지"}, "C6": {"acts": [["탐구 질문에 맞는 실험·조사를 직접 설계", []], ["새로운 측정 도구나 조사 프로토콜 개발", []]], "out": "탐구 계획서, 자작 도구"}, "D1": {"acts": [["내가 평소 쓰는 공부·탐구 전략 목록 만들기", []], ["과제 유형별로 효과가 있던 전략 떠올리기", []]], "out": "나의 전략 목록"}, "D2": {"acts": [["탐구 일지에 나의 강점과 약점 설명하기", []], ["어떤 전략이 왜 효과적이었는지 설명", []]], "out": "탐구 일지"}, "D3": {"acts": [["과제에 맞는 전략을 골라 실제로 써 보기", []], ["자기 질문 체크리스트로 탐구 중간 점검", []]], "out": "전략 실행 기록"}, "D4": {"acts": [["나의 탐구 과정을 단계별로 돌아보기", []], ["막히거나 실패한 지점의 원인 분석", []]], "out": "탐구 회고록"}, "D5": {"acts": [["루브릭으로 자기평가와 동료평가 하기", []], ["사용한 전략이 목표 달성에 효과적이었는지 판단", []]], "out": "자기평가지"}, "D6": {"acts": [["다음 탐구를 위한 개인 학습 계획 세우기", []], ["탐구 포트폴리오와 성장 로드맵 설계", []]], "out": "성장 계획서, 포트폴리오"}}, "subjects": [{"id": "kor", "name": "공통국어1", "area": "국어", "standards": [["10공국1-01-01", "대화의 원리를 고려하여 대화하고 자신의 듣기⋅말하기 과정과 공동체의 담화 관습을 성찰한다.", ["D5", "B3"]], ["10공국1-01-02", "논제의 필수 쟁점별로 논증을 구성하고 논증이 타당한지 평가하며 토론한다.", ["C5", "C6"]], ["10공국1-02-01", "다양한 글이나 자료를 읽으며 논증의 타당성을 평가하고 자신의 관점을 바탕으로 논증을 재구성한다.", ["B5", "B6"]], ["10공국1-02-02", "자신의 진로나 관심 분야와 관련한 다양한 글이나 자료를 찾아 주제 통합적으로 읽고 읽은 결과를 공유한다.", ["C3"]], ["10공국1-03-01", "내용 전개의 일반적 원리를 고려하여 사회적 쟁점에 대한 자신의 견해를 정교하게 표현하는 글을 쓴다.", ["C6"]], ["10공국1-03-02", "다양한 언어 공동체의 특성을 고려하며 필자의 개성이 드러나는 글을 쓴다.", ["B6"]], ["10공국1-04-01", "언어 공동체가 다변화함에 따라 다양해진 언어 실천 양상을 분석하고 언어 주체로서 책임감을 가지며 국어생활을 한다.", ["B4"]], ["10공국1-04-02", "음운 변동을 탐구하여 발음과 표기에 올바르게 적용한다.", ["C3", "B4"]], ["10공국1-04-03", "다양한 분야의 글과 담화에 나타난 문법 요소 및 어휘의 표현 효과를 평가하고 적절한 표현을 생성한다.", ["B5", "B6"]], ["10공국1-05-01", "문학 소통의 특성을 고려하며 문학 소통에 참여한다.", ["B3"]], ["10공국1-05-02", "갈래에 따른 형상화 방법의 특성을 고려하며 작품을 수용한다.", ["B2"]], ["10공국1-05-03", "작품 구성 요소의 유기적 관계와 맥락에 유의하여 작품을 수용하고 생산한다.", ["B4", "B6"]], ["10공국1-06-01", "사회적 의제를 다룬 매체 자료를 비판적으로 분석한다.", ["A4", "A5"]], ["10공국1-06-02", "소통 맥락과 매체 특성을 고려하여 다양한 목적의 매체 자료를 제작한다.", ["C6"]]], "cells": {"A1": {"acts": [["음운 변동의 종류(비음화, 유음화, 구개음화 등)와 예시 단어 카드 퀴즈", ["10공국1-04-02"]], ["갈래별 핵심 용어(화자, 서술자, 시점 등) 정리", ["10공국1-05-02"]]]}, "A2": {"acts": [["사회적 의제 기사의 사실 정보를 육하원칙으로 요약", ["10공국1-06-01"]]]}, "A3": {"acts": [["진로 관련 글·자료를 찾아 출처와 핵심 내용을 기록한 자료 목록 작성", ["10공국1-02-02"]]]}, "A4": {"acts": [["같은 의제를 다룬 두 매체 기사에서 사실, 의견, 빠진 정보를 구별", ["10공국1-06-01"]]]}, "A5": {"acts": [["매체 자료 속 통계와 인용의 출처를 확인하는 팩트체크", ["10공국1-06-01"]]]}, "A6": {"acts": [["진로 분야 읽기 결과를 주제별 정보 카드로 묶어 학급 자료집 만들기", ["10공국1-02-02"]]]}, "B1": {"acts": [["대화의 원리(협력의 원리, 공손성의 원리) 회상하고 예를 들기", ["10공국1-01-01"]]]}, "B2": {"acts": [["같은 소재를 다룬 시와 소설을 비교해 갈래별 형상화 방법 설명", ["10공국1-05-02"]]]}, "B3": {"acts": [["문학 소통의 특성을 적용해 작품 감상을 주고받는 독자 댓글 토론", ["10공국1-05-01"]], ["대화의 원리를 적용해 갈등 상황 대화문 고쳐 쓰기", ["10공국1-01-01"]]]}, "B4": {"acts": [["세대·지역·온라인 공동체별 언어 실천 양상(신어, 줄임말, 외래어) 조사 분석", ["10공국1-04-01"]], ["작품 구성 요소(인물, 사건, 배경)의 관계도 그리기", ["10공국1-05-03"]]]}, "B5": {"acts": [["칼럼의 논증 타당성 평가표 작성", ["10공국1-02-01"]], ["광고·연설문 속 문법 요소와 어휘의 표현 효과 평가", ["10공국1-04-03"]]]}, "B6": {"acts": [["작품의 시점이나 배경을 바꿔 재창작", ["10공국1-05-03"]], ["평가한 글의 논증을 내 관점으로 재구성", ["10공국1-02-01"]], ["지역어나 세대 말투 등 언어 공동체 특성을 살려 개성 있는 수필 쓰기", ["10공국1-03-02"]]]}, "C1": {"acts": [["토론 절차(입론, 반론, 최종 발언)와 각 단계 시간 정리", ["10공국1-01-02"]]]}, "C2": {"acts": [["음운 변동이 일어나는 과정을 순서도로 설명", ["10공국1-04-02"]]]}, "C3": {"acts": [["음운 변동 규칙을 적용해 발음·표기 오류 찾아 고치기", ["10공국1-04-02"]], ["진로 관련 자료 2~3편을 주제 통합적으로 읽고 결과 공유", ["10공국1-02-02"]]]}, "C4": {"acts": [["논제의 필수 쟁점별로 주장, 근거, 반박을 나눈 논증 구조도 작성", ["10공국1-01-02"]]]}, "C5": {"acts": [["토론 후 양측 논증의 타당성 판정표 작성", ["10공국1-01-02"]]]}, "C6": {"acts": [["사회적 쟁점에 대한 논설문 쓰기", ["10공국1-03-01"]], ["카드뉴스나 짧은 영상 등 매체 자료 제작", ["10공국1-06-02"]]]}, "D1": {"acts": [["내가 자주 쓰는 읽기 전략(예측, 질문, 요약) 목록 만들기", []]]}, "D2": {"acts": [["대화를 녹음해 듣고 나의 듣기·말하기 습관 설명", ["10공국1-01-01"]]]}, "D3": {"acts": [["글쓰기 단계별 자기 점검표로 초고 고쳐 쓰기", ["10공국1-03-01"]]]}, "D4": {"acts": [["토론 영상을 다시 보며 나의 발언에서 약했던 지점 분석", ["10공국1-01-02"]]]}, "D5": {"acts": [["나의 듣기·말하기 과정과 공동체의 담화 관습 성찰 일지", ["10공국1-01-01"]]]}, "D6": {"acts": [["한 학기 읽기·쓰기 포트폴리오와 다음 학기 독서 계획", []]]}}}, {"id": "math", "name": "공통수학1", "area": "수학", "standards": [["10공수1-01-01", "다항식의 사칙연산의 원리를 설명하고, 그 계산을 할 수 있다.", ["B2", "C3"]], ["10공수1-01-02", "항등식의 성질과 나머지정리를 이해하고, 이를 활용하여 문제를 해결할 수 있다.", ["B2", "C3"]], ["10공수1-01-03", "다항식의 인수분해를 할 수 있다.", ["C3"]], ["10공수1-02-01", "복소수의 뜻과 성질을 설명하고, 사칙연산을 수행할 수 있다.", ["B2", "C3"]], ["10공수1-02-02", "이차방정식의 실근과 허근을 이해하고, 판별식을 이용하여 이차방정식의 근을 판별할 수 있다.", ["B2", "C3"]], ["10공수1-02-03", "이차방정식의 근과 계수의 관계를 설명할 수 있다.", ["B2"]], ["10공수1-02-04", "이차방정식과 이차함수를 연결하여 그 관계를 설명할 수 있다.", ["B4"]], ["10공수1-02-05", "이차함수의 그래프와 직선의 위치 관계를 판단할 수 있다.", ["C3", "B4"]], ["10공수1-02-06", "이차함수의 최대, 최소를 탐구하고, 이를 실생활과 연결하여 유용성을 인식할 수 있다.", ["B3"]], ["10공수1-02-07", "간단한 삼차방정식과 사차방정식을 풀 수 있다.", ["C3"]], ["10공수1-02-08", "미지수가 2개인 연립이차방정식을 풀 수 있다.", ["C3"]], ["10공수1-02-09", "미지수가 1개인 연립일차부등식을 풀 수 있다.", ["C3"]], ["10공수1-02-10", "절댓값을 포함한 일차부등식을 풀 수 있다.", ["C3"]], ["10공수1-02-11", "이차부등식과 이차함수를 연결하여 그 관계를 설명하고, 이차부등식과 연립이차부등식을 풀 수 있다.", ["B4", "C3"]], ["10공수1-03-01", "합의 법칙과 곱의 법칙을 이해하고, 적절한 전략을 사용하여 경우의 수와 관련된 문제를 해결할 수 있다.", ["D3", "C3"]], ["10공수1-03-02", "순열의 개념을 이해하고, 순열의 수를 구하는 방법을 설명할 수 있다.", ["B2"]], ["10공수1-03-03", "조합의 개념을 이해하고, 조합의 수를 구하는 방법을 설명할 수 있다.", ["B2"]], ["10공수1-04-01", "행렬의 뜻을 알고, 실생활 상황을 행렬로 표현할 수 있다.", ["A1", "B3"]], ["10공수1-04-02", "행렬의 연산을 수행하고, 관련된 문제를 해결할 수 있다.", ["C3"]]], "cells": {"A1": {"acts": [["행렬, 성분, 허수단위, 켤레복소수 등 용어와 기호 정리", ["10공수1-04-01", "10공수1-02-01"]]]}, "A2": {"acts": [["판별식 D, 순열 ₙPᵣ, 조합 ₙCᵣ 같은 기호를 말로 읽고 뜻 풀이", ["10공수1-02-02", "10공수1-03-02", "10공수1-03-03"]]]}, "A3": {"acts": [["시간표·교통·성적 같은 실생활 자료를 행렬로 기록", ["10공수1-04-01"]]]}, "A4": {"acts": [["서술형 문제에서 주어진 조건과 구할 것을 구별해 표시", []]]}, "A5": {"acts": [["구한 해를 원래 식에 대입해 검산하고 오류 찾기", ["10공수1-02-07", "10공수1-02-08"]]]}, "A6": {"acts": [["단원 용어·기호·공식을 모은 나만의 수학 사전 제작", []]]}, "B1": {"acts": [["나머지정리, 근과 계수의 관계 진술 회상", ["10공수1-01-02", "10공수1-02-03"]]]}, "B2": {"acts": [["다항식의 연산 원리를 수의 연산과 비교해 설명", ["10공수1-01-01"]], ["순열과 조합의 차이를 예시로 설명", ["10공수1-03-02", "10공수1-03-03"]]]}, "B3": {"acts": [["이차함수의 최대·최소로 울타리 넓이, 판매 수익 같은 실생활 최적화 문제 해결", ["10공수1-02-06"]], ["실생활 상황을 행렬로 표현", ["10공수1-04-01"]]]}, "B4": {"acts": [["이차방정식·이차함수·이차부등식의 관계를 그래프 한 장으로 연결", ["10공수1-02-04", "10공수1-02-11"]], ["판별식 부호와 그래프·직선의 위치 관계 대응표 만들기", ["10공수1-02-05"]]]}, "B5": {"acts": [["같은 문제를 판별식과 그래프로 풀어 보고 어느 방법이 나은지 평가", ["10공수1-02-05"]]]}, "B6": {"acts": [["이차함수 최적화를 활용한 실생활 문제 직접 출제", ["10공수1-02-06"]]]}, "C1": {"acts": [["인수분해 공식과 근의 공식 회상", ["10공수1-01-03"]]]}, "C2": {"acts": [["조립제법의 각 단계가 무엇을 계산하는지 설명", ["10공수1-01-02"]]]}, "C3": {"acts": [["인수분해와 고차·연립방정식, 부등식 풀이", ["10공수1-01-03", "10공수1-02-07", "10공수1-02-08", "10공수1-02-09", "10공수1-02-10"]], ["행렬의 연산 수행", ["10공수1-04-02"]]]}, "C4": {"acts": [["경우의 수 문제에서 합의 법칙과 곱의 법칙을 쓰는 조건 구분", ["10공수1-03-01"]]]}, "C5": {"acts": [["친구 풀이에서 오류를 찾아 피드백 쓰기", []]]}, "C6": {"acts": [["공학 도구로 계수에 따른 이차함수 그래프 변화를 탐구하는 활동지 설계", ["10공수1-02-04"]]]}, "D1": {"acts": [["문제 유형별로 내가 쓰는 풀이 전략 목록 만들기", []]]}, "D2": {"acts": [["오답 원인을 개념·계산·해석 중 무엇인지 설명", []]]}, "D3": {"acts": [["경우의 수 문제에서 수형도, 표, 여사건 중 전략을 골라 풀기", ["10공수1-03-01"]]]}, "D4": {"acts": [["오답 노트로 반복되는 실수 패턴 분석", []]]}, "D5": {"acts": [["단원별 자기평가 체크리스트로 이해도 판단", []]]}, "D6": {"acts": [["취약 단원 보충 학습 계획 세우기", []]]}}}, {"id": "eng", "name": "공통영어1", "area": "영어", "standards": [["10공영1-01-01", "말이나 글에 포함된 세부 정보를 파악한다.", ["A2"]], ["10공영1-01-02", "말이나 글의 주제나 요지를 파악한다.", ["B2"]], ["10공영1-01-03", "말이나 글의 분위기나 화자나 인물의 심정 및 의도 등을 추론한다.", ["B2"]], ["10공영1-01-04", "말이나 글에 나타난 일이나 사건의 논리적 관계를 파악한다.", ["B4"]], ["10공영1-01-05", "말이나 글에 포함된 표현의 함축적 의미를 추론한다.", ["B2"]], ["10공영1-01-06", "말이나 글의 전개 방식이나 구조를 파악한다.", ["B4"]], ["10공영1-01-07", "말이나 글의 이해를 위한 적절한 전략을 적용한다.", ["D3"]], ["10공영1-01-08", "말이나 글에 나타난 다양한 관점이나 의견을 포용적인 태도로 분석한다.", ["B4"]], ["10공영1-02-01", "실물, 그림, 사진, 도표 등을 활용하여 내용을 설명한다.", ["A2"]], ["10공영1-02-02", "사실적 정보나 지식을 말이나 글로 전달한다.", ["A3"]], ["10공영1-02-03", "경험이나 계획 등을 말하거나 기술한다.", ["A3"]], ["10공영1-02-04", "자신의 생각이나 의견, 감정, 감상 등을 표현한다.", ["C6"]], ["10공영1-02-05", "듣거나 읽은 내용을 요약하여 말하거나 기술한다.", ["B2"]], ["10공영1-02-06", "어휘나 표현을 점검하여 내용을 명확하게 전달한다.", ["C5"]], ["10공영1-02-07", "적절한 전략과 다양한 매체를 활용하여 상황과 목적에 맞게 말하거나 쓴다.", ["D3"]], ["10공영1-02-08", "상대방의 생각이나 관점을 존중하고 언어 예절을 갖추어 표현한다.", ["C3"]]], "cells": {"A1": {"acts": [["주제별 핵심 어휘와 연어(collocation) 목록 익히기", []]]}, "A2": {"acts": [["글의 세부 정보로 True/False 문제 풀고 근거 문장 표시", ["10공영1-01-01"]], ["도표나 사진을 보고 내용을 영어로 설명", ["10공영1-02-01"]]]}, "A3": {"acts": [["조사한 사실 정보를 1분 영어 발표로 전달", ["10공영1-02-02"]], ["주말 경험이나 진로 계획을 영어로 기술", ["10공영1-02-03"]]]}, "A4": {"acts": [["지문 속 사실 문장과 의견 문장 구별", ["10공영1-01-08"]]]}, "A5": {"acts": [["영어 기사에 나온 수치와 출처를 원자료와 대조", []]]}, "A6": {"acts": [["조사한 사실 정보로 영어 인포그래픽 제작", ["10공영1-02-01", "10공영1-02-02"]]]}, "B1": {"acts": [["담화 표지(however, therefore, for instance)의 기능 회상", ["10공영1-01-04"]]]}, "B2": {"acts": [["주제문 찾기와 요지 한 문장 쓰기", ["10공영1-01-02"]], ["인물의 심정과 표현의 함축 의미 추론", ["10공영1-01-03", "10공영1-01-05"]], ["읽은 내용 요약해 말하기", ["10공영1-02-05"]]]}, "B3": {"acts": [["담화 표지를 단서로 이어질 내용 예측하기", ["10공영1-01-04"]]]}, "B4": {"acts": [["글의 전개 방식(비교, 인과, 문제-해결) 구조도 그리기", ["10공영1-01-06"]], ["사건의 논리적 관계를 연결해 순서 배열", ["10공영1-01-04"]], ["한 쟁점에 대한 여러 의견 분석", ["10공영1-01-08"]]]}, "B5": {"acts": [["같은 주제를 다룬 두 글의 관점을 비교해 설득력 평가", ["10공영1-01-08"]]]}, "B6": {"acts": [["다른 인물의 관점으로 이야기 다시 쓰기", ["10공영1-02-04"]]]}, "C1": {"acts": [["에세이 쓰기 단계(브레인스토밍-개요-초고-수정) 회상", []]]}, "C2": {"acts": [["주제문-뒷받침-결론 문단 구성 방식 설명", ["10공영1-01-06"]]]}, "C3": {"acts": [["언어 예절을 갖춘 요청·거절 역할극", ["10공영1-02-08"]]]}, "C4": {"acts": [["모범 에세이의 문단 구조와 연결어 분석", ["10공영1-01-06"]]]}, "C5": {"acts": [["어휘와 표현을 점검해 초고 고쳐 쓰기, 동료 첨삭", ["10공영1-02-06"]]]}, "C6": {"acts": [["의견을 담은 에세이나 스피치 원고 작성", ["10공영1-02-04"]]]}, "D1": {"acts": [["내가 쓰는 읽기·듣기 전략 목록 만들기", ["10공영1-01-07"]]]}, "D2": {"acts": [["이해가 어려웠던 지문의 원인(어휘, 구조, 배경지식) 설명", []]]}, "D3": {"acts": [["스키밍·스캐닝 등 이해 전략을 골라 적용", ["10공영1-01-07"]], ["상황과 매체에 맞는 말하기·쓰기 전략 선택", ["10공영1-02-07"]]]}, "D4": {"acts": [["발표 녹화를 보며 말하기 회고", ["10공영1-02-07"]]]}, "D5": {"acts": [["말하기·쓰기 루브릭으로 자기평가", ["10공영1-02-06"]]]}, "D6": {"acts": [["영어 학습 목표와 주간 학습 계획 세우기", []]]}}}, {"id": "soc", "name": "통합사회1", "area": "사회", "standards": [["10통사1-01-01", "인간, 사회, 환경을 바라보는 시간적, 공간적, 사회적, 윤리적 관점의 의미와 특징을 사례를 통해 파악한다.", ["B2"]], ["10통사1-01-02", "인간, 사회, 환경의 탐구에 통합적 관점이 요청되는 이유를 도출하고 이를 탐구에 적용한다.", ["B3"]], ["10통사1-02-01", "시대와 지역에 따라 다르게 나타나는 행복의 기준을 사례를 통해 비교하여 평가하고, 삶의 목적으로서 행복의 의미를 성찰한다.", ["B5", "D5"]], ["10통사1-02-02", "행복한 삶을 실현하기 위한 조건으로 질 높은 정주 환경의 조성, 경제적 안정, 민주주의 발전 및 도덕적 실천의 필요성에 관해 탐구한다.", ["B4"]], ["10통사1-03-01", "자연환경이 인간의 생활에 미치는 영향에 관한 과거와 현재의 사례를 조사하여 분석하고, 안전하고 쾌적한 환경에서 살아가는 것이 시민의 권리임을 주장한다.", ["A4", "B5"]], ["10통사1-03-02", "자연에 대한 인간의 다양한 관점을 사례를 통해 비교하고, 인간과 자연의 바람직한 관계를 제안한다.", ["B6", "B2"]], ["10통사1-03-03", "환경 문제 해결을 위한 정부, 시민사회, 기업 등의 다양한 노력을 조사하고, 생태시민으로서 실천 방안을 모색한다.", ["A3", "C6"]], ["10통사1-04-01", "자연환경과 인문환경의 영향을 받아 형성된 다양한 문화권의 특징과 삶의 방식을 탐구한다.", ["B4"]], ["10통사1-04-02", "문화 변동의 다양한 양상을 이해하고, 현대 사회에서 전통문화가 지니는 의의를 탐색한다.", ["B2"]], ["10통사1-04-03", "문화적 차이에 대한 상대주의적 태도의 필요성을 이해하고, 보편 윤리의 차원에서 자문화와 타문화를 평가한다.", ["B5"]], ["10통사1-04-04", "다문화 사회의 현황을 조사하고, 문화적 다양성을 존중하는 태도를 바탕으로 갈등 해결 방안을 모색한다.", ["A3", "C6"]], ["10통사1-05-01", "산업화, 도시화로 인해 나타난 생활공간과 생활양식의 변화 양상을 조사하고, 이에 따른 문제점의 해결 방안을 제안한다.", ["A3", "B6"]], ["10통사1-05-02", "교통⋅통신 및 과학기술의 발달과 함께 나타난 생활공간과 생활양식의 변화 양상을 조사하고, 이에 따른 문제점의 해결 방안을 제안한다.", ["A3", "B6"]], ["10통사1-05-03", "자신이 거주하는 지역을 사례로 공간 변화가 초래한 양상 및 문제점을 탐구하고, 공동체의 구성원으로서 지역사회의 변화를 위한 방안을 모색하고 이를 실천한다.", ["C6", "C3"]]], "cells": {"A1": {"acts": [["시간적·공간적·사회적·윤리적 관점의 이름과 대표 질문 정리", ["10통사1-01-01"]], ["세계 주요 문화권과 지역 이름 지도에 표시", ["10통사1-04-01"]]]}, "A2": {"acts": [["도시화율, 인구 이동 통계 그래프를 읽고 변화 요약", ["10통사1-05-01"]]]}, "A3": {"acts": [["환경 문제 해결을 위한 정부·시민사회·기업의 노력 사례 조사", ["10통사1-03-03"]], ["우리 지역 다문화 가구 현황 조사", ["10통사1-04-04"]], ["산업화·교통 발달에 따른 생활 변화 사례 수집", ["10통사1-05-01", "10통사1-05-02"]]]}, "A4": {"acts": [["자연재해·기후가 생활에 준 영향의 과거·현재 사례 비교 분석", ["10통사1-03-01"]]]}, "A5": {"acts": [["환경·도시 관련 통계와 기사의 출처 신뢰성 점검", ["10통사1-03-01"]]]}, "A6": {"acts": [["우리 지역의 과거·현재 지도와 사진으로 변화 연표 제작", ["10통사1-05-03"]]]}, "B1": {"acts": [["문화 변동, 문화 상대주의, 생태시민 등 개념 정의 회상", ["10통사1-04-02", "10통사1-04-03"]]]}, "B2": {"acts": [["하나의 사례를 네 가지 관점으로 각각 설명", ["10통사1-01-01"]], ["문화 변동 양상(전파, 발명, 동화, 융합) 사례 설명", ["10통사1-04-02"]]]}, "B3": {"acts": [["통합적 관점을 적용해 지역 문제 사례 탐구", ["10통사1-01-02"]]]}, "B4": {"acts": [["행복의 조건(정주 환경, 경제, 민주주의, 도덕) 간 관계 분석", ["10통사1-02-02"]], ["문화권 특징을 자연·인문 환경 요인으로 분석", ["10통사1-04-01"]]]}, "B5": {"acts": [["시대·지역별 행복 기준을 비교해 평가", ["10통사1-02-01"]], ["보편 윤리 기준으로 문화 사례 평가 토론", ["10통사1-04-03"]], ["환경권 주장 논술", ["10통사1-03-01"]]]}, "B6": {"acts": [["인간과 자연의 바람직한 관계 제안서", ["10통사1-03-02"]], ["도시·기술 변화 문제 해결 방안 제안", ["10통사1-05-01", "10통사1-05-02"]]]}, "C1": {"acts": [["사회 조사 절차(문제 설정-자료 수집-분석-결론) 회상", []]]}, "C2": {"acts": [["설문지와 면담 질문을 만드는 단계 설명", ["10통사1-05-03"]]]}, "C3": {"acts": [["지역 주민 설문·면담 실시", ["10통사1-05-03"]]]}, "C4": {"acts": [["문헌·설문·현장 조사 방법의 장단점 비교", []]]}, "C5": {"acts": [["조사 결과 해석이 자료로 뒷받침되는지 동료 검토", []]]}, "C6": {"acts": [["생태시민 실천 프로젝트 설계", ["10통사1-03-03"]], ["다문화 갈등 해결 방안 모색", ["10통사1-04-04"]], ["지역사회 변화 방안을 세우고 실천", ["10통사1-05-03"]]]}, "D1": {"acts": [["사회 문제를 볼 때 내가 주로 쓰는 관점 떠올리기", ["10통사1-01-01"]]]}, "D2": {"acts": [["나에게 행복이란 무엇인지 글로 설명", ["10통사1-02-01"]]]}, "D3": {"acts": [["탐구 계획표로 조사 일정과 역할 점검", ["10통사1-05-03"]]]}, "D4": {"acts": [["모둠 탐구 과정에서 나의 기여와 어려움 분석", []]]}, "D5": {"acts": [["삶의 목적으로서 행복의 의미 성찰 일지", ["10통사1-02-01"]]]}, "D6": {"acts": [["생태시민으로서 개인 실천 계획 세우기", ["10통사1-03-03"]]]}}}, {"id": "sci", "name": "통합과학1", "area": "과학", "standards": [["10통과1-01-01", "자연을 시간과 공간에서 기술할 수 있음을 알고, 길이와 시간 측정의 현대적 방법과 다양한 규모의 측정 사례를 조사할 수 있다.", ["A3"]], ["10통과1-01-02", "과학 탐구에서 중요한 기본량의 의미를 알고, 자연 현상을 기술하는 데 단위가 가지는 의미와 적용사례를 설명할 수 있다.", ["A2"]], ["10통과1-01-03", "과학 탐구에서 측정과 어림의 의미를 알고, 일상생활의 여러 가지 상황에서 측정 표준의 유용성과 필요성을 논증할 수 있다.", ["C5"]], ["10통과1-01-04", "자연에서 일어나는 다양한 변화를 측정⋅분석하여 정보를 산출함을 알고, 이러한 정보를 디지털로 변환하는 기술을 정보 통신에 활용하여 현대 문명에 미친 영향을 인식한다.", ["C2"]], ["10통과1-02-03", "세상을 구성하는 원소들의 성질이 주기성을 나타내는 현상을 통해 자연의 규칙성을 도출하고, 지구와 생명체를 구성하는 주요 원소들이 결합을 형성하는 이유를 해석할 수 있다.", ["B4", "B2"]], ["10통과1-02-05", "지각과 생명체를 구성하는 물질들이 기본 단위체의 결합을 통해서 형성된다는 것을 규산염 광물, 단백질과 핵산의 예를 통해 설명할 수 있다.", ["B2"]], ["10통과1-03-01", "지구시스템은 태양계라는 시스템의 구성요소임을 알고, 지구시스템을 구성하는 권역들 간의 물질 순환과 에너지 흐름의 결과로 나타나는 현상을 논증할 수 있다.", ["B5", "B4"]], ["10통과1-03-02", "지권의 변화를 판구조론 관점에서 해석하고, 에너지 흐름의 결과로 발생하는 지권의 변화가 지구시스템에 미치는 영향을 추론할 수 있다.", ["B2"]], ["10통과1-03-03", "중력의 작용으로 인한 지구 표면과 지구 주위의 다양한 운동을 설명할 수 있다.", ["B2"]], ["10통과1-03-04", "상호작용이 없을 때 물체가 가속되지 않음을 알고, 충격량과 운동량의 관계를 충돌 관련 안전장치와 스포츠에 적용할 수 있다.", ["B3"]], ["10통과1-03-05", "생명 시스템을 유지하기 위해서 다양한 화학 반응과 물질 출입이 필요함을 이해하고, 일상생활에서 활용되는 화학 반응 사례를 조사하여 발표할 수 있다.", ["A3", "B2"]], ["10통과1-03-06", "생명 시스템의 유지에 필요한 세포 내 정보의 흐름을 유전자로부터 단백질이 만들어지는 과정을 중심으로 설명할 수 있다.", ["B2"]]], "cells": {"A1": {"acts": [["SI 기본량 7가지와 단위 기호 정리", ["10통과1-01-02"]]]}, "A2": {"acts": [["생활 속 단위(kWh, mAh, km/h)의 의미와 쓰임 설명", ["10통과1-01-02"]]]}, "A3": {"acts": [["원자에서 우주까지 다양한 규모의 측정 사례 조사", ["10통과1-01-01"]], ["생활 속 화학 반응(발효, 소화 등) 사례 조사 발표", ["10통과1-03-05"]]]}, "A4": {"acts": [["측정 데이터에서 이상값을 찾아 원인 구별", ["10통과1-01-03"]]]}, "A5": {"acts": [["반복 측정값의 평균과 오차 범위를 검토", ["10통과1-01-03"]]]}, "A6": {"acts": [["크기 규모를 한눈에 보는 인포그래픽 제작", ["10통과1-01-01"]]]}, "B1": {"acts": [["주기율표의 족과 주기, 판의 경계 종류 회상", ["10통과1-02-03", "10통과1-03-02"]]]}, "B2": {"acts": [["판구조론으로 지진·화산 분포 해석", ["10통과1-03-02"]], ["단위체 결합으로 단백질·핵산·규산염 광물 형성 설명", ["10통과1-02-05"]], ["유전자에서 단백질이 만들어지는 과정 설명", ["10통과1-03-06"]]]}, "B3": {"acts": [["충격량과 운동량 관계를 에어백, 헬멧, 스포츠 동작에 적용", ["10통과1-03-04"]]]}, "B4": {"acts": [["원소 성질 자료에서 주기성 규칙 도출", ["10통과1-02-03"]], ["지구시스템 권역 간 상호작용 관계도 작성", ["10통과1-03-01"]]]}, "B5": {"acts": [["특정 현상(태풍, 해수 순환)을 권역 간 물질 순환과 에너지 흐름으로 논증", ["10통과1-03-01"]]]}, "B6": {"acts": [["충격을 줄이는 새로운 안전장치 모형 제안", ["10통과1-03-04"]]]}, "C1": {"acts": [["실험 안전 수칙과 측정 도구 사용법 회상", []]]}, "C2": {"acts": [["아날로그 측정값이 디지털 정보로 바뀌는 과정 설명", ["10통과1-01-04"]]]}, "C3": {"acts": [["스마트폰 센서로 낙하·운동을 측정하는 실험 수행", ["10통과1-01-04", "10통과1-03-03"]]]}, "C4": {"acts": [["충돌 실험의 독립·종속·통제 변인 분석", ["10통과1-03-04"]]]}, "C5": {"acts": [["측정 표준이 없을 때 생기는 문제로 표준의 필요성 논증", ["10통과1-01-03"]], ["실험 오차 원인 평가", []]]}, "C6": {"acts": [["달걀 낙하 등 충돌 완화 실험 설계", ["10통과1-03-04"]]]}, "D1": {"acts": [["과학 개념을 공부할 때 쓰는 전략 목록 만들기", []]]}, "D2": {"acts": [["헷갈리는 개념(질량과 무게 등)이 왜 어려운지 설명", []]]}, "D3": {"acts": [["탐구 계획서 점검표로 실험 설계 확인", []]]}, "D4": {"acts": [["실험 과정에서 예상과 다른 결과가 나온 이유 회고", []]]}, "D5": {"acts": [["탐구 보고서 루브릭으로 자기평가", []]]}, "D6": {"acts": [["다음 탐구 주제와 개인 탐구 계획 설계", []]]}}}, {"id": "his", "name": "한국사1", "area": "역사", "standards": [["10한사1-01-01", "고대 국가의 형성과 성장 과정을 파악한다.", ["A2"]], ["10한사1-01-02", "고려의 통치 체제와 지배 세력의 변화를 이해한다.", ["B2"]], ["10한사1-01-03", "조선의 성립과 정치 운영의 변화를 파악한다.", ["A2"]], ["10한사1-01-04", "조선 후기에 등장한 새로운 변화 양상을 이해한다.", ["B2"]], ["10한사1-02-01", "근대 이전 국제 관계와 대외 교류의 시대적 특징을 비교한다.", ["B2"]], ["10한사1-02-02", "근대 이전의 수취 체제 변화를 농업 중심의 경제생활과 관련하여 탐구한다.", ["B4"]], ["10한사1-02-03", "근대 이전 사회 구조를 신분제를 중심으로 분석한다.", ["B4"]], ["10한사1-02-04", "근대 이전의 사상과 문화를 국제 교류와 관련하여 탐구한다.", ["B4"]], ["10한사1-02-05", "근대 이전 한국사 주제를 설정하여 탐구하고, 그 결과를 다양한 방법으로 표현한다.", ["C6"]], ["10한사1-03-01", "조선의 개항을 국제 질서의 변동과 연관하여 분석한다.", ["B4"]], ["10한사1-03-02", "여러 세력이 추진한 근대 국가 수립의 다양한 노력을 이해한다.", ["B2"]], ["10한사1-03-03", "개항 이후 사회⋅경제 변화를 파악하고, 서구 문물의 도입이 문화에 미친 영향을 탐구한다.", ["A2", "B4"]], ["10한사1-03-04", "일제의 국권 침탈 과정을 조사하고, 이에 맞선 국권 수호 운동의 흐름을 파악한다.", ["A3", "A2"]]], "cells": {"A1": {"acts": [["시대별 주요 사건·인물 연표 만들기", ["10한사1-01-01", "10한사1-01-03"]]]}, "A2": {"acts": [["고대 국가 형성 과정을 단계별로 정리", ["10한사1-01-01"]], ["조선 정치 운영 변화를 시기별 표로 정리", ["10한사1-01-03"]]]}, "A3": {"acts": [["국권 침탈 조약과 사건을 사료로 조사", ["10한사1-03-04"]]]}, "A4": {"acts": [["사료 속 사실 서술과 기록자의 해석 구별", []]]}, "A5": {"acts": [["사료의 작성자, 시기, 목적을 따져 신뢰성 판단", []]]}, "A6": {"acts": [["시대별 역사 지도와 연표를 합친 디지털 연표 제작", []]]}, "B1": {"acts": [["통치 체제·수취 제도 핵심 용어 회상", ["10한사1-01-02", "10한사1-02-02"]]]}, "B2": {"acts": [["고려 지배 세력 변화를 인과로 설명", ["10한사1-01-02"]], ["시대별 대외 교류의 특징 비교", ["10한사1-02-01"]], ["근대 국가 수립을 위한 여러 세력의 노력 비교", ["10한사1-03-02"]], ["조선 후기 상품 화폐 경제와 서민 문화의 변화 설명", ["10한사1-01-04"]]]}, "B3": {"acts": [["신분제 개념을 다른 시대 사례에 적용해 설명", ["10한사1-02-03"]]]}, "B4": {"acts": [["수취 체제 변화와 농민 생활의 관계 분석", ["10한사1-02-02"]], ["개항을 국제 질서 변동과 연결해 분석", ["10한사1-03-01"]], ["사상·문화와 국제 교류의 관계 탐구", ["10한사1-02-04"]]]}, "B5": {"acts": [["근대 개혁 운동들의 목표와 한계를 비교 평가하는 토론", ["10한사1-03-02"]]]}, "B6": {"acts": [["역사 인물 가상 인터뷰나 신문 제작", ["10한사1-02-05"]]]}, "C1": {"acts": [["사료 탐구 절차(사료 찾기-읽기-비판-해석) 회상", []]]}, "C2": {"acts": [["사료를 읽고 해석하는 단계 설명", []]]}, "C3": {"acts": [["원사료를 절차에 따라 읽고 해석", ["10한사1-03-03"]]]}, "C4": {"acts": [["같은 사건에 대한 서로 다른 사료 비교 분석", ["10한사1-03-04"]]]}, "C5": {"acts": [["역사 탐구 보고서의 근거 사료 적절성 검토", ["10한사1-02-05"]]]}, "C6": {"acts": [["근대 이전 한국사 주제를 설정해 탐구하고 결과 표현", ["10한사1-02-05"]]]}, "D1": {"acts": [["역사 공부에 쓰는 전략(연표, 인과도) 목록 만들기", []]]}, "D2": {"acts": [["역사 해석에 내 관점이 어떻게 작용하는지 설명", []]]}, "D3": {"acts": [["탐구 계획표로 사료 조사 진행 점검", ["10한사1-02-05"]]]}, "D4": {"acts": [["탐구 과정에서 사료 해석이 바뀐 지점 회고", ["10한사1-02-05"]]]}, "D5": {"acts": [["역사 탐구 루브릭으로 자기평가", []]]}, "D6": {"acts": [["다음 역사 탐구 주제와 계획 세우기", []]]}}}], "names": {"A1": "사실적·기억", "A2": "사실적·이해", "A3": "사실적·적용", "A4": "사실적·분석", "A5": "사실적·평가", "A6": "사실적·창안", "B1": "개념적·기억", "B2": "개념적·이해", "B3": "개념적·적용", "B4": "개념적·분석", "B5": "개념적·평가", "B6": "개념적·창안", "C1": "절차적·기억", "C2": "절차적·이해", "C3": "절차적·적용", "C4": "절차적·분석", "C5": "절차적·평가", "C6": "절차적·창안", "D1": "메타인지·기억", "D2": "메타인지·이해", "D3": "메타인지·적용", "D4": "메타인지·분석", "D5": "메타인지·평가", "D6": "메타인지·창안"}};</script>
 <script>
-document.querySelectorAll('.path').forEach(function(b){b.addEventListener('click',function(){
-  var on=b.getAttribute('aria-pressed')!=='true';
-  document.querySelectorAll('.path').forEach(function(x){x.setAttribute('aria-pressed','false')});
-  document.querySelectorAll('td.on').forEach(function(t){t.classList.remove('on')});
-  if(on){b.setAttribute('aria-pressed','true');b.dataset.cells.split(' ').forEach(function(c){var t=document.getElementById('c-'+c);if(t)t.classList.add('on')});
-    var first=document.getElementById('c-'+b.dataset.cells.split(' ')[0]);if(first)first.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});}
-})});
+(function(){
+  var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+  var tabs=document.getElementById('tabs'), note=document.getElementById('subject-note');
+  var views=[{id:'common',name:'전 과목 공통',area:''}].concat(DATA.subjects);
+  views.forEach(function(v){
+    var b=document.createElement('button');b.type='button';b.className='tab';b.id='tab-'+v.id;b.setAttribute('role','tab');
+    b.innerHTML=esc(v.name)+(v.standards?'<small>'+v.standards.length+'</small>':'');
+    b.addEventListener('click',function(){location.hash=v.id});tabs.appendChild(b);
+  });
+  function clearMarks(){document.querySelectorAll('.mx td.on').forEach(function(t){t.classList.remove('on')});
+    document.querySelectorAll('.path').forEach(function(x){x.setAttribute('aria-pressed','false')});}
+  function mark(cells){clearMarks();cells.forEach(function(c){var t=document.getElementById('c-'+c);if(t)t.classList.add('on')});
+    var f=document.getElementById('c-'+cells[0]);if(f)f.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});}
+  function render(){
+    var id=(location.hash||'').slice(1); var v=views.filter(function(x){return x.id===id})[0]||views[0];
+    views.forEach(function(x){document.getElementById('tab-'+x.id).setAttribute('aria-selected',x===v?'true':'false')});
+    clearMarks();
+    var byCell={};
+    if(v.standards){v.standards.forEach(function(s){s[2].forEach(function(c,i){(byCell[c]=byCell[c]||[]).push({code:s[0],main:i===0})})});}
+    Object.keys(DATA.names).forEach(function(k){
+      var td=document.getElementById('c-'+k), cell=v.standards?v.cells[k]:DATA.common[k];
+      var h='<span class="code">'+k+'</span><ul>'+cell.acts.map(function(a){
+        return '<li>'+esc(a[0])+a[1].map(function(c){return '<span class="ref">'+esc(c.replace(/^10[^-]+-/,''))+'</span>'}).join('')+'</li>'}).join('')+'</ul>';
+      if(!v.standards) h+='<div class="out"><b>산출물</b> '+esc(cell.out)+'</div>';
+      else if(byCell[k]) h+='<div class="stds"><b>성취기준</b> '+byCell[k].map(function(x){var c=esc(x.code.replace(/^10[^-]+-/,''));return x.main?'<b>'+c+'</b>':c}).join(', ')+'</div>';
+      td.innerHTML=h;
+    });
+    var sec=document.getElementById('std-section');
+    if(v.standards){
+      sec.hidden=false;
+      note.textContent=v.name+' 성취기준 '+v.standards.length+'개를 칸에 배치했습니다. 활동 옆 번호는 성취기준 코드의 뒷자리입니다(예: '+v.standards[0][0].replace(/^10[^-]+-/,'')+' → '+v.standards[0][0]+').';
+      document.getElementById('std-title').textContent=v.name+' 성취기준 배치';
+      document.getElementById('std-body').innerHTML=v.standards.map(function(s){
+        return '<tr><td class="c">['+esc(s[0])+']</td><td>'+esc(s[1])+'</td><td class="k">'+s[2].map(function(c,i){
+          return '<button type="button" class="std-cell'+(i===0?' main':'')+'" data-cells="'+c+'">'+c+'<span>'+esc(DATA.names[c])+'</span></button>'}).join('')+'</td></tr>'}).join('');
+    } else { sec.hidden=true; note.textContent='과목 공통으로 쓸 수 있는 기본 활동과 산출물입니다. 과목을 고르면 성취기준에 맞춘 활동으로 바뀝니다.'; }
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.std-cell');if(b){mark([b.dataset.cells]);return;}
+    var p=e.target.closest('.path');if(p){var on=p.getAttribute('aria-pressed')!=='true';clearMarks();
+      if(on){mark(p.dataset.cells.split(' '));p.setAttribute('aria-pressed','true');}}
+  });
+  window.addEventListener('hashchange',render);render();
+})();
 </script>
 </body>
 </html>
