@@ -139,6 +139,6 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 
 - 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr) 원문과 다시 확인해 사용하세요. 일반선택 중 원문을 구하지 못한 현대사회와 윤리, 영어 진로선택 4과목(영어 발표와 토론·심화 영어·심화 영어 독해와 작문·직무 영어), 융합선택 4과목(실생활 영어 회화·미디어 영어·역사로 탐구하는 현대 세계·윤리문제 탐구)은 아직 넣지 않았습니다.
 - 칸 배치는 성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 한 예시이며 교사 판단에 따라 바꿀 수 있습니다.
-- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(고1 공통), `tools/subjects_common2.py`(고1 2학기·과학탐구실험), `tools/subjects_general.py`(일반선택), `tools/subjects_career.py`(진로선택), `tools/subjects_convergence.py`(융합선택)에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.
+- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(고1 공통), `tools/subjects_common2.py`(고1 2학기·과학탐구실험), `tools/subjects_general.py`(일반선택), `tools/subjects_career.py`(진로선택), `tools/subjects_convergence.py`(융합선택)에 있습니다. 과목별 칸 상세 예시(주제탐구 예시와 세특 기재 예시)는 `tools/detail/<과목 id>.txt`에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.
 
 Anderson, L. W., & Krathwohl, D. R. (Eds.). (2001). *A Taxonomy for Learning, Teaching, and Assessing: A Revision of Bloom’s Taxonomy of Educational Objectives.* Longman.
