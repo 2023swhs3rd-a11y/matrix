@@ -2,7 +2,7 @@
 # PRETENDARD_WOFF2=<PretendardVariable.woff2 경로>를 주면 글꼴을 넣은 미리보기용 matrix.html도 만든다.
 import sys, html, json, os, base64, subprocess, datetime
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from data import PROCESSES, KNOWLEDGE, CELLS, PATHS
+from data import PROCESSES, KNOWLEDGE, CELLS, PATHS, TOPIC_TEMPLATES
 from subjects import SUBJECTS as _S1
 from subjects_common2 import SUBJECTS_COMMON2
 from subjects_general import SUBJECTS_GENERAL
@@ -57,6 +57,17 @@ h2{font-family:var(--display);font-weight:700;letter-spacing:-.01em;font-size:22
 p{margin:0}
 .lead{color:var(--muted)}
 .picker{display:grid;gap:14px}
+.topic{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.topic label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin-right:4px}
+.topic input,.topic select,.topic button{font:inherit;font-size:14px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);padding:7px 10px}
+.topic input{flex:1 1 260px;min-width:0}
+.topic button{background:var(--fg);color:var(--bg);border-color:var(--fg);font-weight:600;cursor:pointer}
+.topic input:focus-visible,.topic select:focus-visible,.topic button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mx .tpl{color:var(--muted);font-size:11px;font-weight:600;margin-right:4px}
+.rel{margin-top:6px;font-size:12px;color:var(--muted)}
+.rel b{font-weight:600;margin-right:4px}
+.rel a{color:inherit}
+.st td .subj{display:inline-block;font-size:12px;font-weight:600;margin-right:6px}
 .areas{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 .areas .sep{width:1px;height:20px;background:var(--line);margin:0 6px}
 .area-tab{--accent:var(--c-base);font:inherit;font-size:15px;font-weight:700;color:var(--muted);background:none;border:1px solid transparent;border-radius:10px;padding:7px 14px;cursor:pointer}
@@ -147,7 +158,7 @@ def payload():
             "standards": [[full(c), t, cells] for c, t, cells in s["standards"]],
             "cells": {k: {"acts": [[a, [full(c) for c in cs.split(',') if c]] for a, cs in acts]} for k, acts in s["cells"].items()},
         })
-    return {"processes": PROCESSES, "knowledge": KNOWLEDGE, "common": common, "subjects": subs,
+    return {"processes": PROCESSES, "knowledge": KNOWLEDGE, "common": common, "subjects": subs, "topic": TOPIC_TEMPLATES,
             "names": {k[0] + p[0]: cell_name(k[0] + p[0]) for k in KNOWLEDGE for p in PROCESSES}}
 
 def body():
@@ -156,7 +167,7 @@ def body():
          '<h1><a href="./" id="home" title="처음 화면으로">블룸의 개정 교육목표 분류로 보는 교과탐구활동 추천 매트릭스</a></h1>',
          '<p class="lead">지식 차원 4가지와 인지 과정 6가지를 교차한 24칸에 탐구활동을 추천합니다. 과목을 고르면 2022 개정 교육과정 성취기준을 칸에 배치하고, 그 성취기준에 맞춘 과목별 활동을 보여 줍니다.</p>',
          '</header>',
-         '<section aria-label="과목 선택" class="picker"><div class="areas" role="tablist" aria-label="교과" id="areas"></div><div class="panel" id="panel" hidden></div><p class="subject-note" id="subject-note"></p></section>',
+         '<section aria-label="과목 선택" class="picker"><div class="areas" role="tablist" aria-label="교과" id="areas"></div><div class="panel" id="panel" hidden></div><form class="topic" id="topic-form" role="search" aria-label="주제로 활동 찾기"><label for="topic-q">주제로 찾기</label><input id="topic-q" type="search" placeholder="탐구 주제 (예: 미세플라스틱, 인공지능 윤리)" autocomplete="off"><select id="topic-f" aria-label="분야(교과)"><option value="">전체 교과</option><option>국어</option><option>수학</option><option>영어</option><option>사회</option><option>과학</option></select><button type="submit">활동 추천</button></form><p class="subject-note" id="subject-note"></p></section>',
          '<section><div class="scroller"><table class="mx" id="mx">', '<thead><tr><th class="corner" scope="col">지식 차원 ↓ / 인지 과정 →</th>']
     for code, ko, en, d, v in PROCESSES:
         o.append(f'<th scope="col"><span class="en">{code}. {en}</span><span class="ko">{ko}</span><span class="def">{E(d)}</span><span class="vb">{E(v)}</span></th>')
@@ -246,7 +257,50 @@ JS = r'''<script>
     document.querySelectorAll('.path').forEach(function(x){x.setAttribute('aria-pressed','false')});}
   function mark(cells){clearMarks();cells.forEach(function(c){var t=document.getElementById('c-'+c);if(t)t.classList.add('on')});
     var f=document.getElementById('c-'+cells[0]);if(f)f.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});}
+  // 주제로 찾기: 칸마다 활동 틀에 주제어를 넣고, 성취기준·과목 활동에서 주제어를 찾아 함께 보여 준다
+  var SUBJ={};DATA.subjects.forEach(function(s){SUBJ[s.id]=s});
+  var tq=document.getElementById('topic-q'), tf=document.getElementById('topic-f');
+  document.getElementById('topic-form').addEventListener('submit',function(e){e.preventDefault();
+    var q=tq.value.trim();if(!q){tq.focus();return;}
+    location.hash='q='+encodeURIComponent(q)+(tf.value?'&f='+encodeURIComponent(tf.value):'');});
+  function tokens(q){return q.split(/[\s,·/]+/).filter(function(x){return x.length>=2})}
+  function score(text,ts){var n=0;ts.forEach(function(t){if(text.indexOf(t)>=0)n++});return n}
+  function fullChip(c){return '<span class="ref" tabindex="0" data-code="'+esc(c)+'" aria-label="'+esc(c+' '+(TEXT[c]||''))+'">'+esc(c)+'</span>'}
+  function renderTopic(h){
+    var p=new URLSearchParams(h), q=(p.get('q')||'').trim(), f=p.get('f')||'';
+    tq.value=q;tf.value=f;cur=null;buildPanel();
+    Object.keys(atab).forEach(function(k){atab[k].setAttribute('aria-selected','false')});
+    views.forEach(function(x){btn[x.id].setAttribute('aria-pressed','false')});
+    clearMarks();document.body.className=RCLS[f]?'a-'+RCLS[f]:'';
+    var ts=tokens(q);if(!ts.length&&q)ts=[q];
+    var subs=DATA.subjects.filter(function(s){return !f||ROW[s.area]===f});
+    var stds=[],acts=[];
+    subs.forEach(function(s){
+      s.standards.forEach(function(x){var n=score(x[1],ts);if(n)stds.push({s:s,x:x,n:n})});
+      Object.keys(s.cells).forEach(function(k){s.cells[k].acts.forEach(function(a){var n=score(a[0],ts);if(n)acts.push({s:s,k:k,a:a[0],n:n})})});
+    });
+    stds.sort(function(a,b){return b.n-a.n});acts.sort(function(a,b){return b.n-a.n});
+    var byCell={},actCell={};
+    stds.forEach(function(r){var c=r.x[2][0];(byCell[c]=byCell[c]||[]).push(r)});
+    acts.forEach(function(r){(actCell[r.k]=actCell[r.k]||[]).push(r)});
+    Object.keys(DATA.names).forEach(function(k){
+      var td=document.getElementById('c-'+k);
+      var h='<span class="code">'+k+'</span><ul>'+DATA.topic[k].map(function(t){return '<li><span class="tpl">추천</span>'+esc(t.split('{t}').join(q))+'</li>'}).join('')+'</ul>';
+      if(actCell[k])h+='<div class="rel"><b>과목 활동</b>'+actCell[k].slice(0,2).map(function(r){return esc(r.a)+' (<a href="#'+r.s.id+'">'+esc(r.s.name)+'</a>)'}).join(' · ')+'</div>';
+      if(byCell[k])h+='<div class="stds"><b>성취기준</b> '+byCell[k].slice(0,3).map(function(r){return fullChip(r.x[0])}).join('')+'</div>';
+      td.innerHTML=h;
+    });
+    var sec=document.getElementById('std-section');
+    note.textContent='‘'+q+'’'+(f?' ('+f+')':'')+'에 맞춰 칸마다 활동 틀을 추천했습니다. '+(stds.length?'주제어가 들어간 성취기준 '+stds.length+'개와 과목 활동 '+acts.length+'개를 찾아 함께 표시했습니다. 성취기준은 주된 칸에 놓았습니다.':'주제어가 들어간 성취기준은 찾지 못했습니다. 더 짧거나 다른 낱말로 찾아보세요.');
+    if(stds.length){
+      sec.hidden=false;document.getElementById('std-title').textContent='‘'+q+'’ 관련 성취기준';
+      document.getElementById('std-body').innerHTML=stds.slice(0,40).map(function(r){var s=r.x;
+        return '<tr><td class="c">['+esc(s[0])+']</td><td><a class="subj" href="#'+r.s.id+'">'+esc(r.s.name)+'</a>'+esc(s[1])+'</td><td class="k">'+s[2].map(function(c,i){
+          return '<button type="button" class="std-cell'+(i===0?' main':'')+'" data-cells="'+c+'">'+c+'<span>'+esc(DATA.names[c])+'</span></button>'}).join('')+'</td></tr>'}).join('');
+    } else sec.hidden=true;
+  }
   function render(){
+    var hh=(location.hash||'').slice(1);if(hh.indexOf('q=')===0){renderTopic(hh);return;}
     var id=(location.hash||'').slice(1); var v=views.filter(function(x){return x.id===id})[0]||views[0];
     cur=v.area?ROW[v.area]:null;buildPanel();
     views.forEach(function(x){btn[x.id].setAttribute('aria-pressed',x===v?'true':'false')});
