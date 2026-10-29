@@ -3,7 +3,12 @@
 import sys, html, json, os, base64, subprocess
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from data import PROCESSES, KNOWLEDGE, CELLS, PATHS
-from subjects import SUBJECTS
+from subjects import SUBJECTS as _S1
+from subjects_general import SUBJECTS_GENERAL
+for _s in _S1: _s.setdefault('group', '고1 공통')
+SUBJECTS = _S1 + SUBJECTS_GENERAL
+GROUPS = list(dict.fromkeys(s['group'] for s in SUBJECTS))
+def code(s, c): return f"{s['prefix']}{s.get('sep', '-')}{c}"
 E = html.escape
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 
@@ -36,7 +41,9 @@ h1{font-family:var(--display);font-weight:800;letter-spacing:-.02em;font-size:cl
 h2{font-family:var(--display);font-weight:700;letter-spacing:-.01em;font-size:22px;margin:0 0 4px;text-wrap:balance}
 p{margin:0}
 .lead{color:var(--muted)}
-.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tabs{display:grid;gap:10px}
+.tab-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tab-group{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em;min-width:64px}
 .tab{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 14px;cursor:pointer}
 .tab small{font-weight:400;color:var(--muted);margin-left:4px}
 .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
@@ -101,9 +108,9 @@ def payload():
     common = {k + p: {"acts": [[a, []] for a in acts], "out": out} for k, row in CELLS.items() for p, (acts, out) in row.items()}
     subs = []
     for s in SUBJECTS:
-        full = lambda c: f"{s['prefix']}-{c}"
+        full = lambda c, s=s: code(s, c)
         subs.append({
-            "id": s["id"], "name": s["name"], "area": s["area"],
+            "id": s["id"], "name": s["name"], "area": s["area"], "group": s["group"],
             "standards": [[full(c), t, cells] for c, t, cells in s["standards"]],
             "cells": {k: {"acts": [[a, [full(c) for c in cs.split(',') if c]] for a, cs in acts]} for k, acts in s["cells"].items()},
         })
@@ -142,7 +149,7 @@ def body():
 <li><b>단계 배치:</b> 주된 칸의 왼쪽이나 위쪽 칸에서 시작해 2~4칸을 이어 탐구 경로를 만듭니다. 성취기준이 없는 칸의 활동은 기초 다지기나 성찰 활동으로 덧붙이면 됩니다.</li>
 <li><b>평가 정렬:</b> 주된 칸의 활동 결과물을 수행평가 대상으로 삼으면 성취기준, 활동, 평가가 같은 칸에 맞춰집니다.</li>
 </ol></section>''')
-    o.append('<footer><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목. 원문은 국가교육과정정보센터(NCIC)에서 확인할 수 있습니다. 통합과학1은 원문을 확인한 성취기준만 실었습니다.</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p></footer>')
+    o.append('<footer><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목과 2·3학년 일반선택 과목. 공개 정리 자료에서 옮겼으므로 국가교육과정정보센터(NCIC) 원문과 대조해 사용하세요. 통합과학1은 원문을 확인한 성취기준만 실었고, 현대사회와 윤리는 아직 넣지 않았습니다.</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p></footer>')
     o.append('</div>')
     o.append('<script>var DATA=' + json.dumps(payload(), ensure_ascii=False) + ';</script>')
     o.append(JS)
@@ -166,10 +173,13 @@ JS = r'''<script>
   document.addEventListener('focusout',hideTip);window.addEventListener('scroll',hideTip,true);
   var tabs=document.getElementById('tabs'), note=document.getElementById('subject-note');
   var views=[{id:'common',name:'전 과목 공통',area:''}].concat(DATA.subjects);
+  var rows={};
   views.forEach(function(v){
+    var g=v.group||'기본';
+    if(!rows[g]){rows[g]=document.createElement('div');rows[g].className='tab-row';rows[g].innerHTML='<span class="tab-group">'+esc(g)+'</span>';tabs.appendChild(rows[g]);}
     var b=document.createElement('button');b.type='button';b.className='tab';b.id='tab-'+v.id;b.setAttribute('role','tab');
     b.innerHTML=esc(v.name)+(v.standards?'<small>'+v.standards.length+'</small>':'');
-    b.addEventListener('click',function(){location.hash=v.id});tabs.appendChild(b);
+    b.addEventListener('click',function(){location.hash=v.id});rows[g].appendChild(b);
   });
   function clearMarks(){document.querySelectorAll('.mx td.on').forEach(function(t){t.classList.remove('on')});
     document.querySelectorAll('.path').forEach(function(x){x.setAttribute('aria-pressed','false')});}
@@ -237,21 +247,21 @@ LINKS = ['## 바로가기', '',
  '| 웹 페이지 (GitHub Pages) | https://2023swhs3rd-a11y.github.io/matrix/ |',
  '| 웹 미리보기 (Pages 설정 전에도 열림) | https://htmlpreview.github.io/?https://github.com/2023swhs3rd-a11y/matrix/blob/main/index.html |',
  '| HTML 원본 | [index.html](index.html) |',
- '| 과목별 매트릭스 | ' + ' · '.join(f'[{s["name"]}](subjects/{s["id"]}.md)' for s in SUBJECTS) + ' |',
+ *[f'| {g} | ' + ' · '.join(f'[{s["name"]}](subjects/{s["id"]}.md)' for s in SUBJECTS if s['group'] == g) + ' |' for g in GROUPS],
  '| 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [활용 안내](#활용-안내) |', '']
 
 r = ['# 블룸의 개정 교육목표 분류 활용 학생 탐구활동 추천 매트릭스', '',
-     'Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 탐구활동을 추천합니다. **2022 개정 교육과정 고1 공통과목** 6개(공통국어1, 공통수학1, 공통영어1, 통합사회1, 통합과학1, 한국사1)는 성취기준을 칸에 배치하고 과목별 활동을 따로 정리했습니다.', ''] + LINKS
+     'Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 탐구활동을 추천합니다. **2022 개정 교육과정** 고1 공통과목 6개와 2·3학년 일반선택 16과목은 성취기준을 칸에 배치하고 과목별 활동을 따로 정리했습니다.', ''] + LINKS
 r += ['## 두 축', '', '| 인지 과정 | 뜻 | 하위 과정 |', '|---|---|---|']
 for c, ko, en, d, v in PROCESSES: r.append(f'| {c}. {ko} ({en}) | {d} | {v} |')
 r += ['', '| 지식 차원 | 하위 유형 |', '|---|---|']
 for c, ko, en, d in KNOWLEDGE: r.append(f'| {c}. {ko} ({en}) | {d} |')
-r += ['', '## 과목별 매트릭스', '', '| 과목 | 성취기준 수 | 성취기준이 가장 많이 모인 칸 |', '|---|---|---|']
+r += ['', '## 과목별 매트릭스', '', '| 구분 | 과목 | 성취기준 수 | 성취기준이 가장 많이 모인 칸 |', '|---|---|---|---|']
 for s in SUBJECTS:
     cnt = {}
     for _, _, cells in s['standards']: cnt[cells[0]] = cnt.get(cells[0], 0) + 1
     top = sorted(cnt.items(), key=lambda x: -x[1])[:2]
-    r.append(f'| [{s["name"]}](subjects/{s["id"]}.md) | {len(s["standards"])} | ' + ', '.join(f'{k}({cell_name(k)}) {n}개' for k, n in top) + ' |')
+    r.append(f'| {s["group"]} | [{s["name"]}](subjects/{s["id"]}.md) | {len(s["standards"])} | ' + ', '.join(f'{k}({cell_name(k)}) {n}개' for k, n in top) + ' |')
 r += ['', '## 전 과목 공통 매트릭스', '', '각 칸: 추천 활동 · **산출물**', '']
 r += md_matrix(lambda k: '<br>'.join('• ' + a for a in CELLS[k[0]][k[1]][0]) + f'<br>**산출물:** {CELLS[k[0]][k[1]][1]}')
 r += ['', '## 탐구 경로 예시', '']
@@ -263,20 +273,19 @@ r += ['', '## 활용 안내', '',
  '3. **단계 배치:** 주된 칸의 왼쪽이나 위쪽 칸에서 시작해 2~4칸을 이어 탐구 경로를 만듭니다.',
  '4. **평가 정렬:** 주된 칸의 활동 결과물을 수행평가 대상으로 삼아 성취기준, 활동, 평가를 같은 칸에 맞춥니다.', '',
  '## 출처와 수정 방법', '',
- '- 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 원문은 [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr)에서 확인할 수 있습니다. 통합과학1은 원문을 확인한 성취기준만 실었습니다.',
+ '- 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 공개 정리 자료에서 옮겼으므로 [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr) 원문과 대조해 사용하세요. 통합과학1은 원문을 확인한 성취기준만 실었고, 일반선택 중 현대사회와 윤리는 아직 넣지 않았습니다.',
  '- 칸 배치는 성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 한 예시이며 교사 판단에 따라 바꿀 수 있습니다.',
- '- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(과목별)에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.', '',
+ '- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(고1 공통), `tools/subjects_general.py`(일반선택)에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.', '',
  'Anderson, L. W., & Krathwohl, D. R. (Eds.). (2001). *A Taxonomy for Learning, Teaching, and Assessing: A Revision of Bloom’s Taxonomy of Educational Objectives.* Longman.', '']
 open(os.path.join(ROOT, 'README.md'), 'w').write('\n'.join(r))
 
 os.makedirs(os.path.join(ROOT, 'subjects'), exist_ok=True)
 for s in SUBJECTS:
-    p = s['prefix']
     m = [f'# {s["name"]} 탐구활동 추천 매트릭스', '',
          f'2022 개정 교육과정 {s["name"]} 성취기준 {len(s["standards"])}개를 개정 블룸 분류 칸에 배치하고, 칸마다 과목에 맞춘 탐구활동을 정리했습니다. [전체 README로 돌아가기](../README.md)', '',
          '## 성취기준 배치', '', '주된 칸은 굵게 표시했습니다.', '', '| 코드 | 성취기준 | 칸 |', '|---|---|---|']
     for c, t, cells in s['standards']:
-        m.append(f'| [{p}-{c}] | {t} | ' + ', '.join((f'**{k}** {cell_name(k)}' if i == 0 else f'{k} {cell_name(k)}') for i, k in enumerate(cells)) + ' |')
+        m.append(f'| [{code(s, c)}] | {t} | ' + ', '.join((f'**{k}** {cell_name(k)}' if i == 0 else f'{k} {cell_name(k)}') for i, k in enumerate(cells)) + ' |')
     by = {}
     for c, _, cells in s['standards']:
         for k in cells: by.setdefault(k, []).append(c)

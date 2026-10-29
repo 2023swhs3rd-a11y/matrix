@@ -1,6 +1,6 @@
 # 블룸의 개정 교육목표 분류 활용 학생 탐구활동 추천 매트릭스
 
-Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 탐구활동을 추천합니다. **2022 개정 교육과정 고1 공통과목** 6개(공통국어1, 공통수학1, 공통영어1, 통합사회1, 통합과학1, 한국사1)는 성취기준을 칸에 배치하고 과목별 활동을 따로 정리했습니다.
+Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 탐구활동을 추천합니다. **2022 개정 교육과정** 고1 공통과목 6개와 2·3학년 일반선택 16과목은 성취기준을 칸에 배치하고 과목별 활동을 따로 정리했습니다.
 
 ## 바로가기
 
@@ -9,7 +9,8 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | 웹 페이지 (GitHub Pages) | https://2023swhs3rd-a11y.github.io/matrix/ |
 | 웹 미리보기 (Pages 설정 전에도 열림) | https://htmlpreview.github.io/?https://github.com/2023swhs3rd-a11y/matrix/blob/main/index.html |
 | HTML 원본 | [index.html](index.html) |
-| 과목별 매트릭스 | [공통국어1](subjects/kor.md) · [공통수학1](subjects/math.md) · [공통영어1](subjects/eng.md) · [통합사회1](subjects/soc.md) · [통합과학1](subjects/sci.md) · [한국사1](subjects/his.md) |
+| 고1 공통 | [공통국어1](subjects/kor.md) · [공통수학1](subjects/math.md) · [공통영어1](subjects/eng.md) · [통합사회1](subjects/soc.md) · [통합과학1](subjects/sci.md) · [한국사1](subjects/his.md) |
+| 일반선택 | [화법과 언어](subjects/hwaeon.md) · [독서와 작문](subjects/dokjak.md) · [문학](subjects/lit.md) · [대수](subjects/alg.md) · [미적분Ⅰ](subjects/calc1.md) · [확률과 통계](subjects/prob.md) · [영어Ⅰ](subjects/eng1.md) · [영어Ⅱ](subjects/eng2.md) · [영어 독해와 작문](subjects/engrw.md) · [세계시민과 지리](subjects/wgeo.md) · [세계사](subjects/whis.md) · [사회와 문화](subjects/socul.md) · [물리학](subjects/phys.md) · [화학](subjects/chem.md) · [생명과학](subjects/bio.md) · [지구과학](subjects/earth.md) |
 | 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [활용 안내](#활용-안내) |
 
 ## 두 축
@@ -32,14 +33,30 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 
 ## 과목별 매트릭스
 
-| 과목 | 성취기준 수 | 성취기준이 가장 많이 모인 칸 |
-|---|---|---|
-| [공통국어1](subjects/kor.md) | 14 | B5(개념적·평가) 2개, C3(절차적·적용) 2개 |
-| [공통수학1](subjects/math.md) | 19 | B2(개념적·이해) 7개, C3(절차적·적용) 7개 |
-| [공통영어1](subjects/eng.md) | 16 | B2(개념적·이해) 4개, B4(개념적·분석) 3개 |
-| [통합사회1](subjects/soc.md) | 14 | A3(사실적·적용) 4개, B2(개념적·이해) 2개 |
-| [통합과학1](subjects/sci.md) | 12 | B2(개념적·이해) 4개, A3(사실적·적용) 2개 |
-| [한국사1](subjects/his.md) | 13 | B2(개념적·이해) 4개, B4(개념적·분석) 4개 |
+| 구분 | 과목 | 성취기준 수 | 성취기준이 가장 많이 모인 칸 |
+|---|---|---|---|
+| 고1 공통 | [공통국어1](subjects/kor.md) | 14 | B5(개념적·평가) 2개, C3(절차적·적용) 2개 |
+| 고1 공통 | [공통수학1](subjects/math.md) | 19 | B2(개념적·이해) 7개, C3(절차적·적용) 7개 |
+| 고1 공통 | [공통영어1](subjects/eng.md) | 16 | B2(개념적·이해) 4개, B4(개념적·분석) 3개 |
+| 고1 공통 | [통합사회1](subjects/soc.md) | 14 | A3(사실적·적용) 4개, B2(개념적·이해) 2개 |
+| 고1 공통 | [통합과학1](subjects/sci.md) | 12 | B2(개념적·이해) 4개, A3(사실적·적용) 2개 |
+| 고1 공통 | [한국사1](subjects/his.md) | 13 | B2(개념적·이해) 4개, B4(개념적·분석) 4개 |
+| 일반선택 | [화법과 언어](subjects/hwaeon.md) | 15 | D3(메타인지·적용) 3개, B4(개념적·분석) 2개 |
+| 일반선택 | [독서와 작문](subjects/dokjak.md) | 15 | B6(개념적·창안) 2개, D5(메타인지·평가) 1개 |
+| 일반선택 | [문학](subjects/lit.md) | 12 | B2(개념적·이해) 3개, B4(개념적·분석) 3개 |
+| 일반선택 | [대수](subjects/alg.md) | 18 | B2(개념적·이해) 7개, C3(절차적·적용) 4개 |
+| 일반선택 | [미적분Ⅰ](subjects/calc1.md) | 20 | C3(절차적·적용) 6개, B2(개념적·이해) 5개 |
+| 일반선택 | [확률과 통계](subjects/prob.md) | 16 | B2(개념적·이해) 5개, C3(절차적·적용) 5개 |
+| 일반선택 | [영어Ⅰ](subjects/eng1.md) | 16 | B2(개념적·이해) 4개, B4(개념적·분석) 3개 |
+| 일반선택 | [영어Ⅱ](subjects/eng2.md) | 17 | B2(개념적·이해) 4개, B4(개념적·분석) 3개 |
+| 일반선택 | [영어 독해와 작문](subjects/engrw.md) | 17 | B2(개념적·이해) 4개, B4(개념적·분석) 3개 |
+| 일반선택 | [세계시민과 지리](subjects/wgeo.md) | 13 | A3(사실적·적용) 4개, B2(개념적·이해) 3개 |
+| 일반선택 | [세계사](subjects/whis.md) | 13 | B2(개념적·이해) 5개, B4(개념적·분석) 5개 |
+| 일반선택 | [사회와 문화](subjects/socul.md) | 15 | B4(개념적·분석) 5개, B2(개념적·이해) 3개 |
+| 일반선택 | [물리학](subjects/phys.md) | 18 | B2(개념적·이해) 9개, B4(개념적·분석) 2개 |
+| 일반선택 | [화학](subjects/chem.md) | 15 | B2(개념적·이해) 4개, B3(개념적·적용) 4개 |
+| 일반선택 | [생명과학](subjects/bio.md) | 19 | B2(개념적·이해) 7개, B4(개념적·분석) 4개 |
+| 일반선택 | [지구과학](subjects/earth.md) | 16 | B2(개념적·이해) 5개, B4(개념적·분석) 3개 |
 
 ## 전 과목 공통 매트릭스
 
@@ -70,8 +87,8 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 
 ## 출처와 수정 방법
 
-- 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 원문은 [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr)에서 확인할 수 있습니다. 통합과학1은 원문을 확인한 성취기준만 실었습니다.
+- 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 공개 정리 자료에서 옮겼으므로 [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr) 원문과 대조해 사용하세요. 통합과학1은 원문을 확인한 성취기준만 실었고, 일반선택 중 현대사회와 윤리는 아직 넣지 않았습니다.
 - 칸 배치는 성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 한 예시이며 교사 판단에 따라 바꿀 수 있습니다.
-- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(과목별)에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.
+- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(고1 공통), `tools/subjects_general.py`(일반선택)에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.
 
 Anderson, L. W., & Krathwohl, D. R. (Eds.). (2001). *A Taxonomy for Learning, Teaching, and Assessing: A Revision of Bloom’s Taxonomy of Educational Objectives.* Longman.
