@@ -15,6 +15,19 @@ for _s in _S1: _s.setdefault('group', '고1 공통')
 SUBJECTS = _S1 + SUBJECTS_GENERAL + SUBJECTS_CAREER + SUBJECTS_CONVERGENCE
 assert len({s['id'] for s in SUBJECTS}) == len(SUBJECTS), '과목 id가 겹칩니다'
 GROUPS = list(dict.fromkeys(s['group'] for s in SUBJECTS))
+# 과목별 칸 예시: tools/detail/<과목 id>.txt (@칸, T 제목, Q 탐구 질문, S 단계 ;; 단계, O 산출물, R 세특 예시)
+def load_detail(sid):
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'detail', sid + '.txt')
+    if not os.path.exists(path): return None
+    d, k = {}, None
+    for line in open(path, encoding='utf-8'):
+        line = line.strip()
+        if not line: continue
+        if line.startswith('@'): k = line[1:]; d[k] = {}; continue
+        tag, _, rest = line.partition(' ')
+        d[k][tag.lower()] = [x.strip() for x in rest.split(';;')] if tag == 'S' else rest
+    assert len(d) == 24 and all(set(v) == {'t', 'q', 's', 'o', 'r'} for v in d.values()), sid + ' 예시 파일 형식 오류'
+    return d
 def code(s, c): return f"{s['prefix']}{s.get('sep', '-')}{c}"
 E = html.escape
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
@@ -170,6 +183,8 @@ footer{font-size:12px;color:var(--muted);max-width:74ch;display:grid;gap:6px}
 .copy{flex:none;font:inherit;font-size:12px;color:var(--muted);background:none;border:1px solid var(--line);border-radius:6px;padding:2px 8px;cursor:pointer}
 .dlg-guide{font-size:12.5px;color:var(--muted);margin:0 0 4px}
 .dlg-guide b{color:var(--fg);font-weight:600}
+.other{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+.other summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--accent)}
 .dlg-note{font-size:12px;color:var(--muted);margin-top:14px}
 
 </style>
@@ -189,6 +204,8 @@ def payload():
             "standards": [[full(c), t, cells] for c, t, cells in s["standards"]],
             "cells": {k: {"acts": [[a, [full(c) for c in cs.split(',') if c]] for a, cs in acts]} for k, acts in s["cells"].items()},
         })
+        ex = load_detail(s["id"])
+        if ex: subs[-1]["ex"] = ex
     return {"processes": PROCESSES, "knowledge": KNOWLEDGE, "common": common, "subjects": subs, "topic": TOPIC_TEMPLATES, "lens": TOPIC_LENS, "related": TOPIC_RELATED, "detail": CELL_DETAIL,
             "names": {k[0] + p[0]: cell_name(k[0] + p[0]) for k in KNOWLEDGE for p in PROCESSES}}
 
@@ -362,14 +379,23 @@ JS = r'''<script>
     if(d.part.length) h+='<div class="callout"><b>기초 단계도 중요한 수업 참여입니다.</b> '+pr[1]+' 단계의 활동은 결과물보다 참여 과정(질문하기, 자기 말로 설명하기, 정확히 기록하기, 모둠 역할 수행)이 학생의 배움을 보여 줍니다. 수업 중 이렇게 참여하게 해 보세요.<ul>'+d.part.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>';
     var sv=curView&&curView.standards?curView:null, acts=sv&&sv.cells[k]?sv.cells[k].acts:[];
     if(acts.length) h+='<h3>'+esc(sv.name)+' 활동<small>이 칸에 맞춘 과목 활동</small></h3><ul>'+acts.map(function(a){return '<li>'+esc(a[0])+a[1].map(function(c){return chip(c,'')}).join('')+'</li>'}).join('')+'</ul>';
-    h+='<h3>주제탐구 활동 예시<small>탐구 질문 → 과정 → 산출물</small></h3>'+d.ex.map(function(e){
-      return '<div class="ex"><h4>'+esc(e.t)+'</h4><p class="q">'+esc(e.q)+'</p><ol>'+e.s.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol><p class="o">산출물: '+esc(e.o)+'</p></div>'}).join('');
-    var off=(k.charCodeAt(0)+k.charCodeAt(1))%3, kind=['스스로 끝까지 해내는','모둠과 함께 해내는','단원을 거치며 성장한'];
-    var recs=acts.slice(0,2).map(function(a,i){var j=(off+i)%3;return {by:sv.name+' · '+a[0]+' ('+kind[j]+' 학생 가정)',t:d.tpl[j].split('{a}').join(a[0])}});
-    recs=recs.concat(d.rec.map(function(t,i){return {by:'사례 가정: '+d.ex[i].t+' 탐구를 수행한 학생',t:t}}));
-    recs.push({by:'다른 교과 사례: '+d.extra.by,t:d.extra.t});
-    h+='<h3>학교생활기록부 기재 예시<small>과목별 세부능력 및 특기사항</small></h3><p class="dlg-guide">예시마다 다른 학생을 가정했습니다. 스스로 끝까지 해내는 학생, 모둠과 함께 해내는 학생, 단원을 거치며 성장한 학생, 다른 교과에서 같은 단계를 보여 준 학생의 사례를 비교해 보고, <b>구체적 행동과 결과 → 교사가 관찰한 역량 → 성장과 후속 활동</b>이 드러나도록 고쳐 쓰세요.</p>'+recs.map(function(r){
-      return '<div class="rec"><p><span class="by">'+esc(r.by)+'</span>'+esc(r.t)+'</p><button type="button" class="copy" data-t="'+esc(r.t)+'">복사</button></div>'}).join('');
+    function exCard(e){return '<div class="ex"><h4>'+esc(e.t)+'</h4><p class="q">'+esc(e.q)+'</p><ol>'+e.s.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol><p class="o">산출물: '+esc(e.o)+'</p></div>'}
+    function recBox(r){return '<div class="rec"><p><span class="by">'+esc(r.by)+'</span>'+esc(r.t)+'</p><button type="button" class="copy" data-t="'+esc(r.t)+'">복사</button></div>'}
+    var se=sv&&sv.ex?sv.ex[k]:null;
+    var common=d.rec.map(function(t,i){return {by:'사례 가정: '+d.ex[i].t+' 탐구를 수행한 학생',t:t}});
+    common.push({by:'다른 교과 사례: '+d.extra.by,t:d.extra.t});
+    if(se){
+      // 과목별 예시가 있으면 그 과목의 탐구와 세특을 앞에 두고, 공통 예시는 접어 둔다
+      h+='<h3>'+esc(sv.name)+' 주제탐구 예시<small>탐구 질문 → 과정 → 산출물</small></h3>'+exCard(se);
+      h+='<h3>'+esc(sv.name)+' 세특 기재 예시<small>과목별 세부능력 및 특기사항</small></h3><p class="dlg-guide">위 탐구를 실제로 수행한 학생을 가정해 썼습니다. <b>그 과목의 개념과 탐구 방법 → 학생의 구체적 행동과 발견 → 이후의 변화</b>가 드러나는지 살펴보고, 학생이 실제로 한 활동으로 바꿔 쓰세요.</p>'+recBox({by:sv.name+' · 사례 가정',t:se.r});
+      h+='<details class="other"><summary>다른 교과의 예시도 보기</summary>'+d.ex.map(exCard).join('')+common.map(recBox).join('')+'</details>';
+    }else{
+      h+='<h3>주제탐구 활동 예시<small>탐구 질문 → 과정 → 산출물</small></h3>'+d.ex.map(exCard).join('');
+      var off=(k.charCodeAt(0)+k.charCodeAt(1))%3, kind=['스스로 끝까지 해내는','모둠과 함께 해내는','단원을 거치며 성장한'];
+      var recs=acts.slice(0,2).map(function(a,i){var j=(off+i)%3;return {by:sv.name+' · '+a[0]+' ('+kind[j]+' 학생 가정)',t:d.tpl[j].split('{a}').join(a[0])}});
+      recs=recs.concat(common);
+      h+='<h3>학교생활기록부 기재 예시<small>과목별 세부능력 및 특기사항</small></h3><p class="dlg-guide">예시마다 다른 학생을 가정했습니다. 스스로 끝까지 해내는 학생, 모둠과 함께 해내는 학생, 단원을 거치며 성장한 학생, 다른 교과에서 같은 단계를 보여 준 학생의 사례를 비교해 보고, <b>구체적 행동과 결과 → 교사가 관찰한 역량 → 성장과 후속 활동</b>이 드러나도록 고쳐 쓰세요.</p>'+recs.map(recBox).join('');
+    }
     h+='<p class="dlg-note">사례와 수치는 가정한 것입니다. 학생이 실제로 한 활동과 교사가 관찰한 모습으로 바꿔 쓰고, 기재 금지·유의 사항은 해당 학년도 「학교생활기록부 기재요령」을 따르세요.</p>';
     document.getElementById('dlg-body').innerHTML=h;hideTip();
     if(dlg.showModal){if(!dlg.open)dlg.showModal();}else dlg.setAttribute('open','');
@@ -481,7 +507,7 @@ r += ['', '## 활용 안내', '',
  '## 출처와 수정 방법', '',
  '- 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr) 원문과 다시 확인해 사용하세요. 일반선택 중 원문을 구하지 못한 현대사회와 윤리, 영어 진로선택 4과목(영어 발표와 토론·심화 영어·심화 영어 독해와 작문·직무 영어), 융합선택 4과목(실생활 영어 회화·미디어 영어·역사로 탐구하는 현대 세계·윤리문제 탐구)은 아직 넣지 않았습니다.',
  '- 칸 배치는 성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 한 예시이며 교사 판단에 따라 바꿀 수 있습니다.',
- '- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(고1 공통), `tools/subjects_common2.py`(고1 2학기·과학탐구실험), `tools/subjects_general.py`(일반선택), `tools/subjects_career.py`(진로선택), `tools/subjects_convergence.py`(융합선택)에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.', '',
+ '- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(고1 공통), `tools/subjects_common2.py`(고1 2학기·과학탐구실험), `tools/subjects_general.py`(일반선택), `tools/subjects_career.py`(진로선택), `tools/subjects_convergence.py`(융합선택)에 있습니다. 과목별 칸 상세 예시(주제탐구 예시와 세특 기재 예시)는 `tools/detail/<과목 id>.txt`에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.', '',
  'Anderson, L. W., & Krathwohl, D. R. (Eds.). (2001). *A Taxonomy for Learning, Teaching, and Assessing: A Revision of Bloom’s Taxonomy of Educational Objectives.* Longman.', '']
 open(os.path.join(ROOT, 'README.md'), 'w').write('\n'.join(r))
 
