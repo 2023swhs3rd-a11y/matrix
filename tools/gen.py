@@ -20,18 +20,25 @@ CSS = """
 /* 레이아웃: 머리말 → 과목 탭 → 4×6 매트릭스(가로 스크롤) → 과목 성취기준 목록 → 탐구 경로 → 활용 안내 */
 :root{
   --bg:#f6f7f9; --surface:#ffffff; --fg:#1d2430; --muted:#5b6575; --line:#d9dee6;
-  --accent:#2f5d8a; --accent-ink:#ffffff; --chip:#e7eef6;
-  --l1:#eef3f8; --l2:#e3ecf5; --l3:#d6e4f1; --l4:#c8dbec; --l5:#b9d1e8; --l6:#a9c6e3;
+  --accent-ink:#ffffff;
+  --c-base:#3f5a78; --c-kor:#b0413a; --c-math:#2b67a8; --c-eng:#7046a8; --c-soc:#9a5b00; --c-sci:#1f7a52; --c-his:#845537;
   --hl:#f2c14e;
   --display:"Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --body:"Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#12161c; --surface:#1a2029; --fg:#e4e8ee; --muted:#9aa4b2; --line:#2c3542; --accent:#8fb8e0; --accent-ink:#0f1620; --chip:#223042;
-  --l1:#18212c; --l2:#1b2632; --l3:#1e2b39; --l4:#213041; --l5:#243649; --l6:#283c52; --hl:#d9a93a; color-scheme:dark}}
+  --bg:#12161c; --surface:#1a2029; --fg:#e4e8ee; --muted:#9aa4b2; --line:#2c3542; --accent-ink:#0f1620;
+  --c-base:#9fb6d0; --c-kor:#ef9a8f; --c-math:#8ab8ec; --c-eng:#bfa3e6; --c-soc:#e9b067; --c-sci:#7fd0a7; --c-his:#d1a587; --hl:#d9a93a; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#12161c; --surface:#1a2029; --fg:#e4e8ee; --muted:#9aa4b2; --line:#2c3542; --accent:#8fb8e0; --accent-ink:#0f1620; --chip:#223042;
-  --l1:#18212c; --l2:#1b2632; --l3:#1e2b39; --l4:#213041; --l5:#243649; --l6:#283c52; --hl:#d9a93a; color-scheme:dark}
+  --bg:#12161c; --surface:#1a2029; --fg:#e4e8ee; --muted:#9aa4b2; --line:#2c3542; --accent-ink:#0f1620;
+  --c-base:#9fb6d0; --c-kor:#ef9a8f; --c-math:#8ab8ec; --c-eng:#bfa3e6; --c-soc:#e9b067; --c-sci:#7fd0a7; --c-his:#d1a587; --hl:#d9a93a; color-scheme:dark}
+/* 교과(국어·수학·영어·사회·과학·역사)마다 강조색 하나; 표의 칸 농도와 번호 배경은 그 색에서 섞어 만든다 */
+body,.tab{--accent:var(--c-base)}
+.a-kor{--accent:var(--c-kor)} .a-math{--accent:var(--c-math)} .a-eng{--accent:var(--c-eng)}
+.a-soc{--accent:var(--c-soc)} .a-sci{--accent:var(--c-sci)} .a-his{--accent:var(--c-his)}
+body{--chip:color-mix(in srgb,var(--accent) 14%,var(--surface));
+  --l1:color-mix(in srgb,var(--accent) 5%,var(--surface)); --l2:color-mix(in srgb,var(--accent) 9%,var(--surface)); --l3:color-mix(in srgb,var(--accent) 13%,var(--surface));
+  --l4:color-mix(in srgb,var(--accent) 17%,var(--surface)); --l5:color-mix(in srgb,var(--accent) 22%,var(--surface)); --l6:color-mix(in srgb,var(--accent) 27%,var(--surface))}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.6;word-break:keep-all;overflow-wrap:break-word}
 .wrap{max-width:1280px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:36px}
 .wrap>*{min-width:0}
@@ -45,6 +52,11 @@ p{margin:0}
 .tab-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .tab-group{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em;min-width:64px}
 .tab{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 14px;cursor:pointer}
+.tab::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
+.tab[aria-selected="true"]::before{background:var(--accent-ink)}
+h1 a{color:inherit;text-decoration:none}
+h1 a:hover{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
+h1 a:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
 .tab small{font-weight:400;color:var(--muted);margin-left:4px}
 .tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 .tab[aria-selected="true"] small{color:inherit;opacity:.8}
@@ -120,7 +132,7 @@ def payload():
 def body():
     o = ['<div class="wrap">', '<header>',
          '<span class="eyebrow">BLOOM’S REVISED TAXONOMY × 2022 개정 교육과정</span>',
-         '<h1>블룸의 개정 교육목표 분류로 보는 학생 탐구활동 추천 매트릭스</h1>',
+         '<h1><a href="./" id="home" title="처음 화면으로">블룸의 개정 교육목표 분류로 보는 학생 탐구활동 추천 매트릭스</a></h1>',
          '<p class="lead">지식 차원 4가지와 인지 과정 6가지를 교차한 24칸에 탐구활동을 추천합니다. 과목을 고르면 2022 개정 교육과정 성취기준을 칸에 배치하고, 그 성취기준에 맞춘 과목별 활동을 보여 줍니다.</p>',
          '</header>',
          '<section aria-label="과목 선택"><div class="tabs" role="tablist" id="tabs"></div><p class="subject-note" id="subject-note"></p></section>',
@@ -151,7 +163,7 @@ def body():
 </ol></section>''')
     stamp = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M')
     total = sum(len(x['standards']) for x in SUBJECTS)
-    o.append(f'<footer><p id="version">업데이트 {stamp} (KST) · 과목 {len(SUBJECTS)}개 · 성취기준 {total}개</p><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목과 2·3학년 일반선택 과목. 공개 정리 자료에서 옮겼으므로 국가교육과정정보센터(NCIC) 원문과 대조해 사용하세요. 통합과학1은 원문을 확인한 성취기준만 실었고, 현대사회와 윤리는 아직 넣지 않았습니다.</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p></footer>')
+    o.append(f'<footer><p id="version">업데이트 {stamp} (KST) · 과목 {len(SUBJECTS)}개 · 성취기준 {total}개</p><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목과 2·3학년 일반선택 과목. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), 국가교육과정정보센터(NCIC) 원문과 다시 확인해 사용하세요. 현대사회와 윤리는 아직 넣지 않았습니다.</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p></footer>')
     o.append('</div>')
     o.append('<script>var DATA=' + json.dumps(payload(), ensure_ascii=False) + ';</script>')
     o.append(JS)
@@ -175,11 +187,12 @@ JS = r'''<script>
   document.addEventListener('focusout',hideTip);window.addEventListener('scroll',hideTip,true);
   var tabs=document.getElementById('tabs'), note=document.getElementById('subject-note');
   var views=[{id:'common',name:'전 과목 공통',area:''}].concat(DATA.subjects);
+  var AREA={'국어':'kor','수학':'math','영어':'eng','사회':'soc','과학':'sci','역사':'his'};
   var rows={};
   views.forEach(function(v){
     var g=v.group||'기본';
     if(!rows[g]){rows[g]=document.createElement('div');rows[g].className='tab-row';rows[g].innerHTML='<span class="tab-group">'+esc(g)+'</span>';tabs.appendChild(rows[g]);}
-    var b=document.createElement('button');b.type='button';b.className='tab';b.id='tab-'+v.id;b.setAttribute('role','tab');
+    var b=document.createElement('button');b.type='button';b.className='tab';b.id='tab-'+v.id;if(AREA[v.area])b.classList.add('a-'+AREA[v.area]);b.setAttribute('role','tab');
     b.innerHTML=esc(v.name)+(v.standards?'<small>'+v.standards.length+'</small>':'');
     b.addEventListener('click',function(){location.hash=v.id});rows[g].appendChild(b);
   });
@@ -191,6 +204,7 @@ JS = r'''<script>
     var id=(location.hash||'').slice(1); var v=views.filter(function(x){return x.id===id})[0]||views[0];
     views.forEach(function(x){document.getElementById('tab-'+x.id).setAttribute('aria-selected',x===v?'true':'false')});
     clearMarks();
+    document.body.className=AREA[v.area]?'a-'+AREA[v.area]:'';
     var byCell={};
     if(v.standards){v.standards.forEach(function(s){s[2].forEach(function(c,i){(byCell[c]=byCell[c]||[]).push({code:s[0],main:i===0})})});}
     Object.keys(DATA.names).forEach(function(k){
@@ -217,6 +231,10 @@ JS = r'''<script>
     var p=e.target.closest('.path');if(p){var on=p.getAttribute('aria-pressed')!=='true';clearMarks();
       if(on){mark(p.dataset.cells.split(' '));p.setAttribute('aria-pressed','true');}}
   });
+  // 제목: 과목·표시를 지우고 처음 화면(전 과목 공통)으로
+  document.getElementById('home').addEventListener('click',function(e){e.preventDefault();hideTip();
+    if(location.hash)history.pushState(null,'',location.pathname+location.search);render();
+    window.scrollTo({top:0,behavior:'smooth'});});
   window.addEventListener('hashchange',render);render();
 })();
 </script>'''
@@ -275,7 +293,7 @@ r += ['', '## 활용 안내', '',
  '3. **단계 배치:** 주된 칸의 왼쪽이나 위쪽 칸에서 시작해 2~4칸을 이어 탐구 경로를 만듭니다.',
  '4. **평가 정렬:** 주된 칸의 활동 결과물을 수행평가 대상으로 삼아 성취기준, 활동, 평가를 같은 칸에 맞춥니다.', '',
  '## 출처와 수정 방법', '',
- '- 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 공개 정리 자료에서 옮겼으므로 [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr) 원문과 대조해 사용하세요. 통합과학1은 원문을 확인한 성취기준만 실었고, 일반선택 중 현대사회와 윤리는 아직 넣지 않았습니다.',
+ '- 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr) 원문과 다시 확인해 사용하세요. 일반선택 중 현대사회와 윤리는 아직 넣지 않았습니다.',
  '- 칸 배치는 성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 한 예시이며 교사 판단에 따라 바꿀 수 있습니다.',
  '- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(고1 공통), `tools/subjects_general.py`(일반선택)에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.', '',
  'Anderson, L. W., & Krathwohl, D. R. (Eds.). (2001). *A Taxonomy for Learning, Teaching, and Assessing: A Revision of Bloom’s Taxonomy of Educational Objectives.* Longman.', '']
