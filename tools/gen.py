@@ -6,7 +6,7 @@ E = html.escape
 CSS = """
 <title>블룸 탐구활동 매트릭스</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap">
+%%FONT%%
 <style>
 /* 레이아웃: 상단 머리말 → 4×6 매트릭스(가로 스크롤 컨테이너) → 탐구 경로 예시 → 활용 안내 */
 :root{
@@ -14,8 +14,8 @@ CSS = """
   --accent:#2f5d8a;
   --l1:#eef3f8; --l2:#e3ecf5; --l3:#d6e4f1; --l4:#c8dbec; --l5:#b9d1e8; --l6:#a9c6e3;
   --hl:#f2c14e;
-  --display:"Nanum Myeongjo", "Noto Serif KR", serif;
-  --body:"IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --display:"Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --body:"Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#12161c; --surface:#1a2029; --fg:#e4e8ee; --muted:#9aa4b2; --line:#2c3542; --accent:#8fb8e0;
@@ -23,12 +23,12 @@ CSS = """
 :root[data-theme="dark"]{
   --bg:#12161c; --surface:#1a2029; --fg:#e4e8ee; --muted:#9aa4b2; --line:#2c3542; --accent:#8fb8e0;
   --l1:#18212c; --l2:#1b2632; --l3:#1e2b39; --l4:#213041; --l5:#243649; --l6:#283c52; --hl:#d9a93a; color-scheme:dark}
-body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.6}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.6;word-break:keep-all;overflow-wrap:break-word}
 .wrap{max-width:1280px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:40px}
 header{display:grid;gap:10px;max-width:70ch}
 .eyebrow{font-size:12px;letter-spacing:.08em;color:var(--accent);font-weight:600}
-h1{font-family:var(--display);font-size:clamp(26px,4vw,38px);line-height:1.25;margin:0;text-wrap:balance}
-h2{font-family:var(--display);font-size:22px;margin:0 0 4px;text-wrap:balance}
+h1{font-family:var(--display);font-weight:800;letter-spacing:-.02em;font-size:clamp(26px,4vw,38px);line-height:1.25;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:700;letter-spacing:-.01em;font-size:22px;margin:0 0 4px;text-wrap:balance}
 p{margin:0}
 .lead{color:var(--muted)}
 .scroller{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
@@ -112,8 +112,21 @@ document.querySelectorAll('.path').forEach(function(b){b.addEventListener('click
 </script>''')
     return '\n'.join(o)
 
-b = CSS + body()
-open('matrix.html','w').write(b)
+import base64, subprocess, os
+CDN = '<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">'
+def embedded():
+    # 아티팩트는 외부 글꼴 호스트를 막으므로 페이지에 쓰인 글자만 남긴 Pretendard를 data URI로 넣는다
+    src = os.environ.get('PRETENDARD_WOFF2')
+    if not src: return CDN
+    open('_chars.txt','w').write(CSS + body() + '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
+    subprocess.run(['pyftsubset', src, '--text-file=_chars.txt', '--flavor=woff2', '--output-file=_sub.woff2', '--layout-features=*'], check=True)
+    d = base64.b64encode(open('_sub.woff2','rb').read()).decode()
+    os.remove('_chars.txt'); os.remove('_sub.woff2')
+    return '<style>@font-face{font-family:"Pretendard Variable";font-weight:45 920;font-style:normal;font-display:swap;src:url(data:font/woff2;base64,%s) format("woff2-variations")}</style>' % d
+FULL = CSS
+CSS = FULL.replace('%%FONT%%', CDN)
+emb = FULL.replace('%%FONT%%', embedded())
+open('matrix.html','w').write(emb + body())
 open('index.html','w').write('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<style>body{margin:0}</style>\n' + CSS + '</head>\n<body>\n' + body() + '\n</body>\n</html>\n')
 
 # README
