@@ -11,7 +11,7 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | HTML 원본 | [index.html](index.html) |
 | 고1 공통 | [공통국어1](subjects/kor.md) · [공통국어2](subjects/kor2.md) · [공통수학1](subjects/math.md) · [공통수학2](subjects/math2.md) · [공통영어1](subjects/eng.md) · [공통영어2](subjects/ceng2.md) · [통합사회1](subjects/soc.md) · [통합사회2](subjects/soc2.md) · [통합과학1](subjects/sci.md) · [통합과학2](subjects/sci2.md) · [한국사1](subjects/his.md) · [한국사2](subjects/his2.md) · [과학탐구실험1](subjects/lab1.md) · [과학탐구실험2](subjects/lab2.md) |
 | 일반선택 | [화법과 언어](subjects/hwaeon.md) · [독서와 작문](subjects/dokjak.md) · [문학](subjects/lit.md) · [대수](subjects/alg.md) · [미적분Ⅰ](subjects/calc1.md) · [확률과 통계](subjects/prob.md) · [영어Ⅰ](subjects/eng1.md) · [영어Ⅱ](subjects/eng2.md) · [영어 독해와 작문](subjects/engrw.md) · [세계시민과 지리](subjects/wgeo.md) · [세계사](subjects/whis.md) · [사회와 문화](subjects/socul.md) · [물리학](subjects/phys.md) · [화학](subjects/chem.md) · [생명과학](subjects/bio.md) · [지구과학](subjects/earth.md) |
-| 진로선택 | [주제 탐구 독서](subjects/jutam.md) · [문학과 영상](subjects/litfilm.md) · [직무 의사소통](subjects/jikui.md) · [기하](subjects/geom.md) · [미적분Ⅱ](subjects/calc2.md) · [경제 수학](subjects/econmath.md) · [인공지능 수학](subjects/aimath.md) · [직무 수학](subjects/jobmath.md) · [한국지리 탐구](subjects/hantam.md) · [도시의 미래 탐구](subjects/dotam.md) · [동아시아 역사 기행](subjects/dongyeok.md) · [정치](subjects/politics.md) · [법과 사회](subjects/law.md) · [경제](subjects/econ.md) · [윤리와 사상](subjects/ethics.md) · [인문학과 윤리](subjects/humeth.md) · [국제 관계의 이해](subjects/intl.md) |
+| 진로선택 | [주제 탐구 독서](subjects/jutam.md) · [문학과 영상](subjects/litfilm.md) · [직무 의사소통](subjects/jikui.md) · [기하](subjects/geom.md) · [미적분Ⅱ](subjects/calc2.md) · [경제 수학](subjects/econmath.md) · [인공지능 수학](subjects/aimath.md) · [직무 수학](subjects/jobmath.md) · [한국지리 탐구](subjects/hantam.md) · [도시의 미래 탐구](subjects/dotam.md) · [동아시아 역사 기행](subjects/dongyeok.md) · [정치](subjects/politics.md) · [법과 사회](subjects/law.md) · [경제](subjects/econ.md) · [윤리와 사상](subjects/ethics.md) · [인문학과 윤리](subjects/humeth.md) · [국제 관계의 이해](subjects/intl.md) · [영미 문학 읽기](subjects/litread.md) · [역학과 에너지](subjects/mech.md) · [전자기와 양자](subjects/emq.md) · [물질과 에너지](subjects/mateng.md) · [화학 반응의 세계](subjects/chemrx.md) · [세포와 물질대사](subjects/cellmet.md) · [생물의 유전](subjects/genet.md) · [지구시스템과학](subjects/earthsys.md) · [행성우주과학](subjects/space.md) |
 | 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [활용 안내](#활용-안내) |
 
 ## 두 축
@@ -83,6 +83,15 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | 진로선택 | [윤리와 사상](subjects/ethics.md) | 15 | B4(개념적·분석) 6개, B2(개념적·이해) 4개 |
 | 진로선택 | [인문학과 윤리](subjects/humeth.md) | 12 | D5(메타인지·평가) 3개, B2(개념적·이해) 2개 |
 | 진로선택 | [국제 관계의 이해](subjects/intl.md) | 12 | B2(개념적·이해) 3개, B4(개념적·분석) 3개 |
+| 진로선택 | [영미 문학 읽기](subjects/litread.md) | 8 | B4(개념적·분석) 3개, D5(메타인지·평가) 2개 |
+| 진로선택 | [역학과 에너지](subjects/mech.md) | 16 | B2(개념적·이해) 8개, A3(사실적·적용) 3개 |
+| 진로선택 | [전자기와 양자](subjects/emq.md) | 17 | B2(개념적·이해) 7개, B4(개념적·분석) 3개 |
+| 진로선택 | [물질과 에너지](subjects/mateng.md) | 14 | B2(개념적·이해) 8개, B3(개념적·적용) 3개 |
+| 진로선택 | [화학 반응의 세계](subjects/chemrx.md) | 14 | B2(개념적·이해) 6개, B3(개념적·적용) 3개 |
+| 진로선택 | [세포와 물질대사](subjects/cellmet.md) | 18 | B2(개념적·이해) 9개, B4(개념적·분석) 5개 |
+| 진로선택 | [생물의 유전](subjects/genet.md) | 17 | B4(개념적·분석) 4개, B2(개념적·이해) 3개 |
+| 진로선택 | [지구시스템과학](subjects/earthsys.md) | 15 | B4(개념적·분석) 6개, B2(개념적·이해) 4개 |
+| 진로선택 | [행성우주과학](subjects/space.md) | 15 | B4(개념적·분석) 6개, B5(개념적·평가) 5개 |
 
 ## 전 과목 공통 매트릭스
 

@@ -57,7 +57,8 @@ p{margin:0}
 .tabs{display:grid;gap:10px}
 .tab-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .tab-sub{font-size:11px;font-weight:600;color:var(--muted);padding:0 2px 0 6px}
-.tab-row .tab-group+.tab-sub{padding-left:0}
+.tab-row .tab-group+.tab-lead .tab-sub{padding-left:0}
+.tab-lead{display:inline-flex;align-items:center;gap:inherit}
 .layout{display:flex;align-items:center;gap:0;margin-bottom:12px;font-size:12px;color:var(--muted)}
 .layout span{font-weight:600;letter-spacing:.04em;min-width:64px;margin-right:8px}
 .layout button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--muted);padding:4px 12px;cursor:pointer}
@@ -220,8 +221,8 @@ JS = r'''<script>
     list.forEach(function(v){
       var g=v.group?(layout==='area'?ROW[v.area]:v.group):'기본';
       if(!rows[g]){rows[g]=document.createElement('div');rows[g].className='tab-row';rows[g].innerHTML='<span class="tab-group">'+esc(g)+'</span>';tabs.appendChild(rows[g]);}
-      if(layout==='area'&&v.group&&last[g]!==v.group){var t=document.createElement('span');t.className='tab-sub';t.textContent=SUB[v.group]||v.group;rows[g].appendChild(t);last[g]=v.group;}
-      rows[g].appendChild(btn[v.id]);
+      if(layout==='area'&&v.group&&last[g]!==v.group){var t=document.createElement('span');t.className='tab-sub';t.textContent=SUB[v.group]||v.group;var w=document.createElement('span');w.className='tab-lead';w.appendChild(t);w.appendChild(btn[v.id]);rows[g].appendChild(w);last[g]=v.group;}
+      else rows[g].appendChild(btn[v.id]);
     });
     document.querySelectorAll('.layout button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.layout===layout?'true':'false')});
   }
