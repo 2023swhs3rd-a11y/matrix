@@ -12,7 +12,7 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | 고1 공통 | [공통국어1](subjects/kor.md) · [공통국어2](subjects/kor2.md) · [공통수학1](subjects/math.md) · [공통수학2](subjects/math2.md) · [공통영어1](subjects/eng.md) · [공통영어2](subjects/ceng2.md) · [통합사회1](subjects/soc.md) · [통합사회2](subjects/soc2.md) · [통합과학1](subjects/sci.md) · [통합과학2](subjects/sci2.md) · [한국사1](subjects/his.md) · [한국사2](subjects/his2.md) · [과학탐구실험1](subjects/lab1.md) · [과학탐구실험2](subjects/lab2.md) |
 | 일반선택 | [화법과 언어](subjects/hwaeon.md) · [독서와 작문](subjects/dokjak.md) · [문학](subjects/lit.md) · [대수](subjects/alg.md) · [미적분Ⅰ](subjects/calc1.md) · [확률과 통계](subjects/prob.md) · [영어Ⅰ](subjects/eng1.md) · [영어Ⅱ](subjects/eng2.md) · [영어 독해와 작문](subjects/engrw.md) · [세계시민과 지리](subjects/wgeo.md) · [세계사](subjects/whis.md) · [사회와 문화](subjects/socul.md) · [물리학](subjects/phys.md) · [화학](subjects/chem.md) · [생명과학](subjects/bio.md) · [지구과학](subjects/earth.md) |
 | 진로선택 | [주제 탐구 독서](subjects/jutam.md) · [문학과 영상](subjects/litfilm.md) · [직무 의사소통](subjects/jikui.md) · [기하](subjects/geom.md) · [미적분Ⅱ](subjects/calc2.md) · [경제 수학](subjects/econmath.md) · [인공지능 수학](subjects/aimath.md) · [직무 수학](subjects/jobmath.md) · [한국지리 탐구](subjects/hantam.md) · [도시의 미래 탐구](subjects/dotam.md) · [동아시아 역사 기행](subjects/dongyeok.md) · [정치](subjects/politics.md) · [법과 사회](subjects/law.md) · [경제](subjects/econ.md) · [윤리와 사상](subjects/ethics.md) · [인문학과 윤리](subjects/humeth.md) · [국제 관계의 이해](subjects/intl.md) · [영미 문학 읽기](subjects/litread.md) · [역학과 에너지](subjects/mech.md) · [전자기와 양자](subjects/emq.md) · [물질과 에너지](subjects/mateng.md) · [화학 반응의 세계](subjects/chemrx.md) · [세포와 물질대사](subjects/cellmet.md) · [생물의 유전](subjects/genet.md) · [지구시스템과학](subjects/earthsys.md) · [행성우주과학](subjects/space.md) |
-| 융합선택 | [독서 토론과 글쓰기](subjects/dokto.md) · [매체 의사소통](subjects/maeui.md) · [언어생활 탐구](subjects/eontam.md) · [수학과 문화](subjects/mathcul.md) · [실용 통계](subjects/prstat.md) · [수학과제 탐구](subjects/mathproj.md) · [과학의 역사와 문화](subjects/scihist.md) · [기후변화와 환경생태](subjects/climeco.md) · [융합과학 탐구](subjects/convsci.md) |
+| 융합선택 | [독서 토론과 글쓰기](subjects/dokto.md) · [매체 의사소통](subjects/maeui.md) · [언어생활 탐구](subjects/eontam.md) · [수학과 문화](subjects/mathcul.md) · [실용 통계](subjects/prstat.md) · [수학과제 탐구](subjects/mathproj.md) · [과학의 역사와 문화](subjects/scihist.md) · [기후변화와 환경생태](subjects/climeco.md) · [융합과학 탐구](subjects/convsci.md) · [세계 문화와 영어](subjects/worldcul.md) · [여행지리](subjects/travel.md) · [사회문제 탐구](subjects/socprob.md) · [금융과 경제생활](subjects/finance.md) · [기후변화와 지속가능한 세계](subjects/climsus.md) |
 | 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [활용 안내](#활용-안내) |
 
 ## 두 축
@@ -102,6 +102,11 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | 융합선택 | [과학의 역사와 문화](subjects/scihist.md) | 17 | B2(개념적·이해) 4개, A3(사실적·적용) 3개 |
 | 융합선택 | [기후변화와 환경생태](subjects/climeco.md) | 15 | B2(개념적·이해) 7개, B4(개념적·분석) 3개 |
 | 융합선택 | [융합과학 탐구](subjects/convsci.md) | 15 | B5(개념적·평가) 4개, B2(개념적·이해) 3개 |
+| 융합선택 | [세계 문화와 영어](subjects/worldcul.md) | 10 | B2(개념적·이해) 3개, B4(개념적·분석) 2개 |
+| 융합선택 | [여행지리](subjects/travel.md) | 12 | B5(개념적·평가) 2개, C6(절차적·창안) 2개 |
+| 융합선택 | [사회문제 탐구](subjects/socprob.md) | 12 | A3(사실적·적용) 3개, C2(절차적·이해) 2개 |
+| 융합선택 | [금융과 경제생활](subjects/finance.md) | 12 | B2(개념적·이해) 4개, B5(개념적·평가) 2개 |
+| 융합선택 | [기후변화와 지속가능한 세계](subjects/climsus.md) | 12 | A3(사실적·적용) 3개, B4(개념적·분석) 3개 |
 
 ## 전 과목 공통 매트릭스
 
