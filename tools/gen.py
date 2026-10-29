@@ -54,27 +54,29 @@ h1{font-family:var(--display);font-weight:800;letter-spacing:-.02em;font-size:cl
 h2{font-family:var(--display);font-weight:700;letter-spacing:-.01em;font-size:22px;margin:0 0 4px;text-wrap:balance}
 p{margin:0}
 .lead{color:var(--muted)}
-.tabs{display:grid;gap:10px}
-.tab-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.tab-sub{font-size:11px;font-weight:600;color:var(--muted);padding:0 2px 0 6px}
-.tab-row .tab-group+.tab-lead .tab-sub{padding-left:0}
-.tab-lead{display:inline-flex;align-items:center;gap:inherit}
-.layout{display:flex;align-items:center;gap:0;margin-bottom:12px;font-size:12px;color:var(--muted)}
-.layout span{font-weight:600;letter-spacing:.04em;min-width:64px;margin-right:8px}
-.layout button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--muted);padding:4px 12px;cursor:pointer}
-.layout button:first-of-type{border-radius:8px 0 0 8px}.layout button:last-of-type{border-radius:0 8px 8px 0;border-left:0}
-.layout button[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
-.layout button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.tab-group{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em;min-width:64px}
-.tab{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 14px;cursor:pointer}
+.picker{display:grid;gap:14px}
+.areas{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.areas .sep{width:1px;height:20px;background:var(--line);margin:0 6px}
+.area-tab{--accent:var(--c-base);font:inherit;font-size:15px;font-weight:700;color:var(--muted);background:none;border:1px solid transparent;border-radius:10px;padding:7px 14px;cursor:pointer}
+.area-tab::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:7px;vertical-align:2px}
+.area-tab small{font-weight:500;font-size:12px;margin-left:5px;opacity:.75}
+.area-tab:hover{color:var(--fg)}
+.area-tab[aria-selected="true"]{color:var(--fg);background:color-mix(in srgb,var(--accent) 14%,var(--surface));border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.area-tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.panel{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 28px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.panel[hidden]{display:none}
+.col h3{margin:0 0 8px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em}
+.col h3 span{font-weight:400;margin-left:6px}
+.col div{display:flex;flex-wrap:wrap;gap:6px}
+.tab{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:5px 12px;cursor:pointer}
 .tab::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
-.tab[aria-selected="true"]::before{background:var(--accent-ink)}
+.tab[aria-pressed="true"]::before{background:var(--accent-ink)}
 h1 a{color:inherit;text-decoration:none}
 h1 a:hover{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
 h1 a:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
 .tab small{font-weight:400;color:var(--muted);margin-left:4px}
-.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.tab[aria-selected="true"] small{color:inherit;opacity:.8}
+.tab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tab[aria-pressed="true"] small{color:inherit;opacity:.8}
 .tab:focus-visible,.std-cell:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .subject-note{font-size:13px;color:var(--muted);margin-top:10px}
 .scroller{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
@@ -150,7 +152,7 @@ def body():
          '<h1><a href="./" id="home" title="처음 화면으로">블룸의 개정 교육목표 분류로 보는 학생 탐구활동 추천 매트릭스</a></h1>',
          '<p class="lead">지식 차원 4가지와 인지 과정 6가지를 교차한 24칸에 탐구활동을 추천합니다. 과목을 고르면 2022 개정 교육과정 성취기준을 칸에 배치하고, 그 성취기준에 맞춘 과목별 활동을 보여 줍니다.</p>',
          '</header>',
-         '<section aria-label="과목 선택"><div class="layout" role="group" aria-label="탭 배치"><span>배치</span><button type="button" data-layout="area">교과별</button><button type="button" data-layout="group">학년·유형별</button></div><div class="tabs" role="tablist" id="tabs"></div><p class="subject-note" id="subject-note"></p></section>',
+         '<section aria-label="과목 선택" class="picker"><div class="areas" role="tablist" aria-label="교과" id="areas"></div><div class="panel" id="panel" hidden></div><p class="subject-note" id="subject-note"></p></section>',
          '<section><div class="scroller"><table class="mx" id="mx">', '<thead><tr><th class="corner" scope="col">지식 차원 ↓ / 인지 과정 →</th>']
     for code, ko, en, d, v in PROCESSES:
         o.append(f'<th scope="col"><span class="en">{code}. {en}</span><span class="ko">{ko}</span><span class="def">{E(d)}</span><span class="vb">{E(v)}</span></th>')
@@ -200,42 +202,49 @@ JS = r'''<script>
   document.addEventListener('mouseout',function(e){if(e.target.closest('.ref[data-code]'))hideTip()});
   document.addEventListener('focusin',function(e){var el=e.target.closest('.ref[data-code]');if(el)showTip(el)});
   document.addEventListener('focusout',hideTip);window.addEventListener('scroll',hideTip,true);
-  var tabs=document.getElementById('tabs'), note=document.getElementById('subject-note');
+  var note=document.getElementById('subject-note');
   var views=[{id:'common',name:'전 과목 공통',area:''}].concat(DATA.subjects);
   var AREA={'국어':'kor','수학':'math','영어':'eng','사회':'soc','과학':'sci','역사':'his','도덕':'eth'};
-  // 탭 배치: 교과별(기본) 또는 학년·유형별. 교과별에서는 같은 줄 안에서 고1 → 일반 → 진로 순서로 둔다
+  // 과목 고르기: 교과를 먼저 고르면 그 교과의 과목이 유형(고1 공통·일반선택·진로선택…) 열로 펼쳐진다
   var ROW={'국어':'국어','수학':'수학','영어':'영어','사회':'사회','역사':'사회','도덕':'사회','과학':'과학'};
-  var SUB={'고1 공통':'고1','일반선택':'일반','진로선택':'진로'};
+  var ROWS=['국어','수학','영어','사회','과학'], RCLS={'국어':'kor','수학':'math','영어':'eng','사회':'soc','과학':'sci'};
+  var GRADE={'고1 공통':'1학년','일반선택':'2·3학년','진로선택':'2·3학년','융합선택':'2·3학년'};
   var GROUPS=[];views.forEach(function(v){if(v.group&&GROUPS.indexOf(v.group)<0)GROUPS.push(v.group)});
-  var btn={};
+  var btn={}, atab={}, cur=null, areas=document.getElementById('areas'), panel=document.getElementById('panel');
   views.forEach(function(v){
-    var b=document.createElement('button');b.type='button';b.className='tab';b.id='tab-'+v.id;if(AREA[v.area])b.classList.add('a-'+AREA[v.area]);b.setAttribute('role','tab');
+    var b=document.createElement('button');b.type='button';b.className='tab';b.id='tab-'+v.id;if(AREA[v.area])b.classList.add('a-'+AREA[v.area]);
     b.innerHTML=esc(v.name)+(v.standards?'<small>'+v.standards.length+'</small>':'');
     b.addEventListener('click',function(){location.hash=v.id});btn[v.id]=b;
   });
-  var layout='area';try{layout=localStorage.getItem('matrix-layout')||'area'}catch(e){}
-  function buildTabs(){
-    tabs.innerHTML='';var rows={},last={};
-    var list=views.slice();
-    if(layout==='area')list.sort(function(a,b){return (a.group?GROUPS.indexOf(a.group):-1)-(b.group?GROUPS.indexOf(b.group):-1)});
-    list.forEach(function(v){
-      var g=v.group?(layout==='area'?ROW[v.area]:v.group):'기본';
-      if(!rows[g]){rows[g]=document.createElement('div');rows[g].className='tab-row';rows[g].innerHTML='<span class="tab-group">'+esc(g)+'</span>';tabs.appendChild(rows[g]);}
-      if(layout==='area'&&v.group&&last[g]!==v.group){var t=document.createElement('span');t.className='tab-sub';t.textContent=SUB[v.group]||v.group;var w=document.createElement('span');w.className='tab-lead';w.appendChild(t);w.appendChild(btn[v.id]);rows[g].appendChild(w);last[g]=v.group;}
-      else rows[g].appendChild(btn[v.id]);
-    });
-    document.querySelectorAll('.layout button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.layout===layout?'true':'false')});
+  function areaTab(key,label,count,cls,onclick){
+    var b=document.createElement('button');b.type='button';b.className='area-tab';if(cls)b.style.setProperty('--accent','var(--c-'+cls+')');b.setAttribute('role','tab');
+    b.innerHTML=esc(label)+(count?'<small>'+count+'</small>':'');b.addEventListener('click',onclick);atab[key]=b;areas.appendChild(b);
   }
-  document.querySelectorAll('.layout button').forEach(function(x){x.addEventListener('click',function(){
-    layout=x.dataset.layout;try{localStorage.setItem('matrix-layout',layout)}catch(e){}buildTabs();})});
-  buildTabs();
+  areaTab('common','전 과목 공통',0,'',function(){location.hash='common'});
+  var sep=document.createElement('span');sep.className='sep';sep.setAttribute('aria-hidden','true');areas.appendChild(sep);
+  ROWS.forEach(function(r){
+    var n=views.filter(function(v){return v.area&&ROW[v.area]===r}).length;
+    areaTab(r,r,n,RCLS[r],function(){cur=r;buildPanel();});
+  });
+  function buildPanel(){
+    Object.keys(atab).forEach(function(k){atab[k].setAttribute('aria-selected',(cur?k===cur:k==='common')?'true':'false')});
+    panel.hidden=!cur; panel.innerHTML=''; if(!cur)return;
+    GROUPS.forEach(function(g){
+      var list=views.filter(function(v){return v.group===g&&ROW[v.area]===cur}); if(!list.length)return;
+      var col=document.createElement('div');col.className='col';
+      col.innerHTML='<h3>'+esc(g)+'<span>'+esc(GRADE[g]||'')+'</span></h3>';
+      var box=document.createElement('div');box.setAttribute('role','group');box.setAttribute('aria-label',cur+' '+g);
+      list.forEach(function(v){box.appendChild(btn[v.id])});col.appendChild(box);panel.appendChild(col);
+    });
+  }
   function clearMarks(){document.querySelectorAll('.mx td.on').forEach(function(t){t.classList.remove('on')});
     document.querySelectorAll('.path').forEach(function(x){x.setAttribute('aria-pressed','false')});}
   function mark(cells){clearMarks();cells.forEach(function(c){var t=document.getElementById('c-'+c);if(t)t.classList.add('on')});
     var f=document.getElementById('c-'+cells[0]);if(f)f.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});}
   function render(){
     var id=(location.hash||'').slice(1); var v=views.filter(function(x){return x.id===id})[0]||views[0];
-    views.forEach(function(x){document.getElementById('tab-'+x.id).setAttribute('aria-selected',x===v?'true':'false')});
+    cur=v.area?ROW[v.area]:null;buildPanel();
+    views.forEach(function(x){btn[x.id].setAttribute('aria-pressed',x===v?'true':'false')});
     clearMarks();
     document.body.className=AREA[v.area]?'a-'+AREA[v.area]:'';
     var byCell={};
