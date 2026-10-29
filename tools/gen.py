@@ -6,11 +6,13 @@ from data import PROCESSES, KNOWLEDGE, CELLS, PATHS
 from subjects import SUBJECTS as _S1
 from subjects_common2 import SUBJECTS_COMMON2
 from subjects_general import SUBJECTS_GENERAL
+from subjects_career import SUBJECTS_CAREER
 # 고1 공통은 1학기 과목 바로 뒤에 같은 교과의 2학기 과목을 두고, 과학탐구실험은 끝에 둔다
-_PAIR = {s['id']: s for s in SUBJECTS_COMMON2}
-_S1 = [x for s in _S1 for x in (s, _PAIR.pop(s['id'] + '2', None)) if x] + list(_PAIR.values())
+_PAIR = {s.get('pair', s['id']): s for s in SUBJECTS_COMMON2}
+_S1 = [x for s in _S1 for x in (s, _PAIR.pop(s['id'], None)) if x] + list(_PAIR.values())
 for _s in _S1: _s.setdefault('group', '고1 공통')
-SUBJECTS = _S1 + SUBJECTS_GENERAL
+SUBJECTS = _S1 + SUBJECTS_GENERAL + SUBJECTS_CAREER
+assert len({s['id'] for s in SUBJECTS}) == len(SUBJECTS), '과목 id가 겹칩니다'
 GROUPS = list(dict.fromkeys(s['group'] for s in SUBJECTS))
 def code(s, c): return f"{s['prefix']}{s.get('sep', '-')}{c}"
 E = html.escape
@@ -54,6 +56,14 @@ p{margin:0}
 .lead{color:var(--muted)}
 .tabs{display:grid;gap:10px}
 .tab-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.tab-sub{font-size:11px;font-weight:600;color:var(--muted);padding:0 2px 0 6px}
+.tab-row .tab-group+.tab-sub{padding-left:0}
+.layout{display:flex;align-items:center;gap:0;margin-bottom:12px;font-size:12px;color:var(--muted)}
+.layout span{font-weight:600;letter-spacing:.04em;min-width:64px;margin-right:8px}
+.layout button{font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--muted);padding:4px 12px;cursor:pointer}
+.layout button:first-of-type{border-radius:8px 0 0 8px}.layout button:last-of-type{border-radius:0 8px 8px 0;border-left:0}
+.layout button[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.layout button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .tab-group{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em;min-width:64px}
 .tab{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 14px;cursor:pointer}
 .tab::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
@@ -139,7 +149,7 @@ def body():
          '<h1><a href="./" id="home" title="처음 화면으로">블룸의 개정 교육목표 분류로 보는 학생 탐구활동 추천 매트릭스</a></h1>',
          '<p class="lead">지식 차원 4가지와 인지 과정 6가지를 교차한 24칸에 탐구활동을 추천합니다. 과목을 고르면 2022 개정 교육과정 성취기준을 칸에 배치하고, 그 성취기준에 맞춘 과목별 활동을 보여 줍니다.</p>',
          '</header>',
-         '<section aria-label="과목 선택"><div class="tabs" role="tablist" id="tabs"></div><p class="subject-note" id="subject-note"></p></section>',
+         '<section aria-label="과목 선택"><div class="layout" role="group" aria-label="탭 배치"><span>배치</span><button type="button" data-layout="area">교과별</button><button type="button" data-layout="group">학년·유형별</button></div><div class="tabs" role="tablist" id="tabs"></div><p class="subject-note" id="subject-note"></p></section>',
          '<section><div class="scroller"><table class="mx" id="mx">', '<thead><tr><th class="corner" scope="col">지식 차원 ↓ / 인지 과정 →</th>']
     for code, ko, en, d, v in PROCESSES:
         o.append(f'<th scope="col"><span class="en">{code}. {en}</span><span class="ko">{ko}</span><span class="def">{E(d)}</span><span class="vb">{E(v)}</span></th>')
@@ -167,7 +177,7 @@ def body():
 </ol></section>''')
     stamp = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M')
     total = sum(len(x['standards']) for x in SUBJECTS)
-    o.append(f'<footer><p id="version">업데이트 {stamp} (KST) · 과목 {len(SUBJECTS)}개 · 성취기준 {total}개</p><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목과 2·3학년 일반선택 과목. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), 국가교육과정정보센터(NCIC) 원문과 다시 확인해 사용하세요. 현대사회와 윤리는 아직 넣지 않았습니다.</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p></footer>')
+    o.append(f'<footer><p id="version">업데이트 {stamp} (KST) · 과목 {len(SUBJECTS)}개 · 성취기준 {total}개</p><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목, 2·3학년 일반선택·진로선택 과목. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), 국가교육과정정보센터(NCIC) 원문과 다시 확인해 사용하세요. 현대사회와 윤리는 아직 넣지 않았습니다.</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p></footer>')
     o.append('</div>')
     o.append('<script>var DATA=' + json.dumps(payload(), ensure_ascii=False) + ';</script>')
     o.append(JS)
@@ -192,14 +202,32 @@ JS = r'''<script>
   var tabs=document.getElementById('tabs'), note=document.getElementById('subject-note');
   var views=[{id:'common',name:'전 과목 공통',area:''}].concat(DATA.subjects);
   var AREA={'국어':'kor','수학':'math','영어':'eng','사회':'soc','과학':'sci','역사':'his'};
-  var rows={};
+  // 탭 배치: 교과별(기본) 또는 학년·유형별. 교과별에서는 같은 줄 안에서 고1 → 일반 → 진로 순서로 둔다
+  var ROW={'국어':'국어','수학':'수학','영어':'영어','사회':'사회','역사':'사회','과학':'과학'};
+  var SUB={'고1 공통':'고1','일반선택':'일반','진로선택':'진로'};
+  var GROUPS=[];views.forEach(function(v){if(v.group&&GROUPS.indexOf(v.group)<0)GROUPS.push(v.group)});
+  var btn={};
   views.forEach(function(v){
-    var g=v.group||'기본';
-    if(!rows[g]){rows[g]=document.createElement('div');rows[g].className='tab-row';rows[g].innerHTML='<span class="tab-group">'+esc(g)+'</span>';tabs.appendChild(rows[g]);}
     var b=document.createElement('button');b.type='button';b.className='tab';b.id='tab-'+v.id;if(AREA[v.area])b.classList.add('a-'+AREA[v.area]);b.setAttribute('role','tab');
     b.innerHTML=esc(v.name)+(v.standards?'<small>'+v.standards.length+'</small>':'');
-    b.addEventListener('click',function(){location.hash=v.id});rows[g].appendChild(b);
+    b.addEventListener('click',function(){location.hash=v.id});btn[v.id]=b;
   });
+  var layout='area';try{layout=localStorage.getItem('matrix-layout')||'area'}catch(e){}
+  function buildTabs(){
+    tabs.innerHTML='';var rows={},last={};
+    var list=views.slice();
+    if(layout==='area')list.sort(function(a,b){return (a.group?GROUPS.indexOf(a.group):-1)-(b.group?GROUPS.indexOf(b.group):-1)});
+    list.forEach(function(v){
+      var g=v.group?(layout==='area'?ROW[v.area]:v.group):'기본';
+      if(!rows[g]){rows[g]=document.createElement('div');rows[g].className='tab-row';rows[g].innerHTML='<span class="tab-group">'+esc(g)+'</span>';tabs.appendChild(rows[g]);}
+      if(layout==='area'&&v.group&&last[g]!==v.group){var t=document.createElement('span');t.className='tab-sub';t.textContent=SUB[v.group]||v.group;rows[g].appendChild(t);last[g]=v.group;}
+      rows[g].appendChild(btn[v.id]);
+    });
+    document.querySelectorAll('.layout button').forEach(function(x){x.setAttribute('aria-pressed',x.dataset.layout===layout?'true':'false')});
+  }
+  document.querySelectorAll('.layout button').forEach(function(x){x.addEventListener('click',function(){
+    layout=x.dataset.layout;try{localStorage.setItem('matrix-layout',layout)}catch(e){}buildTabs();})});
+  buildTabs();
   function clearMarks(){document.querySelectorAll('.mx td.on').forEach(function(t){t.classList.remove('on')});
     document.querySelectorAll('.path').forEach(function(x){x.setAttribute('aria-pressed','false')});}
   function mark(cells){clearMarks();cells.forEach(function(c){var t=document.getElementById('c-'+c);if(t)t.classList.add('on')});
@@ -275,7 +303,7 @@ LINKS = ['## 바로가기', '',
  '| 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [활용 안내](#활용-안내) |', '']
 
 r = ['# 블룸의 개정 교육목표 분류 활용 학생 탐구활동 추천 매트릭스', '',
-     'Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 탐구활동을 추천합니다. **2022 개정 교육과정** 고1 공통과목 14개(과학탐구실험 포함)와 2·3학년 일반선택 16과목은 성취기준을 칸에 배치하고 과목별 활동을 따로 정리했습니다.', ''] + LINKS
+     'Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 탐구활동을 추천합니다. **2022 개정 교육과정** 고1 공통과목 14개(과학탐구실험 포함), 2·3학년 일반선택 16과목, 진로선택 과목은 성취기준을 칸에 배치하고 과목별 활동을 따로 정리했습니다.', ''] + LINKS
 r += ['## 두 축', '', '| 인지 과정 | 뜻 | 하위 과정 |', '|---|---|---|']
 for c, ko, en, d, v in PROCESSES: r.append(f'| {c}. {ko} ({en}) | {d} | {v} |')
 r += ['', '| 지식 차원 | 하위 유형 |', '|---|---|']
@@ -299,7 +327,7 @@ r += ['', '## 활용 안내', '',
  '## 출처와 수정 방법', '',
  '- 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr) 원문과 다시 확인해 사용하세요. 일반선택 중 현대사회와 윤리는 아직 넣지 않았습니다.',
  '- 칸 배치는 성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 한 예시이며 교사 판단에 따라 바꿀 수 있습니다.',
- '- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(고1 공통), `tools/subjects_general.py`(일반선택)에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.', '',
+ '- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(고1 공통), `tools/subjects_common2.py`(고1 2학기·과학탐구실험), `tools/subjects_general.py`(일반선택), `tools/subjects_career.py`(진로선택)에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.', '',
  'Anderson, L. W., & Krathwohl, D. R. (Eds.). (2001). *A Taxonomy for Learning, Teaching, and Assessing: A Revision of Bloom’s Taxonomy of Educational Objectives.* Longman.', '']
 open(os.path.join(ROOT, 'README.md'), 'w').write('\n'.join(r))
 
