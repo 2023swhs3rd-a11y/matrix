@@ -8,6 +8,7 @@ from subjects_common2 import SUBJECTS_COMMON2
 from subjects_general import SUBJECTS_GENERAL
 from subjects_career import SUBJECTS_CAREER
 from subjects_convergence import SUBJECTS_CONVERGENCE
+from fusion import FUSION_TYPES
 # 고1 공통은 1학기 과목 바로 뒤에 같은 교과의 2학기 과목을 두고, 과학탐구실험은 끝에 둔다
 _PAIR = {s.get('pair', s['id']): s for s in SUBJECTS_COMMON2}
 _S1 = [x for s in _S1 for x in (s, _PAIR.pop(s['id'], None)) if x] + list(_PAIR.values())
@@ -15,6 +16,15 @@ for _s in _S1: _s.setdefault('group', '고1 공통')
 SUBJECTS = _S1 + SUBJECTS_GENERAL + SUBJECTS_CAREER + SUBJECTS_CONVERGENCE
 assert len({s['id'] for s in SUBJECTS}) == len(SUBJECTS), '과목 id가 겹칩니다'
 GROUPS = list(dict.fromkeys(s['group'] for s in SUBJECTS))
+SUBJ_BY_ID = {s['id']: s for s in SUBJECTS}
+# 과목 성취기준이 놓인 칸: 이 칸에만 과목 활동과 예시를 보인다(목표가 없는 칸을 활동으로 억지로 채우지 않는다)
+def valid_cells(s): return {k for _, _, cells in s['standards'] for k in cells}
+# 융합 탐구 예시의 칸은 그 성취기준이 실제로 배치된 칸이어야 한다
+for _t in FUSION_TYPES:
+    for _e in _t['examples']:
+        for _sid, _c, _k in _e['subjects']:
+            _st = next((x for x in SUBJ_BY_ID[_sid]['standards'] if x[0] == _c), None)
+            assert _st and _k in _st[2], f'융합 예시 칸 오류: {_e["title"]} {_sid} {_c} {_k}'
 # 과목별 칸 예시: tools/detail/<과목 id>.txt (@칸, T 제목, Q 탐구 질문, S 단계 ;; 단계, O 산출물, R 세특 예시)
 def load_detail(sid):
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'detail', sid + '.txt')
@@ -38,7 +48,7 @@ CSS = """
 <meta name="claude:viewport-fit-sides" content="cover">
 %%FONT%%
 <style>
-/* 레이아웃: 머리말 → 과목 탭 → 4×6 매트릭스(가로 스크롤) → 과목 성취기준 목록 → 탐구 경로 → 활용 안내 */
+/* 레이아웃: 머리말 → 탐구 설계 예시(탐구 경로 · 과목 융합 탐구 탭) → 과목 탭 → 4×6 매트릭스(가로 스크롤) → 과목 성취기준 목록 → 활용 안내 */
 :root{
   --bg:#f6f7f9; --surface:#ffffff; --fg:#1d2430; --muted:#5b6575; --line:#d9dee6;
   --accent-ink:#ffffff;
@@ -186,6 +196,46 @@ footer{font-size:12px;color:var(--muted);max-width:74ch;display:grid;gap:6px}
 .other{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
 .other summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--accent)}
 .dlg-note{font-size:12px;color:var(--muted);margin-top:14px}
+/* 성취기준이 없는 칸: 과목 활동을 비워 두고 이유만 짧게 보인다 */
+.mx td.na{background:repeating-linear-gradient(135deg,var(--surface) 0 8px,var(--bg) 8px 16px);cursor:pointer}
+.mx td.na .na-note{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
+.mx td.na .code{color:var(--muted)}
+/* 탐구 설계 예시: 탭(탐구 경로 · 과목 융합 탐구) */
+.explore{display:grid;gap:12px}
+.ex-tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+.ex-tabs button{font:inherit;font-size:15px;font-weight:700;color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:8px 14px;margin-bottom:-1px;cursor:pointer;white-space:nowrap}
+.ex-tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
+.ex-tabs button:focus-visible{outline:2px solid var(--fg);outline-offset:-2px}
+.fu-intro{display:grid;gap:6px;max-width:80ch;font-size:14.5px}
+.fu-how{font-size:13px;color:var(--muted)}
+.fu-types{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.fu-types button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:5px 14px;cursor:pointer}
+.fu-types button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.fu-types button:focus-visible,.fu-show:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.fu-type{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 24px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.fu-type h3{margin:0;font-size:17px}
+.fu-type .where{font-size:12.5px;color:var(--muted);margin:2px 0 8px}
+.fu-tip{background:var(--bg);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:13px}
+.mini{display:grid;grid-template-columns:auto repeat(6,22px);gap:2px;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;align-items:center;justify-items:center}
+.mini i{width:22px;height:18px;border-radius:3px;background:var(--bg);border:1px solid var(--line);font-style:normal}
+.mini i.on{background:var(--fg)}
+.mini i.s0{background:var(--ca);border-color:var(--ca)} .mini i.s1{background:var(--cb);border-color:var(--cb)} .mini i.s01{background:linear-gradient(135deg,var(--ca) 50%,var(--cb) 50%);border-color:var(--fg)}
+.fu-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:14px;margin-top:14px}
+.fu-ex{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:10px;align-content:start}
+.fu-ex h4{margin:0;font-size:16px}
+.fu-ex .q{font-size:13.5px;font-weight:600;color:var(--fg);border-left:3px solid var(--fg);padding-left:8px}
+.fu-sub{display:grid;gap:6px}
+.fu-sub div{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:13px;align-items:baseline}
+.fu-sub .nm{font-weight:700;color:var(--accent)}
+.fu-sub .nm::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--accent);margin-right:6px;vertical-align:1px}
+.fu-sub .st{color:var(--muted);grid-column:2}
+.fu-sub .cl{font-size:12px;font-weight:600;font-variant-numeric:tabular-nums}
+.fu-ex h5{margin:0;font-size:12.5px;color:var(--muted);font-weight:600}
+.fu-ex ol,.fu-ex ul{margin:2px 0 0;padding-left:18px;font-size:13.5px;display:grid;gap:3px}
+.fu-ex .o{font-size:12.5px;color:var(--muted)}
+.fu-show{justify-self:start;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:4px 10px;cursor:pointer}
+.fu-show[aria-pressed="true"]{border-color:var(--fg)}
+@media (max-width:640px){.fu-type{grid-template-columns:1fr}}
 
 </style>
 """
@@ -206,7 +256,9 @@ def payload():
         })
         ex = load_detail(s["id"])
         if ex: subs[-1]["ex"] = ex
-    return {"processes": PROCESSES, "knowledge": KNOWLEDGE, "common": common, "subjects": subs, "topic": TOPIC_TEMPLATES, "lens": TOPIC_LENS, "related": TOPIC_RELATED, "detail": CELL_DETAIL,
+    fusion = [dict(t, examples=[dict(e, subjects=[{"id": sid, "name": SUBJ_BY_ID[sid]["name"], "area": SUBJ_BY_ID[sid]["area"], "code": code(SUBJ_BY_ID[sid], c),
+               "text": next(x[1] for x in SUBJ_BY_ID[sid]["standards"] if x[0] == c), "cell": k} for sid, c, k in e["subjects"]]) for e in t["examples"]]) for t in FUSION_TYPES]
+    return {"fusion": fusion, "processes": PROCESSES, "knowledge": KNOWLEDGE, "common": common, "subjects": subs, "topic": TOPIC_TEMPLATES, "lens": TOPIC_LENS, "related": TOPIC_RELATED, "detail": CELL_DETAIL,
             "names": {k[0] + p[0]: cell_name(k[0] + p[0]) for k in KNOWLEDGE for p in PROCESSES}}
 
 def cell_extra(k):
@@ -215,12 +267,28 @@ def cell_extra(k):
     h = f'<div class="part"><b>수업 참여</b> {E(part[0])}</div>' if part else ''
     return h + f'<button type="button" class="more" data-cell="{k}" aria-haspopup="dialog">탐구 예시 · 기재 예시</button>'
 
+def explore():
+    # 상단 탭: 탐구 경로 예시 · 과목 융합 탐구
+    o = ['<section class="explore" aria-labelledby="ex-h"><h2 id="ex-h">탐구 설계 예시</h2>',
+         '<div class="ex-tabs" role="tablist" aria-label="탐구 설계 예시"><button type="button" role="tab" id="xt-path" aria-controls="xp-path" aria-selected="true">탐구 경로 예시</button><button type="button" role="tab" id="xt-fusion" aria-controls="xp-fusion" aria-selected="false" tabindex="-1">과목 융합 탐구</button></div>',
+         '<div role="tabpanel" id="xp-path" aria-labelledby="xt-path"><p class="lead" style="margin-bottom:16px">한 학기 탐구를 몇 칸의 순서로 묶은 예시입니다. 경로를 누르면 아래 표에 해당 칸이 표시되고, 과목을 바꿔도 같은 칸의 과목별 활동을 볼 수 있습니다.</p><div class="paths">']
+    for i, (name, steps, desc) in enumerate(PATHS):
+        st = '<span aria-hidden="true">→</span>'.join(f'<span class="s">{s} {E(cell_name(s))}</span>' for s in steps)
+        o.append(f'<button type="button" class="path" id="path-{i}" aria-pressed="false" data-cells="{" ".join(steps)}"><h3>{E(name)}</h3><div class="steps">{st}</div><p>{E(desc)}</p></button>')
+    o.append('</div></div>')
+    o.append('<div role="tabpanel" id="xp-fusion" aria-labelledby="xt-fusion" hidden>'
+             '<div class="fu-intro"><p><b>융합 탐구</b>는 두 과목의 성취기준을 하나의 탐구 질문으로 묶는 탐구입니다. 두 과목의 성취기준이 매트릭스의 <b>어느 칸에서 만나는지</b> 보면 탐구의 성격이 보입니다. 같은 행(지식 차원)에서 만나면 개념끼리 잇는 탐구가, 한 과목이 절차(C행)를 맡으면 방법을 빌려 쓰는 탐구가, 평가·창안 열에서 만나면 판단하거나 만들어 내는 탐구가 됩니다.</p>'
+             '<p class="fu-how">유형을 고르면 특징과 예시가 나옵니다. 예시의 <b>표에서 보기</b>를 누르면 아래 매트릭스에 두 과목의 칸이 표시됩니다.</p></div>'
+             '<div class="fu-types" role="group" aria-label="융합 탐구 유형" id="fu-types"></div><div id="fu-body"></div></div>')
+    o.append('</section>')
+    return o
+
 def body():
     o = ['<div class="wrap">', '<header>',
          '<span class="eyebrow">BLOOM’S REVISED TAXONOMY × 2022 개정 교육과정</span>',
-         '<h1><a href="./" id="home" title="처음 화면으로">블룸의 개정 교육목표 분류로 보는 교과탐구활동 추천 매트릭스</a></h1>',
+         '<h1><a href="./" id="home" title="처음 화면으로">블룸의 개정 교육목표 분류로 보는<br>교과탐구활동 추천 매트릭스</a></h1>',
          '<p class="lead">지식 차원 4가지와 인지 과정 6가지를 교차한 24칸에 탐구활동을 추천합니다. 과목을 고르면 2022 개정 교육과정 성취기준을 칸에 배치하고, 그 성취기준에 맞춘 과목별 활동을 보여 줍니다.</p>',
-         '</header>',
+         '</header>', *explore(),
          '<section aria-label="과목 선택" class="picker"><div class="areas" role="tablist" aria-label="교과" id="areas"></div><div class="panel" id="panel" hidden></div><form class="topic" id="topic-form" role="search" aria-label="주제로 활동 찾기"><label for="topic-q">주제로 찾기</label><input id="topic-q" type="search" placeholder="탐구 주제 (예: 미세플라스틱, 인공지능 윤리)" autocomplete="off"><select id="topic-f" aria-label="분야(교과)"><option value="">전체 교과</option><option>국어</option><option>수학</option><option>영어</option><option>사회</option><option>과학</option></select><button type="submit">활동 추천</button></form><p class="subject-note" id="subject-note"></p></section>',
          '<section><div class="scroller"><table class="mx" id="mx">', '<thead><tr><th class="corner" scope="col">지식 차원 ↓ / 인지 과정 →</th>']
     for code, ko, en, d, v in PROCESSES:
@@ -234,14 +302,9 @@ def body():
             o.append(f'<td class="p{pc}" id="c-{kc}{pc}"><span class="code">{kc}{pc}</span><ul>{lis}</ul><div class="out"><b>산출물</b> {E(out)}</div>{cell_extra(kc + pc)}</td>')
         o.append('</tr>')
     o.append('</tbody></table></div>')
-    o.append('<p class="axis">오른쪽으로 갈수록 고차원 사고, 아래로 갈수록 추상적인 지식입니다. 칸 색이 진할수록 인지 부담이 큰 활동입니다. 활동 옆 번호는 관련 성취기준이며, 마우스를 올리면 원문이 나옵니다. 칸을 누르면 구체적인 주제탐구 예시와 학교생활기록부 기재 예시를 볼 수 있습니다. 기억·이해·적용 칸에는 수업 참여 활동을 함께 적었습니다.</p></section>')
+    o.append('<p class="axis">오른쪽으로 갈수록 고차원 사고, 아래로 갈수록 추상적인 지식입니다. 칸 색이 진할수록 인지 부담이 큰 활동입니다. 활동 옆 번호는 관련 성취기준이며, 마우스를 올리면 원문이 나옵니다. 칸을 누르면 구체적인 주제탐구 예시와 학교생활기록부 기재 예시를 볼 수 있습니다. 기억·이해·적용 칸에는 수업 참여 활동을 함께 적었습니다. 과목을 고르면 그 과목 성취기준이 놓인 칸에만 활동을 보이고, 교육목표가 없는 칸은 빗금으로 비워 둡니다.</p></section>')
     o.append('<dialog class="dlg" id="cell-dlg" aria-labelledby="dlg-title"><div class="dlg-head"><div><span class="code" id="dlg-code"></span><h2 id="dlg-title"></h2><p id="dlg-sub"></p></div><button type="button" class="dlg-x" id="dlg-x" aria-label="닫기">×</button></div><div class="dlg-body" id="dlg-body"></div></dialog>')
     o.append('<section id="std-section" hidden><h2 id="std-title">성취기준 배치</h2><p class="lead" style="margin-bottom:12px">성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 칸을 정했습니다. 테두리가 진한 칸이 주된 칸입니다. 칸 번호를 누르면 표에서 위치를 보여 줍니다.</p><div class="scroller"><table class="st"><thead><tr><th scope="col">코드</th><th scope="col">성취기준</th><th scope="col">칸</th></tr></thead><tbody id="std-body"></tbody></table></div></section>')
-    o.append('<section><h2>탐구 경로 예시</h2><p class="lead" style="margin-bottom:16px">한 학기 탐구를 몇 칸의 순서로 묶은 예시입니다. 경로를 누르면 표에 해당 칸이 표시되고, 과목을 바꿔도 같은 칸의 과목별 활동을 볼 수 있습니다.</p><div class="paths">')
-    for i, (name, steps, desc) in enumerate(PATHS):
-        st = '<span aria-hidden="true">→</span>'.join(f'<span class="s">{s} {E(cell_name(s))}</span>' for s in steps)
-        o.append(f'<button type="button" class="path" id="path-{i}" aria-pressed="false" data-cells="{" ".join(steps)}"><h3>{E(name)}</h3><div class="steps">{st}</div><p>{E(desc)}</p></button>')
-    o.append('</div></section>')
     o.append('''<section class="guide"><h2>활용 안내</h2><ol>
 <li><b>성취기준 찾기:</b> 과목을 고르고 아래 성취기준 목록에서 수업할 성취기준의 칸을 확인합니다. 예: “이차함수의 최대, 최소를 탐구하고, 이를 실생활과 연결하여…” → 개념적 지식 × 적용(B3).</li>
 <li><b>활동 고르기:</b> 그 칸의 과목별 활동을 고르거나, 전 과목 공통 활동을 과목 내용에 맞게 바꿉니다.</li>
@@ -310,7 +373,7 @@ JS = r'''<script>
     });
   }
   function clearMarks(){document.querySelectorAll('.mx td.on').forEach(function(t){t.classList.remove('on')});
-    document.querySelectorAll('.path').forEach(function(x){x.setAttribute('aria-pressed','false')});}
+    document.querySelectorAll('.path,.fu-show').forEach(function(x){x.setAttribute('aria-pressed','false')});}
   function mark(cells){clearMarks();cells.forEach(function(c){var t=document.getElementById('c-'+c);if(t)t.classList.add('on')});
     var f=document.getElementById('c-'+cells[0]);if(f)f.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});}
   // 주제로 찾기: 칸마다 활동 틀에 주제어를 넣고, 성취기준·과목 활동에서 주제어를 찾아 함께 보여 준다
@@ -349,7 +412,7 @@ JS = r'''<script>
     stds.forEach(function(r){var c=r.x[2][0];(byCell[c]=byCell[c]||[]).push(r)});
     acts.forEach(function(r){(actCell[r.k]=actCell[r.k]||[]).push(r)});
     Object.keys(DATA.names).forEach(function(k){
-      var td=document.getElementById('c-'+k);
+      var td=document.getElementById('c-'+k);td.classList.remove('na');
       var i=Object.keys(DATA.names).indexOf(k), L=f?[[f,DATA.lens[f][k]],['',DATA.topic[k][i%2]]]:[[order[0],DATA.lens[order[0]][k]],[order[1+i%4],DATA.lens[order[1+i%4]][k]]];
       var h='<span class="code">'+k+'</span><ul>'+L.map(function(x){return '<li><span class="tpl">'+(x[0]||'추천')+'</span>'+esc(x[1].split('{t}').join(q))+'</li>'}).join('')+'</ul>';
       if(actCell[k])h+='<div class="rel"><b>과목 활동</b>'+actCell[k].slice(0,2).map(function(r){return esc(r.a)+' (<a href="#'+r.s.id+'">'+esc(r.s.name)+'</a>)'}).join(' · ')+'</div>';
@@ -378,6 +441,11 @@ JS = r'''<script>
     var h='';
     if(d.part.length) h+='<div class="callout"><b>기초 단계도 중요한 수업 참여입니다.</b> '+pr[1]+' 단계의 활동은 결과물보다 참여 과정(질문하기, 자기 말로 설명하기, 정확히 기록하기, 모둠 역할 수행)이 학생의 배움을 보여 줍니다. 수업 중 이렇게 참여하게 해 보세요.<ul>'+d.part.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>';
     var sv=curView&&curView.standards?curView:null, acts=sv&&sv.cells[k]?sv.cells[k].acts:[];
+    if(sv){var own=sv.standards.filter(function(x){return x[2].indexOf(k)>=0});
+      if(!own.length){var cs=[];sv.standards.forEach(function(x){x[2].forEach(function(c){if(cs.indexOf(c)<0)cs.push(c)})});cs.sort();
+        document.getElementById('dlg-body').innerHTML='<div class="callout"><b>'+esc(sv.name)+'에서는 이 칸을 비워 두었습니다.</b> 이 과목의 성취기준 가운데 '+esc(DATA.names[k])+'에 해당하는 목표가 없어서, 활동을 억지로 만들어 넣지 않았습니다. 교육목표가 없는 칸의 활동은 평가 근거로 삼기 어렵고 학생에게도 과목과 동떨어진 과제가 되기 쉽습니다.</div><h3>'+esc(sv.name)+' 성취기준이 놓인 칸</h3><p>'+cs.map(function(c){return '<b>'+c+'</b> '+esc(DATA.names[c])}).join(' · ')+'</p><p class="dlg-note">전 과목 공통 화면에서는 이 칸의 일반 활동을 볼 수 있습니다. 다른 과목과 함께하는 탐구라면 위쪽 ‘과목 융합 탐구’ 탭도 참고하세요.</p>';
+        hideTip();if(dlg.showModal){if(!dlg.open)dlg.showModal();}else dlg.setAttribute('open','');return;}
+      var oc=own.map(function(x){return x[0]}),fa=acts.filter(function(a){return a[1].some(function(c){return oc.indexOf(c)>=0})});if(fa.length)acts=fa;}
     if(acts.length) h+='<h3>'+esc(sv.name)+' 활동<small>이 칸에 맞춘 과목 활동</small></h3><ul>'+acts.map(function(a){return '<li>'+esc(a[0])+a[1].map(function(c){return chip(c,'')}).join('')+'</li>'}).join('')+'</ul>';
     function exCard(e){return '<div class="ex"><h4>'+esc(e.t)+'</h4><p class="q">'+esc(e.q)+'</p><ol>'+e.s.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol><p class="o">산출물: '+esc(e.o)+'</p></div>'}
     function recBox(r){return '<div class="rec"><p><span class="by">'+esc(r.by)+'</span>'+esc(r.t)+'</p><button type="button" class="copy" data-t="'+esc(r.t)+'">복사</button></div>'}
@@ -419,7 +487,11 @@ JS = r'''<script>
     if(v.standards){v.standards.forEach(function(s){s[2].forEach(function(c,i){(byCell[c]=byCell[c]||[]).push({code:s[0],main:i===0})})});}
     Object.keys(DATA.names).forEach(function(k){
       var td=document.getElementById('c-'+k), cell=v.standards?v.cells[k]:DATA.common[k];
-      var h='<span class="code">'+k+'</span><ul>'+cell.acts.map(function(a){
+      td.classList.remove('na');
+      if(v.standards&&!byCell[k]){td.classList.add('na');td.innerHTML='<span class="code">'+k+'</span><p class="na-note">이 과목 성취기준 없음</p>';return;}
+      var acts=cell.acts;
+      if(v.standards){var own=byCell[k].map(function(x){return x.code});var f=acts.filter(function(a){return a[1].some(function(c){return own.indexOf(c)>=0})});if(f.length)acts=f;}
+      var h='<span class="code">'+k+'</span><ul>'+acts.map(function(a){
         return '<li>'+esc(a[0])+a[1].map(function(c){return chip(c,'')}).join('')+'</li>'}).join('')+'</ul>';
       if(!v.standards) h+='<div class="out"><b>산출물</b> '+esc(cell.out)+'</div>';
       else if(byCell[k]) h+='<div class="stds"><b>성취기준</b> '+byCell[k].map(function(x){return chip(x.code,x.main?' main':'')}).join('')+'</div>';
@@ -428,7 +500,7 @@ JS = r'''<script>
     var sec=document.getElementById('std-section');
     if(v.standards){
       sec.hidden=false;
-      note.textContent=v.name+' 성취기준 '+v.standards.length+'개를 칸에 배치했습니다. 활동 옆 번호는 성취기준 코드의 뒷자리이고, 마우스를 올리거나 누르면 성취기준 원문이 나옵니다(예: '+short(v.standards[0][0])+' → '+v.standards[0][0]+').';
+      note.textContent=v.name+' 성취기준 '+v.standards.length+'개를 '+Object.keys(byCell).length+'칸에 배치하고, 성취기준이 놓인 칸에만 과목 활동을 제시했습니다(빗금 칸은 이 과목의 교육목표에 해당하지 않는 칸). 활동 옆 번호는 성취기준 코드의 뒷자리이고, 마우스를 올리거나 누르면 성취기준 원문이 나옵니다(예: '+short(v.standards[0][0])+' → '+v.standards[0][0]+').';
       document.getElementById('std-title').textContent=v.name+' 성취기준 배치';
       document.getElementById('std-body').innerHTML=v.standards.map(function(s){
         return '<tr><td class="c">['+esc(s[0])+']</td><td>'+esc(s[1])+'</td><td class="k">'+s[2].map(function(c,i){
@@ -447,6 +519,38 @@ JS = r'''<script>
   document.getElementById('home').addEventListener('click',function(e){e.preventDefault();hideTip();
     if(location.hash)history.pushState(null,'',location.pathname+location.search);render();
     window.scrollTo({top:0,behavior:'smooth'});});
+  // 탐구 설계 예시 탭
+  var xtabs=[document.getElementById('xt-path'),document.getElementById('xt-fusion')];
+  function selTab(t){xtabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on});clearMarks();}
+  xtabs.forEach(function(b,i){b.addEventListener('click',function(){selTab(b)});
+    b.addEventListener('keydown',function(e){if(e.key==='ArrowRight'||e.key==='ArrowLeft'){var n=xtabs[(i+(e.key==='ArrowRight'?1:xtabs.length-1))%xtabs.length];n.focus();selTab(n);}})});
+  // 과목 융합 탐구: 유형 → 특징(매트릭스 위치) → 예시(두 과목 성취기준·칸, 담을 내용, 더 탐구할 내용)
+  var fuTypes=document.getElementById('fu-types'), fuBody=document.getElementById('fu-body'), fuCur=0;
+  function mini(on,two){var h='<span></span>';DATA.processes.forEach(function(p){h+='<span>'+p[0]+'</span>'});
+    DATA.knowledge.forEach(function(kn){h+='<span>'+kn[0]+'</span>';DATA.processes.forEach(function(p){var c=kn[0]+p[0],cls='';
+      if(two){var a=two[0]===c,b=two[1]===c;cls=a&&b?'s01':a?'s0':b?'s1':'';}else if(on.indexOf(c)>=0)cls='on';
+      h+='<i class="'+cls+'" title="'+c+' '+esc(DATA.names[c])+'"></i>'})});
+    return h}
+  function renderFusion(){
+    fuTypes.innerHTML=DATA.fusion.map(function(t,i){return '<button type="button" data-i="'+i+'" aria-pressed="'+(i===fuCur)+'">'+esc(t.name)+'</button>'}).join('');
+    var t=DATA.fusion[fuCur];
+    var h='<div class="fu-type"><div><h3>'+esc(t.name)+'</h3><p class="where">매트릭스 위치: '+esc(t.where)+'</p><p>'+esc(t.feature)+'</p><p class="fu-tip"><b>이렇게 시작해 보세요</b> '+esc(t.tip)+'</p></div><div class="mini" role="img" aria-label="'+esc(t.name+'이 주로 놓이는 칸: '+t.cells.join(', '))+'">'+mini(t.cells)+'</div></div><div class="fu-list">';
+    t.examples.forEach(function(e,j){
+      var two=[e.subjects[0].cell,e.subjects[1].cell];
+      h+='<article class="fu-ex" style="--ca:var(--c-'+(AREA[e.subjects[0].area]||'base')+');--cb:var(--c-'+(AREA[e.subjects[1].area]||'base')+')"><h4>'+esc(e.title)+'</h4><p class="q">'+esc(e.q)+'</p>';
+      h+='<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start"><div class="fu-sub">'+e.subjects.map(function(s){
+        return '<div class="a-'+(AREA[s.area]||'')+'"><span class="nm"><a href="#'+s.id+'" style="color:inherit">'+esc(s.name)+'</a></span><span class="cl">'+s.cell+' '+esc(DATA.names[s.cell])+'</span><span class="st">['+esc(s.code)+'] '+esc(s.text)+'</span></div>'}).join('')+'</div>';
+      h+='<div class="mini" role="img" aria-label="'+esc(e.subjects[0].name+' '+two[0]+', '+e.subjects[1].name+' '+two[1])+'">'+mini([],two)+'</div></div>';
+      h+='<h5>실제로 담을 내용</h5><ol>'+e.what.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol><p class="o">산출물: '+esc(e.out)+'</p>';
+      h+='<h5>더 탐구해 볼 내용</h5><ul>'+e.more.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>';
+      h+='<button type="button" class="fu-show" aria-pressed="false" data-cells="'+(two[0]===two[1]?two[0]:two.join(' '))+'">표에서 보기</button></article>';
+    });
+    fuBody.innerHTML=h+'</div>';
+  }
+  fuTypes.addEventListener('click',function(e){var b=e.target.closest('button[data-i]');if(!b)return;fuCur=+b.dataset.i;clearMarks();renderFusion();});
+  fuBody.addEventListener('click',function(e){var b=e.target.closest('.fu-show');if(!b)return;var on=b.getAttribute('aria-pressed')!=='true';clearMarks();
+    if(on){mark(b.dataset.cells.split(' '));b.setAttribute('aria-pressed','true');}});
+  renderFusion();
   window.addEventListener('hashchange',render);render();
 })();
 </script>'''
@@ -480,7 +584,7 @@ LINKS = ['## 바로가기', '',
  '| 웹 미리보기 (Pages 설정 전에도 열림) | https://htmlpreview.github.io/?https://github.com/2023swhs3rd-a11y/matrix/blob/main/index.html |',
  '| HTML 원본 | [index.html](index.html) |',
  *[f'| {g} | ' + ' · '.join(f'[{s["name"]}](subjects/{s["id"]}.md)' for s in SUBJECTS if s['group'] == g) + ' |' for g in GROUPS],
- '| 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [활용 안내](#활용-안내) |', '']
+ '| 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [과목 융합 탐구](#과목-융합-탐구) · [활용 안내](#활용-안내) |', '']
 
 r = ['# 블룸의 개정 교육목표 분류로 보는 교과탐구활동 추천 매트릭스', '',
      'Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 탐구활동을 추천합니다. **2022 개정 교육과정** 고1 공통과목 14개(과학탐구실험 포함)와 2·3학년 일반선택·진로선택·융합선택 과목은 성취기준을 칸에 배치하고 과목별 활동을 따로 정리했습니다.', ''] + LINKS
@@ -499,6 +603,12 @@ r += md_matrix(lambda k: '<br>'.join('• ' + a for a in CELLS[k[0]][k[1]][0]) +
 r += ['', '## 탐구 경로 예시', '']
 for name, steps, desc in PATHS:
     r.append(f'- **{name}**: ' + ' → '.join(f'{s}({cell_name(s)})' for s in steps) + f'  \n  {desc}')
+r += ['', '## 과목 융합 탐구', '', '두 과목의 성취기준이 매트릭스의 어느 칸에서 만나는지에 따라 융합 탐구의 유형을 나눴습니다.', '']
+for t in FUSION_TYPES:
+    r += [f'### {t["name"]}', '', f'- **매트릭스 위치:** {t["where"]}', f'- **특징:** {t["feature"]}', f'- **시작하기:** {t["tip"]}', '']
+    for e in t['examples']:
+        subs = ' + '.join(f'{SUBJ_BY_ID[sid]["name"]} [{code(SUBJ_BY_ID[sid], c)}] {k}' for sid, c, k in e['subjects'])
+        r += [f'**{e["title"]}** ({subs})', '', f'- 탐구 질문: {e["q"]}', *[f'- {x}' for x in e['what']], f'- 산출물: {e["out"]}', f'- 더 탐구해 볼 내용: ' + ' / '.join(e['more']), '']
 r += ['', '## 활용 안내', '',
  '1. **성취기준 찾기:** 과목별 문서에서 수업할 성취기준의 칸을 확인합니다. 예: “이차함수의 최대, 최소를 탐구하고, 이를 실생활과 연결하여…” → 개념적 지식 × 적용(B3).',
  '2. **활동 고르기:** 그 칸의 과목별 활동을 고르거나, 전 과목 공통 활동을 과목 내용에 맞게 바꿉니다.',
@@ -521,9 +631,11 @@ for s in SUBJECTS:
     by = {}
     for c, _, cells in s['standards']:
         for k in cells: by.setdefault(k, []).append(c)
-    m += ['', '## 과목별 활동 매트릭스', '', '활동 뒤 괄호는 관련 성취기준 코드 뒷자리, 칸 끝의 “성취기준”은 그 칸에 배치된 성취기준입니다.', '']
+    m += ['', '## 과목별 활동 매트릭스', '', '활동 뒤 괄호는 관련 성취기준 코드 뒷자리, 칸 끝의 “성취기준”은 그 칸에 배치된 성취기준입니다. 성취기준이 없는 칸(—)은 이 과목의 교육목표에 해당하지 않아 활동을 제시하지 않았습니다.', '']
     def get(k, s=s):
-        acts = '<br>'.join('• ' + a + (f' ({cs.replace(",", ", ")})' if cs else '') for a, cs in s['cells'][k])
+        if k not in by: return '—'
+        own = [a for a in s['cells'][k] if set(x for x in a[1].split(',') if x) & set(by[k])] or s['cells'][k]
+        acts = '<br>'.join('• ' + a + (f' ({cs.replace(",", ", ")})' if cs else '') for a, cs in own)
         return acts + (f'<br>**성취기준:** {", ".join(by[k])}' if k in by else '')
     m += md_matrix(get)
     m.append('')
