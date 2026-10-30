@@ -9,7 +9,7 @@ from subjects_general import SUBJECTS_GENERAL
 from subjects_career import SUBJECTS_CAREER
 from subjects_convergence import SUBJECTS_CONVERGENCE
 from fusion import FUSION_TYPES
-from pyeonje import GRADES, COLS, rows as plan_rows
+from pyeonje import GRADES, COLS, GROUP_COL, AREA_CLASS, placed, rows as plan_rows
 # 고1 공통은 1학기 과목 바로 뒤에 같은 교과의 2학기 과목을 두고, 과학탐구실험은 끝에 둔다
 _PAIR = {s.get('pair', s['id']): s for s in SUBJECTS_COMMON2}
 _S1 = [x for s in _S1 for x in (s, _PAIR.pop(s['id'], None)) if x] + list(_PAIR.values())
@@ -19,6 +19,13 @@ assert len({s['id'] for s in SUBJECTS}) == len(SUBJECTS), '과목 id가 겹칩�
 GROUPS = list(dict.fromkeys(s['group'] for s in SUBJECTS))
 SUBJ_BY_ID = {s['id']: s for s in SUBJECTS}
 # 과목 성취기준이 놓인 칸: 이 칸에만 과목 활동과 예시를 보인다(목표가 없는 칸을 활동으로 억지로 채우지 않는다)
+_PLACED = placed()
+for _s in SUBJECTS:
+    assert _PLACED.get(_s['name']) == GROUP_COL[_s['group']], f'편제표 열 불일치: {_s["name"]} {_s["group"]} {_PLACED.get(_s["name"])}'
+# 국어·수학·영어·사회·과학 편제표 과목 중 매트릭스에 아직 없는 과목(출처 안내에 자동으로 적는다)
+_NAMES = {_s['name'] for _s in SUBJECTS}
+MISSING = [nm for _, name, cols in plan_rows() if name in AREA_CLASS for col in cols for nm, _ in col if nm not in _NAMES]
+MISSING_TXT = '원문을 구하지 못했거나 대체 이수 과목인 ' + '·'.join(MISSING) + f'({len(MISSING)}과목)은 아직 넣지 않았습니다.'
 def valid_cells(s): return {k for _, _, cells in s['standards'] for k in cells}
 # 융합 탐구 예시의 칸은 그 성취기준이 실제로 배치된 칸이어야 한다
 for _t in FUSION_TYPES:
@@ -110,6 +117,8 @@ p{margin:0}
 .tab::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
 .tab[aria-pressed="true"]::before{background:var(--accent-ink)}
 h1 a{color:inherit;text-decoration:none}
+/* 제목: 넓은 화면은 한 줄, 좁아지면 두 덩어리 사이에서만 줄을 바꾼다 */
+h1 a span{display:inline-block}
 h1 a:hover{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
 h1 a:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
 .tab small{font-weight:400;color:var(--muted);margin-left:4px}
@@ -230,6 +239,7 @@ footer p{max-width:140ch}
 .fu-ex h4{margin:0;font-size:16px}
 .fu-ex .q{font-size:13.5px;font-weight:600;color:var(--fg);border-left:3px solid var(--fg);padding-left:8px}
 .fu-sub{display:grid;gap:6px}
+.fu-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start}
 .fu-sub div{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:13px;align-items:baseline}
 .fu-sub .nm{font-weight:700;color:var(--accent)}
 .fu-sub .nm::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;background:var(--accent);margin-right:6px;vertical-align:1px}
@@ -248,17 +258,52 @@ footer p{max-width:140ch}
 .pj{width:100%;min-width:860px;border-collapse:collapse;background:var(--surface);font-size:13.5px}
 .pj th,.pj td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
 .pj thead th{background:var(--bg);font-size:13px}
-.pj tbody th{white-space:nowrap}
+.pj thead th:nth-child(2),.pj td.c0{background:color-mix(in srgb,var(--c-base) 7%,var(--surface))}
+.pj tbody th{white-space:nowrap;border-left:4px solid var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--surface))}
 .pj tbody th small{display:block;font-weight:500;color:var(--muted);font-size:11.5px}
+.pj tbody tr:hover td{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
 .pj ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 6px}
-.pj li{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:6px;padding:2px 6px;background:var(--bg)}
-.pj li a{color:var(--fg);text-underline-offset:2px}
+.pj li{display:inline-flex;align-items:center;gap:5px;border:1px solid color-mix(in srgb,var(--accent) 22%,var(--line));border-radius:6px;padding:2px 6px;background:var(--surface)}
+.pj li a{color:var(--fg);text-decoration-color:color-mix(in srgb,var(--accent) 70%,transparent);text-underline-offset:3px}
 .pj td.none{color:var(--muted);font-size:12px}
-.gb{font-size:10.5px;font-weight:700;border-radius:4px;padding:0 4px;line-height:1.6;white-space:nowrap}
-.gb.g5{background:var(--fg);color:var(--bg)} .gb.ae{border:1px solid var(--fg);color:var(--fg)}
-.gb.abc{border:1px dashed var(--muted);color:var(--muted)} .gb.p{background:var(--line);color:var(--muted)}
+/* 등급 표시: 기본인 5등급은 옅게, 등급이 없는 과목은 색으로 드러낸다 */
+.gb{font-size:10.5px;font-weight:700;border-radius:4px;padding:0 5px;line-height:1.6;white-space:nowrap;border:1px solid transparent}
+.gb.g5{background:var(--bg);color:var(--muted);border-color:var(--line)}
+.gb.ae{background:color-mix(in srgb,#2b67a8 14%,var(--surface));color:color-mix(in srgb,#2b67a8 75%,var(--fg));border-color:color-mix(in srgb,#2b67a8 35%,transparent)}
+.gb.abc{background:color-mix(in srgb,#c07a12 14%,var(--surface));color:color-mix(in srgb,#c07a12 70%,var(--fg));border-color:color-mix(in srgb,#c07a12 35%,transparent)}
+.gb.p{background:color-mix(in srgb,#2f8a5b 14%,var(--surface));color:color-mix(in srgb,#2f8a5b 70%,var(--fg));border-color:color-mix(in srgb,#2f8a5b 35%,transparent)}
 .pj-note{font-size:12.5px;color:var(--muted);margin-top:10px;display:grid;gap:4px;max-width:140ch}
 
+.swipe{display:none;font-size:12px;color:var(--muted);margin-bottom:6px}
+/* 모바일: 탭 이름 줄임, 매트릭스 첫 열 고정·축소, 편제표는 교과별 카드로 */
+@media (max-width:640px){
+  .wrap{padding-block:24px 48px;gap:28px}
+  .ex-tabs .wide{display:none}
+  .ex-tabs button{padding:8px 10px;font-size:14.5px}
+  .swipe{display:block}
+  table.mx{min-width:1240px}
+  .mx th.corner{width:92px;font-size:11px;padding:10px 8px}
+  .mx th,.mx td{padding:10px}
+  .mx .corner,.mx th.dim{position:sticky;left:0;z-index:2;box-shadow:1px 0 0 var(--line)}
+  .mx thead .corner{background:var(--surface)}
+  .mx th.dim{padding:10px 8px}
+  .mx th.dim .def{display:none}
+  .mx th.dim .ko{font-size:15px}
+  .pj-wrap{border:0;background:none;overflow:visible}
+  .pj{min-width:0;background:none}
+  .pj thead{display:none}
+  .pj,.pj tbody,.pj tr,.pj th,.pj td{display:block}
+  .pj tr{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-bottom:12px;background:var(--surface)}
+  .pj th,.pj td{border:0;border-top:1px solid var(--line)}
+  .pj tbody th{border-top:0;border-left:4px solid var(--accent);display:flex;gap:8px;align-items:baseline}
+  .pj tbody th small{display:inline}
+  .pj td::before{content:attr(data-col);display:block;font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:4px}
+  .pj td.none{display:none}
+  .fu-top{grid-template-columns:1fr}
+  .fu-top .mini,.fu-type .mini{justify-self:start}
+  .fu-sub div{grid-template-columns:1fr}
+  .fu-sub .st{grid-column:1}
+}
 </style>
 """
 
@@ -292,7 +337,7 @@ def cell_extra(k):
 def explore():
     # 상단 탭: 탐구 경로 예시 · 과목 융합 탐구
     o = ['<section class="explore" aria-label="탐구 설계 예시와 편제표">',
-         '<div class="ex-tabs" role="tablist" aria-label="탐구 설계 예시와 편제표"><button type="button" role="tab" id="xt-path" aria-controls="xp-path" aria-selected="true">탐구 경로 예시</button><button type="button" role="tab" id="xt-fusion" aria-controls="xp-fusion" aria-selected="false" tabindex="-1">과목 융합 탐구</button><button type="button" role="tab" id="xt-plan" aria-controls="xp-plan" aria-selected="false" tabindex="-1">2022 개정 일반고 편제표</button></div>',
+         '<div class="ex-tabs" role="tablist" aria-label="탐구 설계 예시와 편제표"><button type="button" role="tab" id="xt-path" aria-controls="xp-path" aria-selected="true">탐구 경로 예시</button><button type="button" role="tab" id="xt-fusion" aria-controls="xp-fusion" aria-selected="false" tabindex="-1">과목 융합 탐구</button><button type="button" role="tab" id="xt-plan" aria-controls="xp-plan" aria-selected="false" tabindex="-1"><span class="wide">2022 개정 </span>일반고 편제표</button></div>',
          '<div role="tabpanel" id="xp-path" aria-labelledby="xt-path"><p class="lead" style="margin-bottom:16px">한 학기 탐구를 몇 칸의 순서로 묶은 예시입니다. 경로를 누르면 아래 표에 해당 칸이 표시되고, 과목을 바꿔도 같은 칸의 과목별 활동을 볼 수 있습니다.</p><div class="paths">']
     for i, (name, steps, desc) in enumerate(PATHS):
         st = '<span aria-hidden="true">→</span>'.join(f'<span class="s">{s} {E(cell_name(s))}</span>' for s in steps)
@@ -314,18 +359,19 @@ def pyeonje():
          '<div class="pj-intro"><p>2022 개정 교육과정 일반고 보통교과의 과목 편제입니다. 고1은 공통과목을, 고2·3은 일반선택·진로선택·융합선택 과목을 학교 편성에 따라 골라 듣습니다. 과목마다 <b>내신 등급을 내는지</b> 함께 표시했습니다(2025학년도 고1부터, 2028학년도 대입 적용).</p>'
          '<p class="fu-how">밑줄 친 과목 이름을 누르면 그 과목의 성취기준을 배치한 매트릭스로 갑니다. 밑줄이 없는 과목은 이 매트릭스에 아직 넣지 않은 과목입니다.</p></div>',
          f'<div class="pj-legend" aria-label="등급 표시">{legend}</div>',
-         '<div class="scroller"><table class="pj"><thead><tr><th scope="col">교과(군)</th>' + ''.join(f'<th scope="col">{c}</th>' for c in COLS) + '</tr></thead><tbody>']
+         '<div class="scroller pj-wrap"><table class="pj"><thead><tr><th scope="col">교과(군)</th>' + ''.join(f'<th scope="col">{c}</th>' for c in COLS) + '</tr></thead><tbody>']
     for grp, name, cols in plan_rows():
-        o.append(f'<tr><th scope="row">{E(name)}<small>{E(grp)}</small></th>')
+        ac = AREA_CLASS.get(name, '')
+        o.append(f'<tr class="{ac}"><th scope="row">{E(name)}<small>{E(grp)}</small></th>')
         for i, col in enumerate(cols):
             if not col:
-                o.append('<td class="none">' + ('공통과목 없음' if i == 0 else '') + '</td>')
+                o.append(f'<td class="none c{i}" data-col="{COLS[i]}">' + ('공통과목 없음' if i == 0 else '') + '</td>')
                 continue
             lis = []
             for nm, g in col:
                 t = f'<a href="#{by_name[nm]}">{E(nm)}</a>' if nm in by_name else E(nm)
                 lis.append(f'<li>{t}<b class="gb {g}" title="{E(GRADES[g][1])}">{E(GRADES[g][0])}</b></li>')
-            o.append(f'<td><ul>{"".join(lis)}</ul></td>')
+            o.append(f'<td class="c{i}" data-col="{COLS[i]}"><ul>{"".join(lis)}</ul></td>')
         o.append('</tr>')
     o.append('</tbody></table></div>')
     o.append('<div class="pj-note"><p><b>등급 산출 기준</b> 공통·일반선택·진로선택 과목과 융합선택 과목은 5등급 상대평가(1등급 10%, 2등급 24%, 3등급 32%, 4등급 24%, 5등급 10%)와 성취도(A~E)를 함께 적습니다. 다만 사회·과학 교과의 융합선택 9과목은 성취도(A~E)만 적습니다. 체육·예술 교과와 과학탐구실험1·2는 성취도(A·B·C)만, 교양 교과는 이수 여부(P)만 적습니다.</p>'
@@ -336,11 +382,11 @@ def pyeonje():
 def body():
     o = ['<div class="wrap">', '<header>',
          '<span class="eyebrow">BLOOM’S REVISED TAXONOMY × 2022 개정 교육과정</span>',
-         '<h1><a href="./" id="home" title="처음 화면으로">블룸의 개정 교육목표 분류로 보는<br>교과탐구활동 추천 매트릭스</a></h1>',
+         '<h1><a href="./" id="home" title="처음 화면으로"><span>블룸의 개정 교육목표 분류로 보는</span> <span>교과탐구활동 추천 매트릭스</span></a></h1>',
          '<p class="lead">지식 차원 4가지와 인지 과정 6가지를 교차한 24칸에 탐구활동을 추천합니다. 과목을 고르면 2022 개정 교육과정 성취기준을 칸에 배치하고, 그 성취기준에 맞춘 과목별 활동을 보여 줍니다.</p>',
          '</header>', *explore(),
          '<section aria-label="과목 선택" class="picker"><div class="areas" role="tablist" aria-label="교과" id="areas"></div><div class="panel" id="panel" hidden></div><form class="topic" id="topic-form" role="search" aria-label="주제로 활동 찾기"><label for="topic-q">주제로 찾기</label><input id="topic-q" type="search" placeholder="탐구 주제 (예: 미세플라스틱, 인공지능 윤리)" autocomplete="off"><select id="topic-f" aria-label="분야(교과)"><option value="">전체 교과</option><option>국어</option><option>수학</option><option>영어</option><option>사회</option><option>과학</option></select><button type="submit">활동 추천</button></form><p class="subject-note" id="subject-note"></p></section>',
-         '<section><div class="scroller"><table class="mx" id="mx">', '<thead><tr><th class="corner" scope="col">지식 차원 ↓ / 인지 과정 →</th>']
+         '<section><p class="swipe">표를 옆으로 밀면 인지 과정 6단계를 모두 볼 수 있습니다. 왼쪽 지식 차원 열은 고정됩니다.</p><div class="scroller"><table class="mx" id="mx">', '<thead><tr><th class="corner" scope="col">지식 차원 ↓ / 인지 과정 →</th>']
     for code, ko, en, d, v in PROCESSES:
         o.append(f'<th scope="col"><span class="en">{code}. {en}</span><span class="ko">{ko}</span><span class="def">{E(d)}</span><span class="vb">{E(v)}</span></th>')
     o.append('</tr></thead><tbody>')
@@ -364,7 +410,7 @@ def body():
 </ol></section>''')
     stamp = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M')
     total = sum(len(x['standards']) for x in SUBJECTS)
-    o.append(f'<footer><p id="version">업데이트 {stamp} (KST) · 과목 {len(SUBJECTS)}개 · 성취기준 {total}개</p><p>작성: 봉일천고등학교 진로진학부장 전중수 <a href="mailto:jungsooj@korea.kr">jungsooj@korea.kr</a></p><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목, 2·3학년 일반선택·진로선택·융합선택 과목. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), 국가교육과정정보센터(NCIC) 원문과 다시 확인해 사용하세요. 원문을 구하지 못한 현대사회와 윤리, 영어 진로선택 4과목(영어 발표와 토론·심화 영어·심화 영어 독해와 작문·직무 영어), 융합선택 4과목(실생활 영어 회화·미디어 영어·역사로 탐구하는 현대 세계·윤리문제 탐구)은 아직 넣지 않았습니다.</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p><p class="links"><b>원문 자료</b> <a href="https://ncic.re.kr/" target="_blank" rel="noopener">국가교육과정정보센터(NCIC)</a>: 2022 개정 교육과정 원문(교육부 고시 제2022-33호)과 교과별 교육과정 해설서 · <a href="https://www.kice.re.kr/" target="_blank" rel="noopener">한국교육과정평가원(KICE)</a>: 교육과정·평가 연구 자료 · <a href="https://www.moe.go.kr/" target="_blank" rel="noopener">교육부</a>: 교육과정 고시와 정책 자료 · <a href="https://star.moe.go.kr/" target="_blank" rel="noopener">교육부 학생평가 지원포털</a>: 성취수준과 평가 기준</p></footer>')
+    o.append(f'<footer><p id="version">업데이트 {stamp} (KST) · 과목 {len(SUBJECTS)}개 · 성취기준 {total}개</p><p>작성: 봉일천고등학교 진로진학부장 전중수 <a href="mailto:jungsooj@korea.kr">jungsooj@korea.kr</a></p><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목, 2·3학년 일반선택·진로선택·융합선택 과목. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), 국가교육과정정보센터(NCIC) 원문과 다시 확인해 사용하세요. {MISSING_TXT}</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p><p class="links"><b>원문 자료</b> <a href="https://ncic.re.kr/" target="_blank" rel="noopener">국가교육과정정보센터(NCIC)</a>: 2022 개정 교육과정 원문(교육부 고시 제2022-33호)과 교과별 교육과정 해설서 · <a href="https://www.kice.re.kr/" target="_blank" rel="noopener">한국교육과정평가원(KICE)</a>: 교육과정·평가 연구 자료 · <a href="https://www.moe.go.kr/" target="_blank" rel="noopener">교육부</a>: 교육과정 고시와 정책 자료 · <a href="https://star.moe.go.kr/" target="_blank" rel="noopener">교육부 학생평가 지원포털</a>: 성취수준과 평가 기준</p></footer>')
     o.append('</div>')
     o.append('<script>var DATA=' + json.dumps(payload(), ensure_ascii=False) + ';</script>')
     o.append(JS)
@@ -590,7 +636,7 @@ JS = r'''<script>
     t.examples.forEach(function(e,j){
       var two=[e.subjects[0].cell,e.subjects[1].cell];
       h+='<article class="fu-ex" style="--ca:var(--c-'+(AREA[e.subjects[0].area]||'base')+');--cb:var(--c-'+(AREA[e.subjects[1].area]||'base')+')"><h4>'+esc(e.title)+'</h4><p class="q">'+esc(e.q)+'</p>';
-      h+='<div style="display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start"><div class="fu-sub">'+e.subjects.map(function(s){
+      h+='<div class="fu-top"><div class="fu-sub">'+e.subjects.map(function(s){
         return '<div class="a-'+(AREA[s.area]||'')+'"><span class="nm"><a href="#'+s.id+'" style="color:inherit">'+esc(s.name)+'</a></span><span class="cl">'+s.cell+' '+esc(DATA.names[s.cell])+'</span><span class="st">['+esc(s.code)+'] '+esc(s.text)+'</span></div>'}).join('')+'</div>';
       h+='<div class="mini" role="img" aria-label="'+esc(e.subjects[0].name+' '+two[0]+', '+e.subjects[1].name+' '+two[1])+'">'+mini([],two)+'</div></div>';
       h+='<h5>실제로 담을 내용</h5><ol>'+e.what.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol><p class="o">산출물: '+esc(e.out)+'</p>';
@@ -673,7 +719,7 @@ r += ['', '## 활용 안내', '',
  '3. **단계 배치:** 주된 칸의 왼쪽이나 위쪽 칸에서 시작해 2~4칸을 이어 탐구 경로를 만듭니다.',
  '4. **평가 정렬:** 주된 칸의 활동 결과물을 수행평가 대상으로 삼아 성취기준, 활동, 평가를 같은 칸에 맞춥니다.', '',
  '## 출처와 수정 방법', '',
- '- 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr) 원문과 다시 확인해 사용하세요. 일반선택 중 원문을 구하지 못한 현대사회와 윤리, 영어 진로선택 4과목(영어 발표와 토론·심화 영어·심화 영어 독해와 작문·직무 영어), 융합선택 4과목(실생활 영어 회화·미디어 영어·역사로 탐구하는 현대 세계·윤리문제 탐구)은 아직 넣지 않았습니다.',
+ '- 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr) 원문과 다시 확인해 사용하세요. ' + MISSING_TXT + '',
  '- 칸 배치는 성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 한 예시이며 교사 판단에 따라 바꿀 수 있습니다.',
  '- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(고1 공통), `tools/subjects_common2.py`(고1 2학기·과학탐구실험), `tools/subjects_general.py`(일반선택), `tools/subjects_career.py`(진로선택), `tools/subjects_convergence.py`(융합선택)에 있습니다. 과목별 칸 상세 예시(주제탐구 예시와 세특 기재 예시)는 `tools/detail/<과목 id>.txt`에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.', '',
  '작성: 봉일천고등학교 진로진학부장 전중수 (jungsooj@korea.kr)', '',
