@@ -216,7 +216,7 @@ footer p{max-width:140ch}
 /* 탐구 설계 예시: 탭(탐구 경로 · 과목 융합 탐구) */
 .explore{display:grid;gap:12px}
 .explore>*,.explore [role=tabpanel]{min-width:0}
-.ex-tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+.ex-tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--line)}
 .ex-tabs button{font:inherit;font-size:15px;font-weight:700;color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:8px 14px;margin-bottom:-1px;cursor:pointer;white-space:nowrap}
 .ex-tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
 .ex-tabs button:focus-visible{outline:2px solid var(--fg);outline-offset:-2px}
@@ -344,7 +344,7 @@ def explore():
         o.append(f'<button type="button" class="path" id="path-{i}" aria-pressed="false" data-cells="{" ".join(steps)}"><h3>{E(name)}</h3><div class="steps">{st}</div><p>{E(desc)}</p></button>')
     o.append('</div></div>')
     o.append('<div role="tabpanel" id="xp-fusion" aria-labelledby="xt-fusion" hidden>'
-             '<div class="fu-intro"><p><b>융합 탐구</b>는 두 과목의 성취기준을 하나의 탐구 질문으로 묶는 탐구입니다. 두 과목의 성취기준이 매트릭스의 <b>어느 칸에서 만나는지</b> 보면 탐구의 성격이 보입니다. 같은 행(지식 차원)에서 만나면 개념끼리 잇는 탐구가, 한 과목이 절차(C행)를 맡으면 방법을 빌려 쓰는 탐구가, 평가·창안 열에서 만나면 판단하거나 만들어 내는 탐구가 됩니다.</p>'
+             '<div class="fu-intro"><p><b>융합 탐구</b>는 두 과목의 성취기준을 하나의 탐구 질문으로 묶는 탐구입니다. 두 과목의 성취기준이 매트릭스의 <b>어느 칸에서 만나는지</b> 보면 탐구의 성격이 보입니다. 두 과목이 조사한 사실과 자료(A행)를 한데 겹치면 자료를 결합하는 탐구가, 같은 개념 행(B행)에서 만나면 개념끼리 잇는 탐구가, 한 과목이 절차(C행)를 맡으면 방법을 빌려 쓰는 탐구가, 평가·창안 열에서 만나면 판단하거나 만들어 내는 탐구가 됩니다.</p>'
              '<p class="fu-how">유형을 고르면 특징과 예시가 나옵니다. 예시의 <b>표에서 보기</b>를 누르면 아래 매트릭스에 두 과목의 칸이 표시됩니다.</p></div>'
              '<div class="fu-types" role="group" aria-label="융합 탐구 유형" id="fu-types"></div><div id="fu-body"></div></div>')
     o += pyeonje()
