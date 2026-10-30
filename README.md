@@ -13,7 +13,7 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | 일반선택 | [화법과 언어](subjects/hwaeon.md) · [독서와 작문](subjects/dokjak.md) · [문학](subjects/lit.md) · [대수](subjects/alg.md) · [미적분Ⅰ](subjects/calc1.md) · [확률과 통계](subjects/prob.md) · [영어Ⅰ](subjects/eng1.md) · [영어Ⅱ](subjects/eng2.md) · [영어 독해와 작문](subjects/engrw.md) · [세계시민과 지리](subjects/wgeo.md) · [세계사](subjects/whis.md) · [사회와 문화](subjects/socul.md) · [물리학](subjects/phys.md) · [화학](subjects/chem.md) · [생명과학](subjects/bio.md) · [지구과학](subjects/earth.md) |
 | 진로선택 | [주제 탐구 독서](subjects/jutam.md) · [문학과 영상](subjects/litfilm.md) · [직무 의사소통](subjects/jikui.md) · [기하](subjects/geom.md) · [미적분Ⅱ](subjects/calc2.md) · [경제 수학](subjects/econmath.md) · [인공지능 수학](subjects/aimath.md) · [직무 수학](subjects/jobmath.md) · [한국지리 탐구](subjects/hantam.md) · [도시의 미래 탐구](subjects/dotam.md) · [동아시아 역사 기행](subjects/dongyeok.md) · [정치](subjects/politics.md) · [법과 사회](subjects/law.md) · [경제](subjects/econ.md) · [윤리와 사상](subjects/ethics.md) · [인문학과 윤리](subjects/humeth.md) · [국제 관계의 이해](subjects/intl.md) · [영미 문학 읽기](subjects/litread.md) · [역학과 에너지](subjects/mech.md) · [전자기와 양자](subjects/emq.md) · [물질과 에너지](subjects/mateng.md) · [화학 반응의 세계](subjects/chemrx.md) · [세포와 물질대사](subjects/cellmet.md) · [생물의 유전](subjects/genet.md) · [지구시스템과학](subjects/earthsys.md) · [행성우주과학](subjects/space.md) |
 | 융합선택 | [독서 토론과 글쓰기](subjects/dokto.md) · [매체 의사소통](subjects/maeui.md) · [언어생활 탐구](subjects/eontam.md) · [수학과 문화](subjects/mathcul.md) · [실용 통계](subjects/prstat.md) · [수학과제 탐구](subjects/mathproj.md) · [과학의 역사와 문화](subjects/scihist.md) · [기후변화와 환경생태](subjects/climeco.md) · [융합과학 탐구](subjects/convsci.md) · [세계 문화와 영어](subjects/worldcul.md) · [여행지리](subjects/travel.md) · [사회문제 탐구](subjects/socprob.md) · [금융과 경제생활](subjects/finance.md) · [기후변화와 지속가능한 세계](subjects/climsus.md) |
-| 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [과목 융합 탐구](#과목-융합-탐구) · [활용 안내](#활용-안내) |
+| 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [과목 융합 탐구](#과목-융합-탐구) · [편제표](#2022-개정-일반고-편제표) · [활용 안내](#활용-안내) |
 
 ## 두 축
 
@@ -244,6 +244,27 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 - 더 탐구해 볼 내용: 표본 편향과 동의 절차가 응답 결과에 준 영향을 비교해 보기 / 다른 과목의 실험 탐구에도 같은 점검표를 적용해 보기
 
 
+## 2022 개정 일반고 편제표
+
+과목 옆 표시는 내신 등급 산출 방식입니다(2025학년도 고1부터, 2028학년도 대입 적용). **5등급**: 5등급 상대평가와 성취도(A~E)를 함께 적습니다. · **A~E**: 성취도(A~E)만 적고 등급은 내지 않습니다. · **A·B·C**: 성취도(A·B·C)만 적고 등급은 내지 않습니다. · **P**: 이수 여부(P)만 적습니다.
+
+| 교과(군) | 공통 | 일반선택 | 진로선택 | 융합선택 |
+|---|---|---|---|---|
+| 국어 (기초) | [공통국어1](subjects/kor.md) `5등급`, [공통국어2](subjects/kor2.md) `5등급` | [화법과 언어](subjects/hwaeon.md) `5등급`, [독서와 작문](subjects/dokjak.md) `5등급`, [문학](subjects/lit.md) `5등급` | [주제 탐구 독서](subjects/jutam.md) `5등급`, [문학과 영상](subjects/litfilm.md) `5등급`, [직무 의사소통](subjects/jikui.md) `5등급` | [독서 토론과 글쓰기](subjects/dokto.md) `5등급`, [매체 의사소통](subjects/maeui.md) `5등급`, [언어생활 탐구](subjects/eontam.md) `5등급` |
+| 수학 (기초) | [공통수학1](subjects/math.md) `5등급`, [공통수학2](subjects/math2.md) `5등급`, 기본수학1 `5등급`, 기본수학2 `5등급` | [대수](subjects/alg.md) `5등급`, [미적분Ⅰ](subjects/calc1.md) `5등급`, [확률과 통계](subjects/prob.md) `5등급` | [기하](subjects/geom.md) `5등급`, [미적분Ⅱ](subjects/calc2.md) `5등급`, [경제 수학](subjects/econmath.md) `5등급`, [인공지능 수학](subjects/aimath.md) `5등급`, [직무 수학](subjects/jobmath.md) `5등급` | [수학과 문화](subjects/mathcul.md) `5등급`, [실용 통계](subjects/prstat.md) `5등급`, [수학과제 탐구](subjects/mathproj.md) `5등급` |
+| 영어 (기초) | [공통영어1](subjects/eng.md) `5등급`, [공통영어2](subjects/ceng2.md) `5등급`, 기본영어1 `5등급`, 기본영어2 `5등급` | [영어Ⅰ](subjects/eng1.md) `5등급`, [영어Ⅱ](subjects/eng2.md) `5등급`, [영어 독해와 작문](subjects/engrw.md) `5등급` | [영미 문학 읽기](subjects/litread.md) `5등급`, 영어 발표와 토론 `5등급`, 심화 영어 `5등급`, 심화 영어 독해와 작문 `5등급`, 직무 영어 `5등급` | 실생활 영어 회화 `5등급`, 미디어 영어 `5등급`, [세계 문화와 영어](subjects/worldcul.md) `5등급` |
+| 사회(역사/도덕 포함) (탐구) | [한국사1](subjects/his.md) `5등급`, [한국사2](subjects/his2.md) `5등급`, [통합사회1](subjects/soc.md) `5등급`, [통합사회2](subjects/soc2.md) `5등급` | [세계시민과 지리](subjects/wgeo.md) `5등급`, [세계사](subjects/whis.md) `5등급`, [사회와 문화](subjects/socul.md) `5등급`, 현대사회와 윤리 `5등급` | [한국지리 탐구](subjects/hantam.md) `5등급`, [도시의 미래 탐구](subjects/dotam.md) `5등급`, [동아시아 역사 기행](subjects/dongyeok.md) `5등급`, [정치](subjects/politics.md) `5등급`, [법과 사회](subjects/law.md) `5등급`, [경제](subjects/econ.md) `5등급`, [윤리와 사상](subjects/ethics.md) `5등급`, [인문학과 윤리](subjects/humeth.md) `5등급`, [국제 관계의 이해](subjects/intl.md) `5등급` | [여행지리](subjects/travel.md) `A~E`, 역사로 탐구하는 현대 세계 `A~E`, [사회문제 탐구](subjects/socprob.md) `A~E`, [금융과 경제생활](subjects/finance.md) `A~E`, 윤리문제 탐구 `A~E`, [기후변화와 지속가능한 세계](subjects/climsus.md) `A~E` |
+| 과학 (탐구) | [통합과학1](subjects/sci.md) `5등급`, [통합과학2](subjects/sci2.md) `5등급`, [과학탐구실험1](subjects/lab1.md) `A·B·C`, [과학탐구실험2](subjects/lab2.md) `A·B·C` | [물리학](subjects/phys.md) `5등급`, [화학](subjects/chem.md) `5등급`, [생명과학](subjects/bio.md) `5등급`, [지구과학](subjects/earth.md) `5등급` | [역학과 에너지](subjects/mech.md) `5등급`, [전자기와 양자](subjects/emq.md) `5등급`, [물질과 에너지](subjects/mateng.md) `5등급`, [화학 반응의 세계](subjects/chemrx.md) `5등급`, [세포와 물질대사](subjects/cellmet.md) `5등급`, [생물의 유전](subjects/genet.md) `5등급`, [지구시스템과학](subjects/earthsys.md) `5등급`, [행성우주과학](subjects/space.md) `5등급` | [과학의 역사와 문화](subjects/scihist.md) `A~E`, [기후변화와 환경생태](subjects/climeco.md) `A~E`, [융합과학 탐구](subjects/convsci.md) `A~E` |
+| 체육 (체육·예술) | – | 체육1 `A·B·C`, 체육2 `A·B·C` | 운동과 건강 `A·B·C`, 스포츠 문화 `A·B·C`, 스포츠 과학 `A·B·C` | 스포츠 생활1 `A·B·C`, 스포츠 생활2 `A·B·C` |
+| 예술 (체육·예술) | – | 음악 `A·B·C`, 미술 `A·B·C`, 연극 `A·B·C` | 음악 연주와 창작 `A·B·C`, 음악 감상과 비평 `A·B·C`, 미술 창작 `A·B·C`, 미술 감상과 비평 `A·B·C` | 음악과 미디어 `A·B·C`, 미술과 매체 `A·B·C` |
+| 기술·가정 (생활·교양) | – | 기술·가정 `5등급` | 로봇과 공학세계 `5등급`, 생활과학 탐구 `5등급` | 창의 공학 설계 `5등급`, 지식 재산 일반 `5등급`, 생애 설계와 자립 `5등급`, 아동발달과 부모 `5등급` |
+| 정보 (생활·교양) | – | 정보 `5등급` | 인공지능 기초 `5등급`, 데이터 과학 `5등급` | 소프트웨어와 생활 `5등급` |
+| 제2외국어 (생활·교양) | – | 독일어 `5등급`, 프랑스어 `5등급`, 스페인어 `5등급`, 중국어 `5등급`, 일본어 `5등급`, 러시아어 `5등급`, 아랍어 `5등급`, 베트남어 `5등급` | ○○어 회화 `5등급`, 심화 ○○어 `5등급` | ○○어권 문화 `5등급` |
+| 한문 (생활·교양) | – | 한문 `5등급` | 한문 고전 읽기 `5등급` | 언어생활과 한자 `5등급` |
+| 교양 (생활·교양) | – | 진로와 직업 `P`, 생태와 환경 `P` | 인간과 철학 `P`, 논리와 사고 `P`, 인간과 심리 `P`, 교육의 이해 `P`, 삶과 종교 `P`, 보건 `P` | 인간과 경제활동 `P`, 논술 `P` |
+
+5등급 비율은 10·24·32·24·10%입니다. 사회·과학 융합선택 9과목은 성취도(A~E)만, 체육·예술과 과학탐구실험1·2는 성취도(A·B·C)만, 교양은 이수 여부(P)만 적습니다. 출처: 교육부 고시 제2022-33호 총론, 교육부 「2028 대학입시제도 개편 확정안」(2023-12-27). 학교 편성표와 NCIC 원문으로 다시 확인하세요.
+
 ## 활용 안내
 
 1. **성취기준 찾기:** 과목별 문서에서 수업할 성취기준의 칸을 확인합니다. 예: “이차함수의 최대, 최소를 탐구하고, 이를 실생활과 연결하여…” → 개념적 지식 × 적용(B3).
@@ -256,5 +277,7 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 - 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr) 원문과 다시 확인해 사용하세요. 일반선택 중 원문을 구하지 못한 현대사회와 윤리, 영어 진로선택 4과목(영어 발표와 토론·심화 영어·심화 영어 독해와 작문·직무 영어), 융합선택 4과목(실생활 영어 회화·미디어 영어·역사로 탐구하는 현대 세계·윤리문제 탐구)은 아직 넣지 않았습니다.
 - 칸 배치는 성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 한 예시이며 교사 판단에 따라 바꿀 수 있습니다.
 - 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(고1 공통), `tools/subjects_common2.py`(고1 2학기·과학탐구실험), `tools/subjects_general.py`(일반선택), `tools/subjects_career.py`(진로선택), `tools/subjects_convergence.py`(융합선택)에 있습니다. 과목별 칸 상세 예시(주제탐구 예시와 세특 기재 예시)는 `tools/detail/<과목 id>.txt`에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.
+
+작성: 봉일천고등학교 진로진학부장 전중수 (jungsooj@korea.kr)
 
 Anderson, L. W., & Krathwohl, D. R. (Eds.). (2001). *A Taxonomy for Learning, Teaching, and Assessing: A Revision of Bloom’s Taxonomy of Educational Objectives.* Longman.
