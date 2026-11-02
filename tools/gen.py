@@ -26,6 +26,14 @@ for _s in SUBJECTS:
 _NAMES = {_s['name'] for _s in SUBJECTS}
 MISSING = [nm for _, name, cols in plan_rows() if name in AREA_CLASS for col in cols for nm, _ in col if nm not in _NAMES]
 MISSING_TXT = '원문을 구하지 못했거나 대체 이수 과목인 ' + '·'.join(MISSING) + f'({len(MISSING)}과목)은 아직 넣지 않았습니다.'
+# 과목 칸의 활동은 그 칸에 놓인 성취기준을 하나 이상 근거로 삼아야 한다(화면은 근거가 맞는 활동만 보인다)
+for _s in SUBJECTS:
+    _by = {}
+    for _c, _, _cells in _s['standards']:
+        for _k in _cells: _by.setdefault(_k, set()).add(_c)
+    for _k, _codes in _by.items():
+        _refs = [set(r.strip() for r in a[1].split(',') if r.strip()) for a in _s['cells'].get(_k, [])]
+        assert any(r & _codes for r in _refs), f'칸 활동 근거 없음: {_s["id"]} {_k}'
 def valid_cells(s): return {k for _, _, cells in s['standards'] for k in cells}
 # 융합 탐구 예시의 칸은 그 성취기준이 실제로 배치된 칸이어야 한다
 for _t in FUSION_TYPES:
@@ -52,6 +60,19 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 
 CSS = """
 <title>블룸 교과탐구활동 매트릭스</title>
+<meta name="description" content="블룸의 개정 교육목표 분류(지식 4차원 × 인지 과정 6단계) 24칸에 2022 개정 교육과정 70과목 성취기준을 배치하고, 과목별 탐구활동과 세특 기재 예시를 추천합니다.">
+<!-- 카카오톡·SNS 링크 미리보기(og.png 원본은 tools/og.html) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="봉일천고 진로진학 자료실">
+<meta property="og:title" content="블룸의 개정 교육목표 분류로 보는 교과탐구활동 추천 매트릭스">
+<meta property="og:description" content="70과목 성취기준을 24칸에 배치하고 과목별 탐구활동·세특 기재 예시, 과목 융합 탐구, 2022 개정 일반고 편제표를 함께 제공합니다.">
+<meta property="og:url" content="https://2023swhs3rd-a11y.github.io/matrix/">
+<meta property="og:image" content="https://2023swhs3rd-a11y.github.io/matrix/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="블룸의 개정 교육목표 분류로 보는 교과탐구활동 추천 매트릭스">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M4 13c9-4 19-3 26 2v38c-7-5-17-6-26-2z' fill='%232b67a8'/><path d='M60 13c-9-4-19-3-26 2v38c7-5 17-6 26-2z' fill='%235b8fd0'/><circle cx='41' cy='36' r='12' fill='%23fff' stroke='%231d2733' stroke-width='5'/><path d='M50 45l9 9' stroke='%231d2733' stroke-width='7' stroke-linecap='round'/></svg>">
 <meta name="claude:viewport-fit-sides" content="cover">
 %%FONT%%
@@ -108,22 +129,22 @@ p{margin:0}
 .area-tab:hover{color:var(--fg)}
 .area-tab[aria-selected="true"]{color:var(--fg);background:color-mix(in srgb,var(--accent) 14%,var(--surface));border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
 .area-tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.panel{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 28px;padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.panel{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px 28px;padding:16px 18px;border:1px solid color-mix(in srgb,var(--accent) 30%,var(--line));border-top:3px solid color-mix(in srgb,var(--accent) 60%,var(--line));border-radius:12px;background:color-mix(in srgb,var(--accent) 4%,var(--surface))}
 .panel[hidden]{display:none}
 .col h3{margin:0 0 8px;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.04em}
 .col h3 span{font-weight:400;margin-left:6px}
 .col div{display:flex;flex-wrap:wrap;gap:6px}
-.tab{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:5px 12px;cursor:pointer}
+.tab{font:inherit;font-size:14px;font-weight:600;border:1px solid color-mix(in srgb,var(--accent) 25%,var(--line));background:var(--surface);color:var(--fg);border-radius:999px;padding:5px 12px;cursor:pointer}
+.tab:hover{background:color-mix(in srgb,var(--accent) 7%,var(--surface))}
 .tab::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:6px;vertical-align:1px}
-.tab[aria-pressed="true"]::before{background:var(--accent-ink)}
+
 h1 a{color:inherit;text-decoration:none}
 /* 제목: 넓은 화면은 한 줄, 좁아지면 두 덩어리 사이에서만 줄을 바꾼다 */
 h1 a span{display:inline-block}
 h1 a:hover{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:6px}
 h1 a:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
 .tab small{font-weight:400;color:var(--muted);margin-left:4px}
-.tab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.tab[aria-pressed="true"] small{color:inherit;opacity:.8}
+.tab[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 18%,var(--surface));border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
 .tab:focus-visible,.std-cell:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .subject-note{font-size:13px;color:var(--muted);margin-top:10px}
 .scroller{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
@@ -165,6 +186,7 @@ table.st{border-collapse:collapse;width:100%;min-width:640px;background:var(--su
 .paths{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
 .path{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:8px;text-align:left;font:inherit;color:inherit;cursor:pointer}
 .path:hover,.path[aria-pressed="true"]{border-color:var(--accent)}
+.path[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
 .path:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .path h3{margin:0;font-size:16px}
 .steps{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;color:var(--accent)}
@@ -210,21 +232,20 @@ footer p{max-width:140ch}
 .other summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--accent)}
 .dlg-note{font-size:12px;color:var(--muted);margin-top:14px}
 /* 성취기준이 없는 칸: 과목 활동을 비워 두고 이유만 짧게 보인다 */
-.mx td.na{background:repeating-linear-gradient(135deg,var(--surface) 0 8px,var(--bg) 8px 16px);cursor:pointer}
-.mx td.na .na-note{font-size:12px;color:var(--muted);margin-top:6px;line-height:1.5}
-.mx td.na .code{color:var(--muted)}
+.mx td.na,.mx tbody td.na:hover{background:var(--surface);cursor:default;box-shadow:none}
 /* 탐구 설계 예시: 탭(탐구 경로 · 과목 융합 탐구) */
 .explore{display:grid;gap:12px}
 .explore>*,.explore [role=tabpanel]{min-width:0}
 .ex-tabs{display:flex;flex-wrap:wrap;gap:4px;border-bottom:1px solid var(--line)}
 .ex-tabs button{font:inherit;font-size:15px;font-weight:700;color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:8px 14px;margin-bottom:-1px;cursor:pointer;white-space:nowrap}
-.ex-tabs button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--fg)}
+.ex-tabs button:hover{color:var(--fg)}
+.ex-tabs button[aria-selected="true"]{color:var(--c-base);border-bottom-color:var(--c-base);background:color-mix(in srgb,var(--c-base) 6%,transparent);border-radius:6px 6px 0 0}
 .ex-tabs button:focus-visible{outline:2px solid var(--fg);outline-offset:-2px}
 .fu-intro{display:grid;gap:6px;max-width:120ch;font-size:14.5px}
 .fu-how{font-size:13px;color:var(--muted)}
 .fu-types{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
 .fu-types button{font:inherit;font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:5px 14px;cursor:pointer}
-.fu-types button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.fu-types button[aria-pressed="true"]{background:color-mix(in srgb,var(--c-base) 16%,var(--surface));color:var(--fg);border-color:var(--c-base)}
 .fu-types button:focus-visible,.fu-show:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .fu-type{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 24px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
 .fu-type h3{margin:0;font-size:17px}
@@ -232,7 +253,7 @@ footer p{max-width:140ch}
 .fu-tip{background:var(--bg);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:13px}
 .mini{display:grid;grid-template-columns:auto repeat(6,22px);gap:2px;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;align-items:center;justify-items:center}
 .mini i{width:22px;height:18px;border-radius:3px;background:var(--bg);border:1px solid var(--line);font-style:normal}
-.mini i.on{background:var(--fg)}
+.mini i.on{background:var(--c-base);border-color:var(--c-base)}
 .mini i.s0{background:var(--ca);border-color:var(--ca)} .mini i.s1{background:var(--cb);border-color:var(--cb)} .mini i.s01{background:linear-gradient(135deg,var(--ca) 50%,var(--cb) 50%);border-color:var(--fg)}
 .fu-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:14px;margin-top:14px}
 .fu-ex{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:10px;align-content:start}
@@ -398,7 +419,7 @@ def body():
             o.append(f'<td class="p{pc}" id="c-{kc}{pc}"><span class="code">{kc}{pc}</span><ul>{lis}</ul><div class="out"><b>산출물</b> {E(out)}</div>{cell_extra(kc + pc)}</td>')
         o.append('</tr>')
     o.append('</tbody></table></div>')
-    o.append('<p class="axis">오른쪽으로 갈수록 고차원 사고, 아래로 갈수록 추상적인 지식입니다. 칸 색이 진할수록 인지 부담이 큰 활동입니다. 활동 옆 번호는 관련 성취기준이며, 마우스를 올리면 원문이 나옵니다. 칸을 누르면 구체적인 주제탐구 예시와 학교생활기록부 기재 예시를 볼 수 있습니다. 기억·이해·적용 칸에는 수업 참여 활동을 함께 적었습니다. 과목을 고르면 그 과목 성취기준이 놓인 칸에만 활동을 보이고, 교육목표가 없는 칸은 빗금으로 비워 둡니다.</p></section>')
+    o.append('<p class="axis">오른쪽으로 갈수록 고차원 사고, 아래로 갈수록 추상적인 지식입니다. 칸 색이 진할수록 인지 부담이 큰 활동입니다. 활동 옆 번호는 관련 성취기준이며, 마우스를 올리면 원문이 나옵니다. 칸을 누르면 구체적인 주제탐구 예시와 학교생활기록부 기재 예시를 볼 수 있습니다. 기억·이해·적용 칸에는 수업 참여 활동을 함께 적었습니다. 과목을 고르면 그 과목 성취기준이 놓인 칸에만 활동을 보이고, 교육목표가 없는 칸은 비워 둡니다.</p></section>')
     o.append('<dialog class="dlg" id="cell-dlg" aria-labelledby="dlg-title"><div class="dlg-head"><div><span class="code" id="dlg-code"></span><h2 id="dlg-title"></h2><p id="dlg-sub"></p></div><button type="button" class="dlg-x" id="dlg-x" aria-label="닫기">×</button></div><div class="dlg-body" id="dlg-body"></div></dialog>')
     o.append('<section id="std-section" hidden><h2 id="std-title">성취기준 배치</h2><p class="lead" style="margin-bottom:12px">성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 칸을 정했습니다. 테두리가 진한 칸이 주된 칸입니다. 칸 번호를 누르면 표에서 위치를 보여 줍니다.</p><div class="scroller"><table class="st"><thead><tr><th scope="col">코드</th><th scope="col">성취기준</th><th scope="col">칸</th></tr></thead><tbody id="std-body"></tbody></table></div></section>')
     o.append('''<section class="guide"><h2>활용 안내</h2><ol>
@@ -460,6 +481,7 @@ JS = r'''<script>
   function buildPanel(){
     Object.keys(atab).forEach(function(k){atab[k].setAttribute('aria-selected',(cur?k===cur:k==='common')?'true':'false')});
     panel.hidden=!cur; panel.innerHTML=''; if(!cur)return;
+    panel.style.setProperty('--accent','var(--c-'+(RCLS[cur]||'base')+')');
     GROUPS.forEach(function(g){
       var list=views.filter(function(v){return v.group===g&&ROW[v.area]===cur}); if(!list.length)return;
       var col=document.createElement('div');col.className='col';
@@ -584,9 +606,9 @@ JS = r'''<script>
     Object.keys(DATA.names).forEach(function(k){
       var td=document.getElementById('c-'+k), cell=v.standards?v.cells[k]:DATA.common[k];
       td.classList.remove('na');
-      if(v.standards&&!byCell[k]){td.classList.add('na');td.innerHTML='<span class="code">'+k+'</span><p class="na-note">이 과목 성취기준 없음</p>';return;}
+      if(v.standards&&!byCell[k]){td.classList.add('na');td.innerHTML='';return;}
       var acts=cell.acts;
-      if(v.standards){var own=byCell[k].map(function(x){return x.code});var f=acts.filter(function(a){return a[1].some(function(c){return own.indexOf(c)>=0})});if(f.length)acts=f;}
+      if(v.standards){var own=byCell[k].map(function(x){return x.code});var f=acts.filter(function(a){return a[1].some(function(c){return own.indexOf(c)>=0})});acts=f;}
       var h='<span class="code">'+k+'</span><ul>'+acts.map(function(a){
         return '<li>'+esc(a[0])+a[1].map(function(c){return chip(c,'')}).join('')+'</li>'}).join('')+'</ul>';
       if(!v.standards) h+='<div class="out"><b>산출물</b> '+esc(cell.out)+'</div>';
@@ -596,7 +618,7 @@ JS = r'''<script>
     var sec=document.getElementById('std-section');
     if(v.standards){
       sec.hidden=false;
-      note.textContent=v.name+' 성취기준 '+v.standards.length+'개를 '+Object.keys(byCell).length+'칸에 배치하고, 성취기준이 놓인 칸에만 과목 활동을 제시했습니다(빗금 칸은 이 과목의 교육목표에 해당하지 않는 칸). 활동 옆 번호는 성취기준 코드의 뒷자리이고, 마우스를 올리거나 누르면 성취기준 원문이 나옵니다(예: '+short(v.standards[0][0])+' → '+v.standards[0][0]+').';
+      note.textContent=v.name+' 성취기준 '+v.standards.length+'개를 '+Object.keys(byCell).length+'칸에 배치하고, 성취기준이 놓인 칸에만 과목 활동을 제시했습니다(빈 칸은 이 과목의 교육목표에 해당하지 않는 칸). 활동 옆 번호는 성취기준 코드의 뒷자리이고, 마우스를 올리거나 누르면 성취기준 원문이 나옵니다(예: '+short(v.standards[0][0])+' → '+v.standards[0][0]+').';
       document.getElementById('std-title').textContent=v.name+' 성취기준 배치';
       document.getElementById('std-body').innerHTML=v.standards.map(function(s){
         return '<tr><td class="c">['+esc(s[0])+']</td><td>'+esc(s[1])+'</td><td class="k">'+s[2].map(function(c,i){
@@ -606,7 +628,7 @@ JS = r'''<script>
   document.addEventListener('click',function(e){
     var r=e.target.closest('.ref[data-code]');if(r){showTip(r);return;}
     var m=e.target.closest('.more');if(m){openDetail(m.dataset.cell);return;}
-    var td=e.target.closest('.mx tbody td');if(td&&!e.target.closest('a,button')&&!(window.getSelection&&String(window.getSelection()).length)){openDetail(td.id.slice(2));return;}
+    var td=e.target.closest('.mx tbody td');if(td&&!td.classList.contains('na')&&!e.target.closest('a,button')&&!(window.getSelection&&String(window.getSelection()).length)){openDetail(td.id.slice(2));return;}
     var b=e.target.closest('.std-cell');if(b){mark([b.dataset.cells]);return;}
     var p=e.target.closest('.path');if(p){var on=p.getAttribute('aria-pressed')!=='true';clearMarks();
       if(on){mark(p.dataset.cells.split(' '));p.setAttribute('aria-pressed','true');}}

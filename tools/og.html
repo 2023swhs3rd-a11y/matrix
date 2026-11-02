@@ -1,0 +1,28 @@
+<!doctype html>
+<!-- 카카오톡·SNS 링크 미리보기 이미지(og.png, 1200×630) 원본. 브라우저에서 1200×630으로 열어 캡처한다. -->
+<html lang="ko"><head><meta charset="utf-8">
+<style>
+@font-face{font-family:"Pretendard Variable";font-weight:45 920;src:url("https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/woff2/PretendardVariable.woff2") format("woff2-variations")}
+*{box-sizing:border-box}
+body{margin:0;width:1200px;height:630px;font-family:"Pretendard Variable",sans-serif;background:#f6f7f9;color:#1d2733;word-break:keep-all;display:grid;grid-template-columns:1fr 300px;gap:48px;padding:64px 72px;align-items:center}
+.eyebrow{font-size:20px;font-weight:700;letter-spacing:.08em;color:#3f5a78}
+h1{font-size:52px;font-weight:800;letter-spacing:-.02em;line-height:1.22;margin:18px 0 22px}
+p{font-size:25px;line-height:1.5;color:#5b6675;margin:0}
+.by{margin-top:40px;font-size:21px;font-weight:600;color:#3f5a78}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.grid i{aspect-ratio:1;border-radius:10px;background:#fff;border:2px solid #e2e6ec}
+.ax{display:flex;justify-content:space-between;font-size:15px;font-weight:600;color:#8a94a3;margin-top:10px}
+</style></head><body>
+<div><div class="eyebrow">BLOOM’S REVISED TAXONOMY × 2022 개정 교육과정</div>
+<h1><span style="white-space:nowrap">블룸의 개정 교육목표 분류로 보는</span><br><span style="white-space:nowrap">교과탐구활동 추천 매트릭스</span></h1>
+<p>지식 4차원 × 인지 과정 6단계, 24칸에<br>70과목 성취기준과 탐구·세특 기재 예시</p>
+<div class="by">봉일천고등학교 진로진학부</div></div>
+<div><div class="grid" id="g"></div><div class="ax"><span>기억</span><span>이해</span><span>적용</span><span>분석</span><span>평가</span><span>창안</span></div></div>
+<script>
+// 24칸: 오른쪽·아래로 갈수록 진하게, 교과색 몇 칸으로 탐구 경로를 표시
+var c=['#b0413a','#2b67a8','#7046a8','#9a5b00','#1f7a52'],on={'0,0':1,'1,1':1,'1,3':3,'2,3':4,'2,5':4,'3,4':0,'3,5':2};
+for(var r=0;r<4;r++)for(var k=0;k<6;k++){var i=document.createElement('i'),key=r+','+k;
+ if(key in on){i.style.background=c[on[key]];i.style.borderColor=c[on[key]];}
+ else i.style.background='color-mix(in srgb,#3f5a78 '+(4+k*3+r*2)+'%,#fff)';
+ document.getElementById('g').appendChild(i);}
+</script></body></html>
