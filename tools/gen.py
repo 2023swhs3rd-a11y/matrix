@@ -9,6 +9,7 @@ from subjects_general import SUBJECTS_GENERAL
 from subjects_career import SUBJECTS_CAREER
 from subjects_convergence import SUBJECTS_CONVERGENCE
 from fusion import FUSION_TYPES
+from guide import GUIDE_INTRO, GUIDE_STEPS, GUIDE_EXAMPLE, GUIDE_NOTES
 from pyeonje import GRADES, COLS, GROUP_COL, AREA_CLASS, placed, rows as plan_rows
 # 고1 공통은 1학기 과목 바로 뒤에 같은 교과의 2학기 과목을 두고, 과학탐구실험은 끝에 둔다
 _PAIR = {s.get('pair', s['id']): s for s in SUBJECTS_COMMON2}
@@ -41,6 +42,9 @@ for _t in FUSION_TYPES:
         for _sid, _c, _k in _e['subjects']:
             _st = next((x for x in SUBJ_BY_ID[_sid]['standards'] if x[0] == _c), None)
             assert _st and _k in _st[2], f'융합 예시 칸 오류: {_e["title"]} {_sid} {_c} {_k}'
+# 탐구 첫걸음 예시의 칸은 그 과목 성취기준이 배치된 칸이어야 한다
+_gv = {k for _, _, cells in SUBJ_BY_ID[GUIDE_EXAMPLE['subject']]['standards'] for k in cells}
+for _k, _ in GUIDE_EXAMPLE['steps']: assert _k in _gv, f'탐구 첫걸음 예시 칸 오류: {_k}'
 # 과목별 칸 예시: tools/detail/<과목 id>.txt (@칸, T 제목, Q 탐구 질문, S 단계 ;; 단계, O 산출물, R 세특 예시)
 def load_detail(sid):
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'detail', sid + '.txt')
@@ -273,6 +277,28 @@ footer p{max-width:140ch}
 .fu-ex .o{font-size:12.5px;color:var(--muted)}
 .fu-show{justify-self:start;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:4px 10px;cursor:pointer}
 .fu-show[aria-pressed="true"]{border-color:var(--fg)}
+/* 탐구 첫걸음: 다섯 단계 카드 → 따라 해 보는 예시 → 유의점 */
+.gd-intro{display:grid;gap:6px;max-width:120ch;font-size:14.5px;margin-bottom:16px}
+.gd-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.gd-step{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px;display:grid;gap:8px;align-content:start;font-size:13.5px;min-width:0}
+.gd-step p{margin:0}
+.gd-step ul{margin:0;padding-left:18px;display:grid;gap:4px;color:var(--muted)}
+.gd-head{display:flex;gap:8px;align-items:center}
+.gd-head h3{margin:0;font-size:16px}
+.gd-n{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:color-mix(in srgb,var(--accent) 14%,var(--surface));color:var(--fg);border:1px solid color-mix(in srgb,var(--accent) 45%,var(--line))}
+.gd-check{font-size:13px;border-top:1px dashed var(--line);padding-top:6px}
+.gd-check b{margin-right:4px}
+.gd-show{justify-self:start;align-self:end;font:inherit;font-size:12.5px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:6px;padding:4px 10px;cursor:pointer}
+.gd-show[aria-pressed="true"]{border-color:var(--fg)}
+.gd-show:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.gd-ex{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:10px;font-size:14px}
+.gd-ex h3{margin:0;font-size:16px}
+.gd-ex h3 small{font-size:13px;font-weight:500;margin-left:6px}
+.gd-ex ol{margin:0;padding-left:20px;display:grid;gap:6px}
+.gd-cell{font-size:12px;color:var(--muted);margin:0 4px;white-space:nowrap}
+.gd-notes{margin-top:16px;font-size:13.5px;max-width:120ch}
+.gd-notes h3{font-size:15px;margin:0 0 6px}
+.gd-notes ul{margin:0;padding-left:18px;display:grid;gap:4px}
 @media (max-width:640px){.fu-type{grid-template-columns:1fr}}
 /* 편제표: 교과 행 × 공통·일반·진로·융합 열, 과목마다 등급 산출 표시 */
 .pj-intro{display:grid;gap:6px;max-width:120ch;font-size:14.5px}
@@ -359,19 +385,40 @@ def cell_extra(k):
 
 def explore():
     # 상단 탭: 탐구 경로 예시 · 과목 융합 탐구
-    o = ['<section class="explore" aria-label="탐구 설계 예시와 편제표">',
-         '<div class="ex-tabs" role="tablist" aria-label="탐구 설계 예시와 편제표"><button type="button" role="tab" id="xt-path" aria-controls="xp-path" aria-selected="true">탐구 경로 예시</button><button type="button" role="tab" id="xt-fusion" aria-controls="xp-fusion" aria-selected="false" tabindex="-1">과목 융합 탐구</button><button type="button" role="tab" id="xt-plan" aria-controls="xp-plan" aria-selected="false" tabindex="-1"><span class="wide">2022 개정 </span>일반고 편제표</button></div>',
-         '<div role="tabpanel" id="xp-path" aria-labelledby="xt-path"><p class="lead" style="margin-bottom:16px">한 학기 탐구를 몇 칸의 순서로 묶은 예시입니다. 경로를 누르면 아래 표에 해당 칸이 표시되고, 과목을 바꿔도 같은 칸의 과목별 활동을 볼 수 있습니다.</p><div class="paths">']
+    o = ['<section class="explore" aria-label="탐구 첫걸음, 탐구 설계 예시와 편제표">',
+         '<div class="ex-tabs" role="tablist" aria-label="탐구 설계 예시와 편제표"><button type="button" role="tab" id="xt-guide" aria-controls="xp-guide" aria-selected="true">탐구 첫걸음</button><button type="button" role="tab" id="xt-path" aria-controls="xp-path" aria-selected="false" tabindex="-1">탐구 경로 예시</button><button type="button" role="tab" id="xt-fusion" aria-controls="xp-fusion" aria-selected="false" tabindex="-1">과목 융합 탐구</button><button type="button" role="tab" id="xt-plan" aria-controls="xp-plan" aria-selected="false" tabindex="-1"><span class="wide">2022 개정 </span>일반고 편제표</button></div>',
+         '<div role="tabpanel" id="xp-path" aria-labelledby="xt-path" hidden><p class="lead" style="margin-bottom:16px">한 학기 탐구를 몇 칸의 순서로 묶은 예시입니다. 경로를 누르면 아래 표에 해당 칸이 표시되고, 과목을 바꿔도 같은 칸의 과목별 활동을 볼 수 있습니다.</p><div class="paths">']
     for i, (name, steps, desc) in enumerate(PATHS):
         st = '<span aria-hidden="true">→</span>'.join(f'<span class="s">{s} {E(cell_name(s))}</span>' for s in steps)
         o.append(f'<button type="button" class="path" id="path-{i}" aria-pressed="false" data-cells="{" ".join(steps)}"><h3>{E(name)}</h3><div class="steps">{st}</div><p>{E(desc)}</p></button>')
     o.append('</div></div>')
+    o += guide()
     o.append('<div role="tabpanel" id="xp-fusion" aria-labelledby="xt-fusion" hidden>'
              '<div class="fu-intro"><p><b>융합 탐구</b>는 두 과목의 성취기준을 하나의 탐구 질문으로 묶는 탐구입니다. 두 과목의 성취기준이 매트릭스의 <b>어느 칸에서 만나는지</b> 보면 탐구의 성격이 보입니다. 두 과목이 조사한 사실과 자료(A행)를 한데 겹치면 자료를 결합하는 탐구가, 같은 개념 행(B행)에서 만나면 개념끼리 잇는 탐구가, 한 과목이 절차(C행)를 맡으면 방법을 빌려 쓰는 탐구가, 평가·창안 열에서 만나면 판단하거나 만들어 내는 탐구가 됩니다.</p>'
              '<p class="fu-how">유형을 고르면 특징과 예시가 나옵니다. 예시의 <b>표에서 보기</b>를 누르면 아래 매트릭스에 두 과목의 칸이 표시됩니다.</p></div>'
              '<div class="fu-types" role="group" aria-label="융합 탐구 유형" id="fu-types"></div><div id="fu-body"></div></div>')
     o += pyeonje()
     o.append('</section>')
+    return o
+
+def guide():
+    # 탐구 첫걸음 탭: 다섯 단계 카드와 따라 해 보는 예시
+    ex_s = SUBJ_BY_ID[GUIDE_EXAMPLE['subject']]
+    o = ['<div role="tabpanel" id="xp-guide" aria-labelledby="xt-guide">',
+         '<div class="gd-intro">' + ''.join(f'<p>{t}</p>' for t in GUIDE_INTRO) + '</div>', '<ol class="gd-steps">']
+    for i, st in enumerate(GUIDE_STEPS, 1):
+        cells = ' '.join(st['cells'])
+        o.append(f'<li class="gd-step"><div class="gd-head"><span class="gd-n" aria-hidden="true">{i}</span><h3>{E(st["title"])}</h3></div>'
+                 f'<p>{E(st["do"])}</p><ul>' + ''.join(f'<li>{t}</li>' for t in st['tools']) + '</ul>'
+                 f'<p class="gd-check"><b>확인</b> {E(st["check"])}</p>'
+                 f'<button type="button" class="gd-show" aria-pressed="false" data-cells="{cells}">표에서 보기 · {" ".join(st["cells"])}</button></li>')
+    o.append('</ol>')
+    cells = ' '.join(k for k, _ in GUIDE_EXAMPLE['steps'])
+    o.append(f'<article class="gd-ex"><h3>따라 해 보는 예시: {E(GUIDE_EXAMPLE["title"])} <small><a href="#{ex_s["id"]}">{E(ex_s["name"])}</a></small></h3><ol>')
+    for (k, t), st in zip(GUIDE_EXAMPLE['steps'], GUIDE_STEPS):
+        o.append(f'<li><b>{E(st["title"])}</b> <span class="gd-cell">{k} {E(cell_name(k))}</span> {E(t)}</li>')
+    o.append(f'</ol><button type="button" class="gd-show" aria-pressed="false" data-cells="{cells}">표에서 보기 · {cells}</button></article>')
+    o.append('<div class="gd-notes"><h3>기록과 유의점</h3><ul>' + ''.join(f'<li>{t}</li>' for t in GUIDE_NOTES) + '</ul></div></div>')
     return o
 
 def pyeonje():
@@ -495,7 +542,7 @@ JS = r'''<script>
     });
   }
   function clearMarks(){document.querySelectorAll('.mx td.on').forEach(function(t){t.classList.remove('on')});
-    document.querySelectorAll('.path,.fu-show').forEach(function(x){x.setAttribute('aria-pressed','false')});}
+    document.querySelectorAll('.path,.fu-show,.gd-show').forEach(function(x){x.setAttribute('aria-pressed','false')});}
   function mark(cells){clearMarks();cells.forEach(function(c){var t=document.getElementById('c-'+c);if(t)t.classList.add('on')});
     var f=document.getElementById('c-'+cells[0]);if(f)f.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});}
   // 주제로 찾기: 칸마다 활동 틀에 주제어를 넣고, 성취기준·과목 활동에서 주제어를 찾아 함께 보여 준다
@@ -642,7 +689,7 @@ JS = r'''<script>
     if(location.hash)history.pushState(null,'',location.pathname+location.search);render();
     window.scrollTo({top:0,behavior:'smooth'});});
   // 탐구 설계 예시 탭
-  var xtabs=[document.getElementById('xt-path'),document.getElementById('xt-fusion'),document.getElementById('xt-plan')];
+  var xtabs=[document.getElementById('xt-guide'),document.getElementById('xt-path'),document.getElementById('xt-fusion'),document.getElementById('xt-plan')];
   function selTab(t){xtabs.forEach(function(b){var on=b===t;b.setAttribute('aria-selected',on?'true':'false');b.tabIndex=on?0:-1;document.getElementById(b.getAttribute('aria-controls')).hidden=!on});clearMarks();}
   // 편제표의 과목 이름: 해시로 과목을 바꾼 뒤 과목 탭 위치로 내려간다
   document.querySelectorAll('.pj a').forEach(function(x){x.addEventListener('click',function(){setTimeout(function(){document.getElementById('areas').scrollIntoView({behavior:'smooth',block:'start'})},0)})});
@@ -674,6 +721,8 @@ JS = r'''<script>
   }
   fuTypes.addEventListener('click',function(e){var b=e.target.closest('button[data-i]');if(!b)return;fuCur=+b.dataset.i;clearMarks();renderFusion();});
   fuBody.addEventListener('click',function(e){var b=e.target.closest('.fu-show');if(!b)return;var on=b.getAttribute('aria-pressed')!=='true';clearMarks();
+    if(on){mark(b.dataset.cells.split(' '));b.setAttribute('aria-pressed','true');}});
+  document.getElementById('xp-guide').addEventListener('click',function(e){var b=e.target.closest('.gd-show');if(!b)return;var on=b.getAttribute('aria-pressed')!=='true';clearMarks();
     if(on){mark(b.dataset.cells.split(' '));b.setAttribute('aria-pressed','true');}});
   renderFusion();
   window.addEventListener('hashchange',render);render();
@@ -709,7 +758,7 @@ LINKS = ['## 바로가기', '',
  '| 웹 미리보기 (Pages 설정 전에도 열림) | https://htmlpreview.github.io/?https://github.com/2023swhs3rd-a11y/matrix/blob/main/index.html |',
  '| HTML 원본 | [index.html](index.html) |',
  *[f'| {g} | ' + ' · '.join(f'[{s["name"]}](subjects/{s["id"]}.md)' for s in SUBJECTS if s['group'] == g) + ' |' for g in GROUPS],
- '| 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 경로 예시](#탐구-경로-예시) · [과목 융합 탐구](#과목-융합-탐구) · [편제표](#2022-개정-일반고-편제표) · [활용 안내](#활용-안내) |', '']
+ '| 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 첫걸음](#탐구-첫걸음) · [탐구 경로 예시](#탐구-경로-예시) · [과목 융합 탐구](#과목-융합-탐구) · [편제표](#2022-개정-일반고-편제표) · [활용 안내](#활용-안내) |', '']
 
 r = ['# 블룸의 개정 교육목표 분류로 보는 교과탐구활동 추천 매트릭스', '',
      'Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** × **인지 과정 차원(6)** 을 교차한 24칸에 탐구활동을 추천합니다. **2022 개정 교육과정** 고1 공통과목 14개(과학탐구실험 포함)와 2·3학년 일반선택·진로선택·융합선택 과목은 성취기준을 칸에 배치하고 과목별 활동을 따로 정리했습니다.', ''] + LINKS
@@ -725,6 +774,12 @@ for s in SUBJECTS:
     r.append(f'| {s["group"]} | [{s["name"]}](subjects/{s["id"]}.md) | {len(s["standards"])} | ' + ', '.join(f'{k}({cell_name(k)}) {n}개' for k, n in top) + ' |')
 r += ['', '## 전 과목 공통 매트릭스', '', '각 칸: 추천 활동 · **산출물**', '']
 r += md_matrix(lambda k: '<br>'.join('• ' + a for a in CELLS[k[0]][k[1]][0]) + f'<br>**산출물:** {CELLS[k[0]][k[1]][1]}')
+r += ['', '## 탐구 첫걸음', '', '탐구와 교과 개념에 아직 익숙하지 않은 학생을 위한 다섯 단계입니다. 수업에서 배운 개념 하나를 직접 확인해 보는 데서 시작합니다.', '']
+for _i, _st in enumerate(GUIDE_STEPS, 1):
+    r.append(f"{_i}. **{_st['title']}** ({' · '.join(_st['cells'])}): {_st['do']} 확인: {_st['check']}")
+r += ['', f"**따라 해 보는 예시: {GUIDE_EXAMPLE['title']}** ({SUBJ_BY_ID[GUIDE_EXAMPLE['subject']]['name']})", '']
+r += [f"- {_st['title']} ({_k}): {_t}" for (_k, _t), _st in zip(GUIDE_EXAMPLE['steps'], GUIDE_STEPS)]
+r += [''] + ['- ' + _t.replace('<b>', '**').replace('</b>', '**') for _t in GUIDE_NOTES]
 r += ['', '## 탐구 경로 예시', '']
 for name, steps, desc in PATHS:
     r.append(f'- **{name}**: ' + ' → '.join(f'{s}({cell_name(s)})' for s in steps) + f'  \n  {desc}')
