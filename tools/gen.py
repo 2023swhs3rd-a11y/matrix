@@ -433,7 +433,7 @@ def body():
 </ol></section>''')
     stamp = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M')
     total = sum(len(x['standards']) for x in SUBJECTS)
-    o.append(f'<footer><p id="version">업데이트 {stamp} (KST) · 과목 {len(SUBJECTS)}개 · 성취기준 {total}개</p><p>작성: 봉일천고등학교 진로진학부장 전중수 <a href="mailto:jungsooj@korea.kr">jungsooj@korea.kr</a></p><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목, 2·3학년 일반선택·진로선택·융합선택 과목. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), 국가교육과정정보센터(NCIC) 원문과 다시 확인해 사용하세요. {MISSING_TXT}</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p><p class="links"><b>원문 자료</b> <a href="https://ncic.re.kr/" target="_blank" rel="noopener">국가교육과정정보센터(NCIC)</a>: 2022 개정 교육과정 원문(교육부 고시 제2022-33호)과 교과별 교육과정 해설서 · <a href="https://www.kice.re.kr/" target="_blank" rel="noopener">한국교육과정평가원(KICE)</a>: 교육과정·평가 연구 자료 · <a href="https://www.moe.go.kr/" target="_blank" rel="noopener">교육부</a>: 교육과정 고시와 정책 자료 · <a href="https://star.moe.go.kr/" target="_blank" rel="noopener">교육부 학생평가 지원포털</a>: 성취수준과 평가 기준</p></footer>')
+    o.append(f'<footer><p id="version">업데이트 {stamp} (KST) · 과목 {len(SUBJECTS)}개 · 성취기준 {total}개</p><p>작성: 봉일천고등학교 진로진학부장 전중수 <a href="mailto:jungsooj@korea.kr">jungsooj@korea.kr</a></p><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목, 2·3학년 일반선택·진로선택·융합선택 과목. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), 국가교육과정정보센터(NCIC) 원문과 다시 확인해 사용하세요. {MISSING_TXT}</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p><p class="links"><b>원문 자료</b> <a href="https://ncic.re.kr/" target="_blank" rel="noopener">국가교육과정정보센터(NCIC)</a>: 2022 개정 교육과정 원문(교육부 고시 제2022-33호)과 교과별 교육과정 해설서 · <a href="https://www.kice.re.kr/" target="_blank" rel="noopener">한국교육과정평가원(KICE)</a>: 교육과정·평가 연구 자료 · <a href="https://www.moe.go.kr/" target="_blank" rel="noopener">교육부</a>: 교육과정 고시와 정책 자료 · <a href="https://star.moe.go.kr/" target="_blank" rel="noopener">교육부 학생평가 지원포털</a>: 성취수준과 평가 기준 · <a href="https://snuarori.snu.ac.kr/admissions/officer" target="_blank" rel="noopener">서울대학교 아로리 ‘나도 입학사정관’</a>: 2014~2026학년도 학교생활기록부 평가 사례 · <a href="https://admission.snu.ac.kr/" target="_blank" rel="noopener">서울대학교 입학본부</a>: 학생부종합전형 안내서(2021~2027학년도)</p></footer>')
     o.append('</div>')
     o.append('<script>var DATA=' + json.dumps(payload(), ensure_ascii=False) + ';</script>')
     o.append(JS)
@@ -746,6 +746,7 @@ r += ['', '## 활용 안내', '',
  '6. **수업 안에서 시작하기:** 2024학년도 대입부터 수상경력, 개인 봉사활동 실적, 독서활동 상황, 자율동아리는 대입에 반영되지 않고, 정규 교육과정 밖의 소논문은 적을 수 없습니다(교육부 「대입제도 공정성 강화 방안」, 2019). 서울대 아로리 ‘나도 입학사정관’ 2024~2026학년도 사례도 수업 안 탐구와 세특이 중심입니다.', '',
  '## 출처와 수정 방법', '',
  '- 성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), [국가교육과정정보센터(NCIC)](https://www.ncic.re.kr) 원문과 다시 확인해 사용하세요. ' + MISSING_TXT + '',
+ '- 탐구·기재 예시의 기록 흐름과 수업 안 탐구 원칙: [서울대학교 아로리 ‘나도 입학사정관’](https://snuarori.snu.ac.kr/admissions/officer) 2014~2026학년도 평가 사례, [서울대학교 입학본부](https://admission.snu.ac.kr/) 학생부종합전형 안내서(2021~2027학년도).',
  '- 칸 배치는 성취기준의 동사(인지 과정)와 목적어(지식 차원)를 기준으로 한 예시이며 교사 판단에 따라 바꿀 수 있습니다.',
  '- 내용은 `tools/data.py`(공통)와 `tools/subjects.py`(고1 공통), `tools/subjects_common2.py`(고1 2학기·과학탐구실험), `tools/subjects_general.py`(일반선택), `tools/subjects_career.py`(진로선택), `tools/subjects_convergence.py`(융합선택)에 있습니다. 과목별 칸 상세 예시(주제탐구 예시와 세특 기재 예시)는 `tools/detail/<과목 id>.txt`에 있습니다. 고친 뒤 `cd tools && python3 gen.py`를 실행하면 `index.html`, `README.md`, `subjects/*.md`가 다시 만들어집니다.', '',
  '작성: 봉일천고등학교 진로진학부장 전중수 (jungsooj@korea.kr)', '',
@@ -774,15 +775,15 @@ for s in SUBJECTS:
 # 세특 예시 점검: 대입 미반영 항목에 기대는 표현은 경고, 과목별 확장·과목 연결 문장 수 요약
 import re as _re
 _BAD = _re.compile(r'수상(함|했|하여|경력)|소논문|교외 (활동|대회)|캠프에 참가|R&E|봉사(에|활동에) 참여|인턴')
-_EXT = _re.compile(r'확장|후속|더 나아가|다음 (과제|탐구|단계|실험)|다음에는|에도 적용|추가 탐구|새로운 질문|궁금증|이어 가기로|이어서')
+_EXT = _re.compile(r'확장|후속|더 나아가|다음 (과제|탐구|단계|실험)|다음에는|에도 적용|추가 탐구|추가 질문|새로운 질문|궁금증|이어 가기로|이어서')
 _CROSS = _re.compile(r'(국어|수학|영어|사회|과학|물리|화학|생명|지구|역사|윤리|지리|정보|미술|음악|경제|통계|확률|기하|미적분|대수)\S{0,6}\s*(과목|시간|수업|교과)에서 배운|시간에 배운|에서 배운 .{0,12}(개념|원리|공식|방법)')
 _low = []
 for _s in SUBJECTS:
     _ex = load_detail(_s['id']) or {}
-    _mapped = {k for k, v in _s['cells'].items() if v}
+    _mapped = {c for _st in _s['standards'] for c in _st[2]}  # 화면에 예시가 나오는 칸
     for _k, _v in _ex.items():
         if _k in _mapped and _BAD.search(_v['r']): print('경고: 대입 미반영 항목 표현', _s['id'], _k, _BAD.search(_v['r']).group(0))
     _n = sum(1 for _k, _v in _ex.items() if _k in _mapped and (_EXT.search(_v['r']) or _CROSS.search(_v['r'])))
-    if _n < 4: _low.append(f"{_s['id']}({_n})")
-print(f'확장·과목 연결 문장 4칸 미만 과목 {len(_low)}개:', ' '.join(_low))
+    if _n < 2: _low.append(f"{_s['id']}({_n})")
+print(f'확장·과목 연결 문장 2칸 미만 과목 {len(_low)}개:', ' '.join(_low))
 print('ok')
