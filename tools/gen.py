@@ -241,6 +241,8 @@ footer p{max-width:140ch}
 .ex-tabs button:hover{color:var(--fg)}
 .ex-tabs button[aria-selected="true"]{color:var(--c-base);border-bottom-color:var(--c-base);background:color-mix(in srgb,var(--c-base) 6%,transparent);border-radius:6px 6px 0 0}
 .ex-tabs button:focus-visible{outline:2px solid var(--fg);outline-offset:-2px}
+.fu-ref{font-size:12.5px;color:var(--muted);border-top:1px dashed var(--line);padding-top:6px;margin:8px 0 0}
+.fu-ref b{color:var(--fg);font-weight:600;margin-right:4px}
 .fu-intro{display:grid;gap:6px;max-width:120ch;font-size:14.5px}
 .fu-how{font-size:13px;color:var(--muted)}
 .fu-types{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
@@ -665,6 +667,7 @@ JS = r'''<script>
       h+='<div class="mini" role="img" aria-label="'+esc(e.subjects[0].name+' '+two[0]+', '+e.subjects[1].name+' '+two[1])+'">'+mini([],two)+'</div></div>';
       h+='<h5>실제로 담을 내용</h5><ol>'+e.what.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ol><p class="o">산출물: '+esc(e.out)+'</p>';
       h+='<h5>더 탐구해 볼 내용</h5><ul>'+e.more.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>';
+      if(e.ref)h+='<p class="fu-ref"><b>참고한 서울대 아로리 사례</b> '+esc(e.ref)+'</p>';
       h+='<button type="button" class="fu-show" aria-pressed="false" data-cells="'+(two[0]===two[1]?two[0]:two.join(' '))+'">표에서 보기</button></article>';
     });
     fuBody.innerHTML=h+'</div>';
@@ -730,7 +733,7 @@ for t in FUSION_TYPES:
     r += [f'### {t["name"]}', '', f'- **매트릭스 위치:** {t["where"]}', f'- **특징:** {t["feature"]}', f'- **시작하기:** {t["tip"]}', '']
     for e in t['examples']:
         subs = ' + '.join(f'{SUBJ_BY_ID[sid]["name"]} [{code(SUBJ_BY_ID[sid], c)}] {k}' for sid, c, k in e['subjects'])
-        r += [f'**{e["title"]}** ({subs})', '', f'- 탐구 질문: {e["q"]}', *[f'- {x}' for x in e['what']], f'- 산출물: {e["out"]}', f'- 더 탐구해 볼 내용: ' + ' / '.join(e['more']), '']
+        r += [f'**{e["title"]}** ({subs})', '', f'- 탐구 질문: {e["q"]}', *[f'- {x}' for x in e['what']], f'- 산출물: {e["out"]}', f'- 더 탐구해 볼 내용: ' + ' / '.join(e['more']), *([f'- 참고한 서울대 아로리 사례: {e["ref"]}'] if e.get('ref') else []), '']
 r += ['', '## 2022 개정 일반고 편제표', '', '과목 옆 표시는 내신 등급 산출 방식입니다(2025학년도 고1부터, 2028학년도 대입 적용). ' + ' · '.join(f'**{a}**: {b}' for a, b in GRADES.values()), '',
       '| 교과(군) | ' + ' | '.join(COLS) + ' |', '|---|' + '---|' * len(COLS)]
 _bn = {s['name']: s['id'] for s in SUBJECTS}
