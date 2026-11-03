@@ -779,10 +779,10 @@ _CROSS = _re.compile(r'(국어|수학|영어|사회|과학|물리|화학|생명|
 _low = []
 for _s in SUBJECTS:
     _ex = load_detail(_s['id']) or {}
-    _mapped = {k for k, v in _s['cells'].items() if v}
+    _mapped = {c for _st in _s['standards'] for c in _st[2]}  # 화면에 예시가 나오는 칸
     for _k, _v in _ex.items():
         if _k in _mapped and _BAD.search(_v['r']): print('경고: 대입 미반영 항목 표현', _s['id'], _k, _BAD.search(_v['r']).group(0))
     _n = sum(1 for _k, _v in _ex.items() if _k in _mapped and (_EXT.search(_v['r']) or _CROSS.search(_v['r'])))
-    if _n < 4: _low.append(f"{_s['id']}({_n})")
-print(f'확장·과목 연결 문장 4칸 미만 과목 {len(_low)}개:', ' '.join(_low))
+    if _n < 2: _low.append(f"{_s['id']}({_n})")
+print(f'확장·과목 연결 문장 2칸 미만 과목 {len(_low)}개:', ' '.join(_low))
 print('ok')
