@@ -9,7 +9,7 @@ from subjects_general import SUBJECTS_GENERAL
 from subjects_career import SUBJECTS_CAREER
 from subjects_convergence import SUBJECTS_CONVERGENCE
 from fusion import FUSION_TYPES
-from guide import GUIDE_INTRO, GUIDE_STEPS, GUIDE_EXAMPLE, GUIDE_NOTES
+from guide import GUIDE_INTRO, GUIDE_STEPS, GUIDE_EXAMPLES, GUIDE_NOTES
 from pyeonje import GRADES, COLS, GROUP_COL, AREA_CLASS, placed, rows as plan_rows
 # 고1 공통은 1학기 과목 바로 뒤에 같은 교과의 2학기 과목을 두고, 과학탐구실험은 끝에 둔다
 _PAIR = {s.get('pair', s['id']): s for s in SUBJECTS_COMMON2}
@@ -43,8 +43,9 @@ for _t in FUSION_TYPES:
             _st = next((x for x in SUBJ_BY_ID[_sid]['standards'] if x[0] == _c), None)
             assert _st and _k in _st[2], f'융합 예시 칸 오류: {_e["title"]} {_sid} {_c} {_k}'
 # 탐구 첫걸음 예시의 칸은 그 과목 성취기준이 배치된 칸이어야 한다
-_gv = {k for _, _, cells in SUBJ_BY_ID[GUIDE_EXAMPLE['subject']]['standards'] for k in cells}
-for _k, _ in GUIDE_EXAMPLE['steps']: assert _k in _gv, f'탐구 첫걸음 예시 칸 오류: {_k}'
+for _ex in GUIDE_EXAMPLES:
+    _gv = {k for _, _, cells in SUBJ_BY_ID[_ex['subject']]['standards'] for k in cells}
+    for _k, _ in _ex['steps']: assert _k in _gv, f'탐구 첫걸음 예시 칸 오류: {_ex["title"]} {_k}'
 # 과목별 칸 예시: tools/detail/<과목 id>.txt (@칸, T 제목, Q 탐구 질문, S 단계 ;; 단계, O 산출물, R 세특 예시)
 def load_detail(sid):
     path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'detail', sid + '.txt')
@@ -293,7 +294,15 @@ footer p{max-width:140ch}
 .gd-show:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .gd-ex{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;display:grid;gap:10px;font-size:14px}
 .gd-ex h3{margin:0;font-size:16px}
-.gd-ex h3 small{font-size:13px;font-weight:500;margin-left:6px}
+.gd-sub{margin:0;color:var(--muted);font-size:13.5px}
+.gd-picks{display:flex;flex-wrap:wrap;gap:6px}
+.gd-pick{font:inherit;font-size:13.5px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:999px;padding:4px 14px;cursor:pointer}
+.gd-pick[aria-pressed="true"]{background:color-mix(in srgb,var(--accent) 14%,var(--surface));border-color:color-mix(in srgb,var(--accent) 55%,var(--line))}
+.gd-pick:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.gd-exitem{display:grid;gap:10px}
+.gd-exitem[hidden]{display:none}
+.gd-exitem h4{margin:0;font-size:15.5px}
+.gd-exitem h4 small{font-size:13px;font-weight:500;margin-left:6px}
 .gd-ex ol{margin:0;padding-left:20px;display:grid;gap:6px}
 .gd-cell{font-size:12px;color:var(--muted);margin:0 4px;white-space:nowrap}
 .gd-notes{margin-top:16px;font-size:13.5px;max-width:120ch}
@@ -403,7 +412,6 @@ def explore():
 
 def guide():
     # 탐구 첫걸음 탭: 다섯 단계 카드와 따라 해 보는 예시
-    ex_s = SUBJ_BY_ID[GUIDE_EXAMPLE['subject']]
     o = ['<div role="tabpanel" id="xp-guide" aria-labelledby="xt-guide">',
          '<div class="gd-intro">' + ''.join(f'<p>{t}</p>' for t in GUIDE_INTRO) + '</div>', '<ol class="gd-steps">']
     for i, st in enumerate(GUIDE_STEPS, 1):
@@ -413,11 +421,17 @@ def guide():
                  f'<p class="gd-check"><b>확인</b> {E(st["check"])}</p>'
                  f'<button type="button" class="gd-show" aria-pressed="false" data-cells="{cells}">표에서 보기 · {" ".join(st["cells"])}</button></li>')
     o.append('</ol>')
-    cells = ' '.join(k for k, _ in GUIDE_EXAMPLE['steps'])
-    o.append(f'<article class="gd-ex"><h3>따라 해 보는 예시: {E(GUIDE_EXAMPLE["title"])} <small><a href="#{ex_s["id"]}">{E(ex_s["name"])}</a></small></h3><ol>')
-    for (k, t), st in zip(GUIDE_EXAMPLE['steps'], GUIDE_STEPS):
-        o.append(f'<li><b>{E(st["title"])}</b> <span class="gd-cell">{k} {E(cell_name(k))}</span> {E(t)}</li>')
-    o.append(f'</ol><button type="button" class="gd-show" aria-pressed="false" data-cells="{cells}">표에서 보기 · {cells}</button></article>')
+    o.append('<section class="gd-ex"><h3 id="gd-ex-h">따라 해 보는 예시</h3><p class="gd-sub">고1 공통과목 하나를 골라 다섯 단계를 따라가 보세요.</p>'
+             '<div class="gd-picks" role="group" aria-labelledby="gd-ex-h">'
+             + ''.join(f'<button type="button" class="gd-pick" data-ex="{i}" aria-pressed="{"true" if i == 0 else "false"}">{E(ex["label"])}</button>' for i, ex in enumerate(GUIDE_EXAMPLES)) + '</div>')
+    for i, ex in enumerate(GUIDE_EXAMPLES):
+        ex_s = SUBJ_BY_ID[ex['subject']]
+        cells = ' '.join(k for k, _ in ex['steps'])
+        o.append(f'<article class="gd-exitem" data-ex="{i}"{"" if i == 0 else " hidden"}><h4>{E(ex["title"])} <small><a href="#{ex_s["id"]}">{E(ex_s["name"])}</a></small></h4><ol>')
+        for (k, t), st in zip(ex['steps'], GUIDE_STEPS):
+            o.append(f'<li><b>{E(st["title"])}</b> <span class="gd-cell">{k} {E(cell_name(k))}</span> {E(t)}</li>')
+        o.append(f'</ol><button type="button" class="gd-show" aria-pressed="false" data-cells="{cells}">표에서 보기 · {cells}</button></article>')
+    o.append('</section>')
     o.append('<div class="gd-notes"><h3>기록과 유의점</h3><ul>' + ''.join(f'<li>{t}</li>' for t in GUIDE_NOTES) + '</ul></div></div>')
     return o
 
@@ -722,7 +736,10 @@ JS = r'''<script>
   fuTypes.addEventListener('click',function(e){var b=e.target.closest('button[data-i]');if(!b)return;fuCur=+b.dataset.i;clearMarks();renderFusion();});
   fuBody.addEventListener('click',function(e){var b=e.target.closest('.fu-show');if(!b)return;var on=b.getAttribute('aria-pressed')!=='true';clearMarks();
     if(on){mark(b.dataset.cells.split(' '));b.setAttribute('aria-pressed','true');}});
-  document.getElementById('xp-guide').addEventListener('click',function(e){var b=e.target.closest('.gd-show');if(!b)return;var on=b.getAttribute('aria-pressed')!=='true';clearMarks();
+  document.getElementById('xp-guide').addEventListener('click',function(e){var p=e.target.closest('.gd-pick');
+    if(p){var n=p.dataset.ex;clearMarks();document.querySelectorAll('.gd-pick').forEach(function(x){x.setAttribute('aria-pressed',x===p?'true':'false')});
+      document.querySelectorAll('.gd-exitem').forEach(function(x){x.hidden=x.dataset.ex!==n});return;}
+    var b=e.target.closest('.gd-show');if(!b)return;var on=b.getAttribute('aria-pressed')!=='true';clearMarks();
     if(on){mark(b.dataset.cells.split(' '));b.setAttribute('aria-pressed','true');}});
   renderFusion();
   window.addEventListener('hashchange',render);render();
@@ -777,8 +794,10 @@ r += md_matrix(lambda k: '<br>'.join('• ' + a for a in CELLS[k[0]][k[1]][0]) +
 r += ['', '## 탐구 첫걸음', '', '탐구와 교과 개념에 아직 익숙하지 않은 학생을 위한 다섯 단계입니다. 수업에서 배운 개념 하나를 직접 확인해 보는 데서 시작합니다.', '']
 for _i, _st in enumerate(GUIDE_STEPS, 1):
     r.append(f"{_i}. **{_st['title']}** ({' · '.join(_st['cells'])}): {_st['do']} 확인: {_st['check']}")
-r += ['', f"**따라 해 보는 예시: {GUIDE_EXAMPLE['title']}** ({SUBJ_BY_ID[GUIDE_EXAMPLE['subject']]['name']})", '']
-r += [f"- {_st['title']} ({_k}): {_t}" for (_k, _t), _st in zip(GUIDE_EXAMPLE['steps'], GUIDE_STEPS)]
+r += ['', '**따라 해 보는 예시** (고1 공통과목)']
+for _ex in GUIDE_EXAMPLES:
+    r += ['', f"*{_ex['label']}: {_ex['title']}* ({SUBJ_BY_ID[_ex['subject']]['name']})", '']
+    r += [f"- {_st['title']} ({_k}): {_t}" for (_k, _t), _st in zip(_ex['steps'], GUIDE_STEPS)]
 r += [''] + ['- ' + _t.replace('<b>', '**').replace('</b>', '**') for _t in GUIDE_NOTES]
 r += ['', '## 탐구 경로 예시', '']
 for name, steps, desc in PATHS:
