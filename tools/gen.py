@@ -8,6 +8,7 @@ from subjects_common2 import SUBJECTS_COMMON2
 from subjects_general import SUBJECTS_GENERAL
 from subjects_career import SUBJECTS_CAREER
 from subjects_convergence import SUBJECTS_CONVERGENCE
+from subjects_etc import SUBJECTS_ETC
 from fusion import FUSION_TYPES
 from guide import GUIDE_INTRO, GUIDE_STEPS, GUIDE_EXAMPLES, GUIDE_NOTES
 from pyeonje import GRADES, COLS, GROUP_COL, AREA_CLASS, placed, rows as plan_rows
@@ -15,7 +16,7 @@ from pyeonje import GRADES, COLS, GROUP_COL, AREA_CLASS, placed, rows as plan_ro
 _PAIR = {s.get('pair', s['id']): s for s in SUBJECTS_COMMON2}
 _S1 = [x for s in _S1 for x in (s, _PAIR.pop(s['id'], None)) if x] + list(_PAIR.values())
 for _s in _S1: _s.setdefault('group', '고1 공통')
-SUBJECTS = _S1 + SUBJECTS_GENERAL + SUBJECTS_CAREER + SUBJECTS_CONVERGENCE
+SUBJECTS = _S1 + SUBJECTS_GENERAL + SUBJECTS_CAREER + SUBJECTS_CONVERGENCE + SUBJECTS_ETC
 assert len({s['id'] for s in SUBJECTS}) == len(SUBJECTS), '과목 id가 겹칩니다'
 GROUPS = list(dict.fromkeys(s['group'] for s in SUBJECTS))
 SUBJ_BY_ID = {s['id']: s for s in SUBJECTS}
@@ -65,12 +66,12 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 
 CSS = """
 <title>블룸 교과탐구활동 매트릭스</title>
-<meta name="description" content="블룸의 개정 교육목표 분류(지식 4차원 × 인지 과정 6단계) 24칸에 2022 개정 교육과정 70과목 성취기준을 배치하고, 과목별 탐구활동과 세특 기재 예시를 추천합니다.">
+<meta name="description" content="블룸의 개정 교육목표 분류(지식 4차원 × 인지 과정 6단계) 24칸에 2022 개정 교육과정 73과목 성취기준을 배치하고, 과목별 탐구활동과 세특 기재 예시를 추천합니다.">
 <!-- 카카오톡·SNS 링크 미리보기(og.png 원본은 tools/og.html) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="봉일천고 진로진학 자료실">
 <meta property="og:title" content="블룸의 개정 교육목표 분류로 보는 교과탐구활동 추천 매트릭스">
-<meta property="og:description" content="70과목 성취기준을 24칸에 배치하고 과목별 탐구활동·세특 기재 예시, 과목 융합 탐구, 2022 개정 일반고 편제표를 함께 제공합니다.">
+<meta property="og:description" content="73과목 성취기준을 24칸에 배치하고 과목별 탐구활동·세특 기재 예시, 과목 융합 탐구, 2022 개정 일반고 편제표를 함께 제공합니다.">
 <meta property="og:url" content="https://2023swhs3rd-a11y.github.io/matrix/">
 <meta property="og:image" content="https://2023swhs3rd-a11y.github.io/matrix/og.png">
 <meta property="og:image:width" content="1200">
@@ -86,21 +87,21 @@ CSS = """
 :root{
   --bg:#f6f7f9; --surface:#ffffff; --fg:#1d2430; --muted:#5b6575; --line:#d9dee6;
   --accent-ink:#ffffff;
-  --c-base:#3f5a78; --c-kor:#b0413a; --c-math:#2b67a8; --c-eng:#7046a8; --c-soc:#9a5b00; --c-sci:#1f7a52; --c-his:#845537; --c-eth:#5b6a1e;
+  --c-base:#3f5a78; --c-kor:#b0413a; --c-math:#2b67a8; --c-eng:#7046a8; --c-soc:#9a5b00; --c-sci:#1f7a52; --c-his:#845537; --c-eth:#5b6a1e; --c-art:#a3416f; --c-life:#2f7480;
   --hl:#f2c14e;
   --display:"Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --body:"Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#12161c; --surface:#1a2029; --fg:#e4e8ee; --muted:#9aa4b2; --line:#2c3542; --accent-ink:#0f1620;
-  --c-base:#9fb6d0; --c-kor:#ef9a8f; --c-math:#8ab8ec; --c-eng:#bfa3e6; --c-soc:#e9b067; --c-sci:#7fd0a7; --c-his:#d1a587; --c-eth:#c4d27f; --hl:#d9a93a; color-scheme:dark}}
+  --c-base:#9fb6d0; --c-kor:#ef9a8f; --c-math:#8ab8ec; --c-eng:#bfa3e6; --c-soc:#e9b067; --c-sci:#7fd0a7; --c-his:#d1a587; --c-eth:#c4d27f; --c-art:#eba0c4; --c-life:#86cbd5; --hl:#d9a93a; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#12161c; --surface:#1a2029; --fg:#e4e8ee; --muted:#9aa4b2; --line:#2c3542; --accent-ink:#0f1620;
-  --c-base:#9fb6d0; --c-kor:#ef9a8f; --c-math:#8ab8ec; --c-eng:#bfa3e6; --c-soc:#e9b067; --c-sci:#7fd0a7; --c-his:#d1a587; --c-eth:#c4d27f; --hl:#d9a93a; color-scheme:dark}
+  --c-base:#9fb6d0; --c-kor:#ef9a8f; --c-math:#8ab8ec; --c-eng:#bfa3e6; --c-soc:#e9b067; --c-sci:#7fd0a7; --c-his:#d1a587; --c-eth:#c4d27f; --c-art:#eba0c4; --c-life:#86cbd5; --hl:#d9a93a; color-scheme:dark}
 /* 교과(국어·수학·영어·사회·과학·역사)마다 강조색 하나; 표의 칸 농도와 번호 배경은 그 색에서 섞어 만든다 */
 body,.tab{--accent:var(--c-base)}
 .a-kor{--accent:var(--c-kor)} .a-math{--accent:var(--c-math)} .a-eng{--accent:var(--c-eng)}
-.a-soc{--accent:var(--c-soc)} .a-sci{--accent:var(--c-sci)} .a-his{--accent:var(--c-his)} .a-eth{--accent:var(--c-eth)}
+.a-soc{--accent:var(--c-soc)} .a-sci{--accent:var(--c-sci)} .a-his{--accent:var(--c-his)} .a-eth{--accent:var(--c-eth)} .a-art{--accent:var(--c-art)} .a-life{--accent:var(--c-life)}
 body{--chip:color-mix(in srgb,var(--accent) 14%,var(--surface));
   --l1:color-mix(in srgb,var(--accent) 5%,var(--surface)); --l2:color-mix(in srgb,var(--accent) 9%,var(--surface)); --l3:color-mix(in srgb,var(--accent) 13%,var(--surface));
   --l4:color-mix(in srgb,var(--accent) 17%,var(--surface)); --l5:color-mix(in srgb,var(--accent) 22%,var(--surface)); --l6:color-mix(in srgb,var(--accent) 27%,var(--surface))}
@@ -520,10 +521,10 @@ JS = r'''<script>
   document.addEventListener('focusout',hideTip);window.addEventListener('scroll',hideTip,true);
   var note=document.getElementById('subject-note');
   var views=[{id:'common',name:'전 과목 공통',area:''}].concat(DATA.subjects);
-  var AREA={'국어':'kor','수학':'math','영어':'eng','사회':'soc','과학':'sci','역사':'his','도덕':'eth'};
+  var AREA={'국어':'kor','수학':'math','영어':'eng','사회':'soc','과학':'sci','역사':'his','도덕':'eth','미술':'art','정보':'life','한문':'life'};
   // 과목 고르기: 교과를 먼저 고르면 그 교과의 과목이 유형(고1 공통·일반선택·진로선택…) 열로 펼쳐진다
-  var ROW={'국어':'국어','수학':'수학','영어':'영어','사회':'사회','역사':'사회','도덕':'사회','과학':'과학'};
-  var ROWS=['국어','수학','영어','사회','과학'], RCLS={'국어':'kor','수학':'math','영어':'eng','사회':'soc','과학':'sci'};
+  var ROW={'국어':'국어','수학':'수학','영어':'영어','사회':'사회','역사':'사회','도덕':'사회','과학':'과학','미술':'체육·예술','정보':'생활·교양','한문':'생활·교양'};
+  var ROWS=['국어','수학','영어','사회','과학','체육·예술','생활·교양'], RCLS={'국어':'kor','수학':'math','영어':'eng','사회':'soc','과학':'sci','체육·예술':'art','생활·교양':'life'};
   var GRADE={'고1 공통':'1학년','일반선택':'2·3학년','진로선택':'2·3학년','융합선택':'2·3학년'};
   var GROUPS=[];views.forEach(function(v){if(v.group&&GROUPS.indexOf(v.group)<0)GROUPS.push(v.group)});
   var btn={}, atab={}, cur=null, areas=document.getElementById('areas'), panel=document.getElementById('panel');
