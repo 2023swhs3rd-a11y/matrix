@@ -61,6 +61,23 @@ def load_detail(sid):
     assert len(d) == 24 and all(set(v) == {'t', 'q', 's', 'o', 'r'} for v in d.values()), sid + ' 예시 파일 형식 오류'
     return d
 def code(s, c): return f"{s['prefix']}{s.get('sep', '-')}{c}"
+def adapt_path(steps, placed):
+    """탐구 경로의 칸 가운데 과목 성취기준이 없는 칸을 가까운 칸으로 바꾼다.
+    인지 과정 열은 원래 칸과 한 칸 이내이면서 앞 단계보다 뒤로 가지 않고, 지식 행 차이는 작을수록 좋다.
+    같은 칸은 두 번 쓰지 않으며, 맞는 칸이 없으면 그 단계를 뺀다. 반환: [[칸, 원래 칸(바꾸지 않았으면 '')], ...]"""
+    R, P = 'ABCD', '123456'
+    col = lambda c: P.index(c[1])
+    out, used = [], {c for c in steps if c in placed}
+    for i, st in enumerate(steps):
+        prev = col(out[-1][0]) if out else -1
+        if st in placed and col(st) >= prev: out.append([st, '']); continue
+        nxt = min([col(c) for c in steps[i + 1:] if c in placed] or [5])
+        cand = [c for c in placed if c not in used and prev <= col(c) <= nxt and abs(col(c) - col(st)) <= 1
+                and abs(R.index(c[0]) - R.index(st[0])) <= 2]
+        if not cand: continue
+        c = min(cand, key=lambda c: (2 * abs(col(c) - col(st)) + abs(R.index(c[0]) - R.index(st[0])), c))
+        used.add(c); out.append([c, st])
+    return out
 E = html.escape
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 
@@ -197,6 +214,9 @@ table.st{border-collapse:collapse;width:100%;min-width:640px;background:var(--su
 .path h3{margin:0;font-size:16px}
 .steps{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-variant-numeric:tabular-nums;font-size:13px;font-weight:600;color:var(--accent)}
 .steps span.s{border:1px solid var(--line);border-radius:4px;padding:1px 6px;background:var(--bg)}
+.steps span.s.alt{border-style:dashed;border-color:var(--accent)}
+.path .alt-note{font-size:12.5px;color:var(--muted);margin:0}
+.path .alt-note[hidden]{display:none}
 .path p{font-size:13.5px;color:var(--muted)}
 .guide{display:grid;gap:10px}
 .guide li{max-width:120ch}
@@ -380,6 +400,8 @@ def payload():
             "standards": [[full(c), t, cells] for c, t, cells in s["standards"]],
             "cells": {k: {"acts": [[a, [full(c) for c in cs.split(',') if c]] for a, cs in acts]} for k, acts in s["cells"].items()},
         })
+        _pl = {c for _, _, cs in s["standards"] for c in cs}
+        subs[-1]["paths"] = [adapt_path(steps, _pl) for _, steps, _ in PATHS]
         ex = load_detail(s["id"])
         if ex: subs[-1]["ex"] = ex
     fusion = [dict(t, examples=[dict(e, subjects=[{"id": sid, "name": SUBJ_BY_ID[sid]["name"], "area": SUBJ_BY_ID[sid]["area"], "code": code(SUBJ_BY_ID[sid], c),
@@ -397,10 +419,10 @@ def explore():
     # 상단 탭: 탐구 경로 예시 · 과목 융합 탐구
     o = ['<section class="explore" aria-label="탐구 첫걸음, 탐구 설계 예시와 편제표">',
          '<div class="ex-tabs" role="tablist" aria-label="탐구 설계 예시와 편제표"><button type="button" role="tab" id="xt-guide" aria-controls="xp-guide" aria-selected="true">탐구 첫걸음</button><button type="button" role="tab" id="xt-path" aria-controls="xp-path" aria-selected="false" tabindex="-1">탐구 경로 예시</button><button type="button" role="tab" id="xt-fusion" aria-controls="xp-fusion" aria-selected="false" tabindex="-1">과목 융합 탐구</button><button type="button" role="tab" id="xt-plan" aria-controls="xp-plan" aria-selected="false" tabindex="-1"><span class="wide">2022 개정 </span>일반고 편제표</button></div>',
-         '<div role="tabpanel" id="xp-path" aria-labelledby="xt-path" hidden><p class="lead" style="margin-bottom:16px">한 학기 탐구를 몇 칸의 순서로 묶은 예시입니다. 경로를 누르면 아래 표에 해당 칸이 표시되고, 과목을 바꿔도 같은 칸의 과목별 활동을 볼 수 있습니다.</p><div class="paths">']
+         '<div role="tabpanel" id="xp-path" aria-labelledby="xt-path" hidden><p class="lead" style="margin-bottom:16px">한 학기 탐구를 몇 칸의 순서로 묶은 예시입니다. 경로를 누르면 아래 표에 해당 칸이 표시됩니다. 과목을 고르면 그 과목 성취기준이 없는 칸은 가까운 칸으로 바꿔 보여 주며, 바뀐 칸은 점선으로 표시합니다.</p><div class="paths">']
     for i, (name, steps, desc) in enumerate(PATHS):
         st = '<span aria-hidden="true">→</span>'.join(f'<span class="s">{s} {E(cell_name(s))}</span>' for s in steps)
-        o.append(f'<button type="button" class="path" id="path-{i}" aria-pressed="false" data-cells="{" ".join(steps)}"><h3>{E(name)}</h3><div class="steps">{st}</div><p>{E(desc)}</p></button>')
+        o.append(f'<button type="button" class="path" id="path-{i}" aria-pressed="false" data-cells="{" ".join(steps)}"><h3>{E(name)}</h3><div class="steps" data-orig="{" ".join(steps)}">{st}</div><p>{E(desc)}</p><p class="alt-note" hidden></p></button>')
     o.append('</div></div>')
     o += guide()
     o.append('<div role="tabpanel" id="xp-fusion" aria-labelledby="xt-fusion" hidden>'
@@ -660,12 +682,23 @@ JS = r'''<script>
     var c=e.target.closest('.copy');if(c){var t=c.dataset.t;
       try{navigator.clipboard.writeText(t).then(function(){c.textContent='복사됨'},function(){c.textContent='복사 실패'})}catch(err){c.textContent='복사 실패'}}
   });
+  // 탐구 경로: 과목을 고르면 그 과목 성취기준이 있는 칸으로 바꾼 경로를 보인다
+  function updatePaths(v){document.querySelectorAll('.path').forEach(function(b,i){
+    var box=b.querySelector('.steps'), note=b.querySelector('.alt-note');
+    var steps=v.paths?v.paths[i]:box.dataset.orig.split(' ').map(function(c){return [c,'']});
+    box.innerHTML=steps.map(function(x){return '<span class="s'+(x[1]?' alt':'')+'"'+(x[1]?' title="'+x[1]+' 대신"':'')+'>'+x[0]+' '+esc(DATA.names[x[0]])+'</span>'}).join('<span aria-hidden="true">→</span>');
+    b.dataset.cells=steps.map(function(x){return x[0]}).join(' ');
+    var alt=steps.filter(function(x){return x[1]}), orig=box.dataset.orig.split(' '), kept=steps.map(function(x){return x[1]||x[0]});
+    var gone=orig.filter(function(c){return kept.indexOf(c)<0}), t=[];
+    if(alt.length)t.push(alt.map(function(x){return x[1]+'→'+x[0]}).join(', ')+' 바꿈');
+    if(gone.length)t.push(gone.join('·')+'는 가까운 칸이 없어 뺌');
+    note.hidden=!t.length;note.textContent=t.length?v.name+'에 성취기준이 없는 칸 조정: '+t.join(', '):'';});}
   function render(){
     var hh=(location.hash||'').slice(1);if(hh.indexOf('q=')===0){renderTopic(hh);return;}
     var id=(location.hash||'').slice(1); var v=views.filter(function(x){return x.id===id})[0]||views[0];curView=v;
     cur=v.area?ROW[v.area]:null;buildPanel();
     views.forEach(function(x){btn[x.id].setAttribute('aria-pressed',x===v?'true':'false')});
-    clearMarks();
+    clearMarks();updatePaths(v);
     document.body.className=AREA[v.area]?'a-'+AREA[v.area]:'';
     var byCell={};
     if(v.standards){v.standards.forEach(function(s){s[2].forEach(function(c,i){(byCell[c]=byCell[c]||[]).push({code:s[0],main:i===0})})});}
