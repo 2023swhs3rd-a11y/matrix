@@ -10,6 +10,7 @@ from subjects_career import SUBJECTS_CAREER
 from subjects_convergence import SUBJECTS_CONVERGENCE
 from subjects_etc import SUBJECTS_ETC
 from subjects_more import SUBJECTS_MORE
+from subjects_arts import SUBJECTS_ARTS
 from fusion import FUSION_TYPES
 from guide import GUIDE_INTRO, GUIDE_STEPS, GUIDE_EXAMPLES, GUIDE_NOTES
 from pyeonje import GRADES, COLS, GROUP_COL, AREA_CLASS, placed, rows as plan_rows
@@ -17,6 +18,9 @@ from pyeonje import GRADES, COLS, GROUP_COL, AREA_CLASS, placed, rows as plan_ro
 _PAIR = {s.get('pair', s['id']): s for s in SUBJECTS_COMMON2}
 _S1 = [x for s in _S1 for x in (s, _PAIR.pop(s['id'], None)) if x] + list(_PAIR.values())
 for _s in _S1: _s.setdefault('group', '고1 공통')
+# 국수영사과 밖 교과는 체육·예술 → 생활·교양 순서로 둔다
+_ORDER = ['체육', '음악', '미술', '연극', '기술·가정', '정보', '한문', '교양']
+_ETC = sorted(SUBJECTS_ETC + SUBJECTS_ARTS, key=lambda x: _ORDER.index(x['area']))
 # 나중에 넣은 과목: 고1 공통은 같은 교과 과목 뒤에, 나머지는 같은 과목군 끝에 둔다
 def _insert_after_area(lst, extra):
     for x in extra:
@@ -25,7 +29,7 @@ def _insert_after_area(lst, extra):
     return lst
 _MORE = {g: [x for x in SUBJECTS_MORE if x['group'] == g] for g in ('고1 공통', '일반선택', '진로선택', '융합선택')}
 _S1 = _insert_after_area(_S1, _MORE['고1 공통'])
-SUBJECTS = _S1 + _insert_after_area(list(SUBJECTS_GENERAL), _MORE['일반선택']) + _insert_after_area(list(SUBJECTS_CAREER), _MORE['진로선택']) + _insert_after_area(list(SUBJECTS_CONVERGENCE), _MORE['융합선택']) + SUBJECTS_ETC
+SUBJECTS = _S1 + _insert_after_area(list(SUBJECTS_GENERAL), _MORE['일반선택']) + _insert_after_area(list(SUBJECTS_CAREER), _MORE['진로선택']) + _insert_after_area(list(SUBJECTS_CONVERGENCE), _MORE['융합선택']) + _ETC
 assert len({s['id'] for s in SUBJECTS}) == len(SUBJECTS), '과목 id가 겹칩니다'
 GROUPS = list(dict.fromkeys(s['group'] for s in SUBJECTS))
 SUBJ_BY_ID = {s['id']: s for s in SUBJECTS}
@@ -93,12 +97,12 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 
 CSS = """
 <title>블룸 교과탐구활동 매트릭스</title>
-<meta name="description" content="블룸의 개정 교육목표 분류(지식 4차원 × 인지 과정 6단계) 24칸에 2022 개정 교육과정 86과목 성취기준을 배치하고, 과목별 탐구활동과 세특 기재 예시를 추천합니다.">
+<meta name="description" content="블룸의 개정 교육목표 분류(지식 4차원 × 인지 과정 6단계) 24칸에 2022 개정 교육과정 93과목 성취기준을 배치하고, 과목별 탐구활동과 세특 기재 예시를 추천합니다.">
 <!-- 카카오톡·SNS 링크 미리보기(og.png 원본은 tools/og.html) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="봉일천고 진로진학 자료실">
 <meta property="og:title" content="블룸의 개정 교육목표 분류로 보는 교과탐구활동 추천 매트릭스">
-<meta property="og:description" content="86과목 성취기준을 24칸에 배치하고 과목별 탐구활동·세특 기재 예시, 과목 융합 탐구, 2022 개정 일반고 편제표를 함께 제공합니다.">
+<meta property="og:description" content="93과목 성취기준을 24칸에 배치하고 과목별 탐구활동·세특 기재 예시, 과목 융합 탐구, 2022 개정 일반고 편제표를 함께 제공합니다.">
 <meta property="og:url" content="https://2023swhs3rd-a11y.github.io/matrix/">
 <meta property="og:image" content="https://2023swhs3rd-a11y.github.io/matrix/og.png">
 <meta property="og:image:width" content="1200">
@@ -553,9 +557,9 @@ JS = r'''<script>
   document.addEventListener('focusout',hideTip);window.addEventListener('scroll',hideTip,true);
   var note=document.getElementById('subject-note');
   var views=[{id:'common',name:'전 과목 공통',area:''}].concat(DATA.subjects);
-  var AREA={'국어':'kor','수학':'math','영어':'eng','사회':'soc','과학':'sci','역사':'his','도덕':'eth','미술':'art','정보':'life','한문':'life'};
+  var AREA={'국어':'kor','수학':'math','영어':'eng','사회':'soc','과학':'sci','역사':'his','도덕':'eth','체육':'art','음악':'art','미술':'art','연극':'art','기술·가정':'life','정보':'life','한문':'life','교양':'life'};
   // 과목 고르기: 교과를 먼저 고르면 그 교과의 과목이 유형(고1 공통·일반선택·진로선택…) 열로 펼쳐진다
-  var ROW={'국어':'국어','수학':'수학','영어':'영어','사회':'사회','역사':'사회','도덕':'사회','과학':'과학','미술':'체육·예술','정보':'생활·교양','한문':'생활·교양'};
+  var ROW={'국어':'국어','수학':'수학','영어':'영어','사회':'사회','역사':'사회','도덕':'사회','과학':'과학','체육':'체육·예술','음악':'체육·예술','미술':'체육·예술','연극':'체육·예술','기술·가정':'생활·교양','정보':'생활·교양','한문':'생활·교양','교양':'생활·교양'};
   var ROWS=['국어','수학','영어','사회','과학','체육·예술','생활·교양'], RCLS={'국어':'kor','수학':'math','영어':'eng','사회':'soc','과학':'sci','체육·예술':'art','생활·교양':'life'};
   var GRADE={'고1 공통':'1학년','일반선택':'2·3학년','진로선택':'2·3학년','융합선택':'2·3학년'};
   var GROUPS=[];views.forEach(function(v){if(v.group&&GROUPS.indexOf(v.group)<0)GROUPS.push(v.group)});
@@ -897,7 +901,7 @@ for s in SUBJECTS:
 import re as _re
 _BAD = _re.compile(r'수상(함|했|하여|경력)|소논문|교외 (활동|대회)|캠프에 참가|R&E|봉사(에|활동에) 참여|인턴')
 _EXT = _re.compile(r'확장|후속|더 나아가|다음 (과제|탐구|단계|실험)|다음에는|에도 적용|추가 탐구|추가 질문|새로운 질문|궁금증|이어 가기로|이어서')
-_CROSS = _re.compile(r'(국어|수학|영어|사회|과학|물리|화학|생명|지구|역사|윤리|지리|정보|미술|음악|경제|통계|확률|기하|미적분|대수)\S{0,6}\s*(과목|시간|수업|교과)에서 배운|시간에 배운|에서 배운 .{0,12}(개념|원리|공식|방법)')
+_CROSS = _re.compile(r'(국어|수학|영어|사회|과학|물리|화학|생명|지구|역사|윤리|지리|정보|미술|음악|체육|기술|경제|통계|확률|기하|미적분|대수)\S{0,6}\s*(과목|시간|수업|교과)에서 배운|시간에 배운|에서 배운 .{0,12}(개념|원리|공식|방법)')
 _low = []
 for _s in SUBJECTS:
     _ex = load_detail(_s['id']) or {}
