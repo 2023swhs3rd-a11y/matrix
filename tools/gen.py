@@ -12,6 +12,7 @@ from subjects_etc import SUBJECTS_ETC
 from subjects_more import SUBJECTS_MORE
 from subjects_arts import SUBJECTS_ARTS
 from subjects_arts2 import SUBJECTS_ARTS2
+from subjects_life2 import SUBJECTS_LIFE2
 from fusion import FUSION_TYPES
 from guide import GUIDE_INTRO, GUIDE_STEPS, GUIDE_EXAMPLES, GUIDE_NOTES
 from pyeonje import GRADES, COLS, GROUP_COL, AREA_CLASS, placed, rows as plan_rows
@@ -21,7 +22,7 @@ _S1 = [x for s in _S1 for x in (s, _PAIR.pop(s['id'], None)) if x] + list(_PAIR.
 for _s in _S1: _s.setdefault('group', '고1 공통')
 # 국수영사과 밖 교과는 체육·예술 → 생활·교양 순서로 둔다
 _ORDER = ['체육', '음악', '미술', '연극', '기술·가정', '정보', '한문', '교양']
-_ETC = sorted(SUBJECTS_ETC + SUBJECTS_ARTS + SUBJECTS_ARTS2, key=lambda x: _ORDER.index(x['area']))
+_ETC = sorted(SUBJECTS_ETC + SUBJECTS_ARTS + SUBJECTS_ARTS2 + SUBJECTS_LIFE2, key=lambda x: _ORDER.index(x['area']))
 # 나중에 넣은 과목: 고1 공통은 같은 교과 과목 뒤에, 나머지는 같은 과목군 끝에 둔다
 def _insert_after_area(lst, extra):
     for x in extra:
@@ -100,12 +101,12 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 
 CSS = """
 <title>블룸 교과탐구활동 매트릭스</title>
-<meta name="description" content="블룸의 개정 교육목표 분류(지식 4차원 × 인지 과정 6단계) 24칸에 2022 개정 교육과정 104과목 성취기준을 배치하고, 과목별 탐구활동과 세특 기재 예시를 추천합니다.">
+<meta name="description" content="블룸의 개정 교육목표 분류(지식 4차원 × 인지 과정 6단계) 24칸에 2022 개정 교육과정 115과목 성취기준을 배치하고, 과목별 탐구활동과 세특 기재 예시를 추천합니다.">
 <!-- 카카오톡·SNS 링크 미리보기(og.png 원본은 tools/og.html) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="봉일천고 진로진학 자료실">
 <meta property="og:title" content="블룸의 개정 교육목표 분류로 보는 교과탐구활동 추천 매트릭스">
-<meta property="og:description" content="104과목 성취기준을 24칸에 배치하고 과목별 탐구활동·세특 기재 예시, 과목 융합 탐구, 2022 개정 일반고 편제표를 함께 제공합니다.">
+<meta property="og:description" content="115과목 성취기준을 24칸에 배치하고 과목별 탐구활동·세특 기재 예시, 과목 융합 탐구, 2022 개정 일반고 편제표를 함께 제공합니다.">
 <meta property="og:url" content="https://2023swhs3rd-a11y.github.io/matrix/">
 <meta property="og:image" content="https://2023swhs3rd-a11y.github.io/matrix/og.png">
 <meta property="og:image:width" content="1200">
