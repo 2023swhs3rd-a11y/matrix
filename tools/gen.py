@@ -9,6 +9,7 @@ from subjects_general import SUBJECTS_GENERAL
 from subjects_career import SUBJECTS_CAREER
 from subjects_convergence import SUBJECTS_CONVERGENCE
 from subjects_etc import SUBJECTS_ETC
+from subjects_more import SUBJECTS_MORE
 from fusion import FUSION_TYPES
 from guide import GUIDE_INTRO, GUIDE_STEPS, GUIDE_EXAMPLES, GUIDE_NOTES
 from pyeonje import GRADES, COLS, GROUP_COL, AREA_CLASS, placed, rows as plan_rows
@@ -16,7 +17,15 @@ from pyeonje import GRADES, COLS, GROUP_COL, AREA_CLASS, placed, rows as plan_ro
 _PAIR = {s.get('pair', s['id']): s for s in SUBJECTS_COMMON2}
 _S1 = [x for s in _S1 for x in (s, _PAIR.pop(s['id'], None)) if x] + list(_PAIR.values())
 for _s in _S1: _s.setdefault('group', '고1 공통')
-SUBJECTS = _S1 + SUBJECTS_GENERAL + SUBJECTS_CAREER + SUBJECTS_CONVERGENCE + SUBJECTS_ETC
+# 나중에 넣은 과목: 고1 공통은 같은 교과 과목 뒤에, 나머지는 같은 과목군 끝에 둔다
+def _insert_after_area(lst, extra):
+    for x in extra:
+        i = max((j for j, y in enumerate(lst) if y.get('area') == x['area']), default=len(lst) - 1)
+        lst.insert(i + 1, x)
+    return lst
+_MORE = {g: [x for x in SUBJECTS_MORE if x['group'] == g] for g in ('고1 공통', '일반선택', '진로선택', '융합선택')}
+_S1 = _insert_after_area(_S1, _MORE['고1 공통'])
+SUBJECTS = _S1 + _insert_after_area(list(SUBJECTS_GENERAL), _MORE['일반선택']) + _insert_after_area(list(SUBJECTS_CAREER), _MORE['진로선택']) + _insert_after_area(list(SUBJECTS_CONVERGENCE), _MORE['융합선택']) + SUBJECTS_ETC
 assert len({s['id'] for s in SUBJECTS}) == len(SUBJECTS), '과목 id가 겹칩니다'
 GROUPS = list(dict.fromkeys(s['group'] for s in SUBJECTS))
 SUBJ_BY_ID = {s['id']: s for s in SUBJECTS}
@@ -27,7 +36,7 @@ for _s in SUBJECTS:
 # 국어·수학·영어·사회·과학 편제표 과목 중 매트릭스에 아직 없는 과목(출처 안내에 자동으로 적는다)
 _NAMES = {_s['name'] for _s in SUBJECTS}
 MISSING = [nm for _, name, cols in plan_rows() if name in AREA_CLASS for col in cols for nm, _ in col if nm not in _NAMES]
-MISSING_TXT = '원문을 구하지 못했거나 대체 이수 과목인 ' + '·'.join(MISSING) + f'({len(MISSING)}과목)은 아직 넣지 않았습니다.'
+MISSING_TXT = ('원문을 구하지 못했거나 대체 이수 과목인 ' + '·'.join(MISSING) + f'({len(MISSING)}과목)은 아직 넣지 않았습니다.') if MISSING else ''
 # 과목 칸의 활동은 그 칸에 놓인 성취기준을 하나 이상 근거로 삼아야 한다(화면은 근거가 맞는 활동만 보인다)
 for _s in SUBJECTS:
     _by = {}
@@ -58,7 +67,8 @@ def load_detail(sid):
         if line.startswith('@'): k = line[1:]; d[k] = {}; continue
         tag, _, rest = line.partition(' ')
         d[k][tag.lower()] = [x.strip() for x in rest.split(';;')] if tag == 'S' else rest
-    assert len(d) == 24 and all(set(v) == {'t', 'q', 's', 'o', 'r'} for v in d.values()), sid + ' 예시 파일 형식 오류'
+    # 24칸을 모두 쓰거나(초기 과목), 성취기준이 놓인 칸만 쓴다(빈칸은 화면에 나오지 않으므로). 범위는 아래 점검에서 확인
+    assert len(d) == len(set(d)) and all(set(v) == {'t', 'q', 's', 'o', 'r'} for v in d.values()), sid + ' 예시 파일 형식 오류'
     return d
 def code(s, c): return f"{s['prefix']}{s.get('sep', '-')}{c}"
 def adapt_path(steps, placed):
@@ -83,12 +93,12 @@ ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 
 CSS = """
 <title>블룸 교과탐구활동 매트릭스</title>
-<meta name="description" content="블룸의 개정 교육목표 분류(지식 4차원 × 인지 과정 6단계) 24칸에 2022 개정 교육과정 73과목 성취기준을 배치하고, 과목별 탐구활동과 세특 기재 예시를 추천합니다.">
+<meta name="description" content="블룸의 개정 교육목표 분류(지식 4차원 × 인지 과정 6단계) 24칸에 2022 개정 교육과정 86과목 성취기준을 배치하고, 과목별 탐구활동과 세특 기재 예시를 추천합니다.">
 <!-- 카카오톡·SNS 링크 미리보기(og.png 원본은 tools/og.html) -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="봉일천고 진로진학 자료실">
 <meta property="og:title" content="블룸의 개정 교육목표 분류로 보는 교과탐구활동 추천 매트릭스">
-<meta property="og:description" content="73과목 성취기준을 24칸에 배치하고 과목별 탐구활동·세특 기재 예시, 과목 융합 탐구, 2022 개정 일반고 편제표를 함께 제공합니다.">
+<meta property="og:description" content="86과목 성취기준을 24칸에 배치하고 과목별 탐구활동·세특 기재 예시, 과목 융합 탐구, 2022 개정 일반고 편제표를 함께 제공합니다.">
 <meta property="og:url" content="https://2023swhs3rd-a11y.github.io/matrix/">
 <meta property="og:image" content="https://2023swhs3rd-a11y.github.io/matrix/og.png">
 <meta property="og:image:width" content="1200">
@@ -519,7 +529,7 @@ def body():
 </ol></section>''')
     stamp = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=9))).strftime('%Y-%m-%d %H:%M')
     total = sum(len(x['standards']) for x in SUBJECTS)
-    o.append(f'<footer><p id="version">업데이트 {stamp} (KST) · 과목 {len(SUBJECTS)}개 · 성취기준 {total}개</p><p>작성: 봉일천고등학교 진로진학부장 전중수 <a href="mailto:jungsooj@korea.kr">jungsooj@korea.kr</a></p><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목, 2·3학년 일반선택·진로선택·융합선택 과목. 공개 정리 자료에서 옮긴 뒤 과목마다 다른 공개 자료와 문장을 대조했지만(2026-10-29), 국가교육과정정보센터(NCIC) 원문과 다시 확인해 사용하세요. {MISSING_TXT}</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p><p class="links"><b>원문 자료</b> <a href="https://ncic.re.kr/" target="_blank" rel="noopener">국가교육과정정보센터(NCIC)</a>: 2022 개정 교육과정 원문(교육부 고시 제2022-33호)과 교과별 교육과정 해설서 · <a href="https://www.kice.re.kr/" target="_blank" rel="noopener">한국교육과정평가원(KICE)</a>: 교육과정·평가 연구 자료 · <a href="https://www.moe.go.kr/" target="_blank" rel="noopener">교육부</a>: 교육과정 고시와 정책 자료 · <a href="https://star.moe.go.kr/" target="_blank" rel="noopener">교육부 학생평가 지원포털</a>: 성취수준과 평가 기준 · <a href="https://snuarori.snu.ac.kr/admissions/officer" target="_blank" rel="noopener">서울대학교 아로리 ‘나도 입학사정관’</a>: 2014~2026학년도 학교생활기록부 평가 사례 · <a href="https://admission.snu.ac.kr/" target="_blank" rel="noopener">서울대학교 입학본부</a>: 학생부종합전형 안내서(2021~2027학년도)</p></footer>')
+    o.append(f'<footer><p id="version">업데이트 {stamp} (KST) · 과목 {len(SUBJECTS)}개 · 성취기준 {total}개</p><p>작성: 봉일천고등학교 진로진학부장 전중수 <a href="mailto:jungsooj@korea.kr">jungsooj@korea.kr</a></p><p>성취기준: 교육부 고시 제2022-33호 2022 개정 교육과정, 고등학교 1학년 공통과목, 2·3학년 일반선택·진로선택·융합선택 과목. 성취기준 문장은 「2022 개정 초·중등학교 교육과정 [별책 4] 고등학교 교육과정」 전문과 모두 대조했습니다(2026-11-06). 사용 전 국가교육과정정보센터(NCIC) 원문과 다시 확인하세요. {MISSING_TXT}</p><p>분류 틀: Anderson, L. W., &amp; Krathwohl, D. R. (Eds.). (2001). <i>A Taxonomy for Learning, Teaching, and Assessing.</i> Longman. 성취기준의 칸 배치는 교사 판단을 돕기 위한 예시입니다.</p><p class="links"><b>원문 자료</b> <a href="https://ncic.re.kr/" target="_blank" rel="noopener">국가교육과정정보센터(NCIC)</a>: 2022 개정 교육과정 원문(교육부 고시 제2022-33호)과 교과별 교육과정 해설서 · <a href="https://www.kice.re.kr/" target="_blank" rel="noopener">한국교육과정평가원(KICE)</a>: 교육과정·평가 연구 자료 · <a href="https://www.moe.go.kr/" target="_blank" rel="noopener">교육부</a>: 교육과정 고시와 정책 자료 · <a href="https://star.moe.go.kr/" target="_blank" rel="noopener">교육부 학생평가 지원포털</a>: 성취수준과 평가 기준 · <a href="https://snuarori.snu.ac.kr/admissions/officer" target="_blank" rel="noopener">서울대학교 아로리 ‘나도 입학사정관’</a>: 2014~2026학년도 학교생활기록부 평가 사례 · <a href="https://admission.snu.ac.kr/" target="_blank" rel="noopener">서울대학교 입학본부</a>: 학생부종합전형 안내서(2021~2027학년도)</p></footer>')
     o.append('</div>')
     o.append('<script>var DATA=' + json.dumps(payload(), ensure_ascii=False) + ';</script>')
     o.append(JS)
@@ -892,6 +902,7 @@ _low = []
 for _s in SUBJECTS:
     _ex = load_detail(_s['id']) or {}
     _mapped = {c for _st in _s['standards'] for c in _st[2]}  # 화면에 예시가 나오는 칸
+    assert not _ex or _mapped <= set(_ex), f"칸 예시 누락: {_s['id']} {sorted(_mapped - set(_ex))}"
     for _k, _v in _ex.items():
         if _k in _mapped and _BAD.search(_v['r']): print('경고: 대입 미반영 항목 표현', _s['id'], _k, _BAD.search(_v['r']).group(0))
     _n = sum(1 for _k, _v in _ex.items() if _k in _mapped and (_EXT.search(_v['r']) or _CROSS.search(_v['r'])))
