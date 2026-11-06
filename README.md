@@ -10,9 +10,9 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | 웹 미리보기 (Pages 설정 전에도 열림) | https://htmlpreview.github.io/?https://github.com/2023swhs3rd-a11y/matrix/blob/main/index.html |
 | HTML 원본 | [index.html](index.html) |
 | 고1 공통 | [공통국어1](subjects/kor.md) · [공통국어2](subjects/kor2.md) · [공통수학1](subjects/math.md) · [공통수학2](subjects/math2.md) · [기본수학1](subjects/bmath1.md) · [기본수학2](subjects/bmath2.md) · [공통영어1](subjects/eng.md) · [공통영어2](subjects/ceng2.md) · [기본영어1](subjects/beng1.md) · [기본영어2](subjects/beng2.md) · [통합사회1](subjects/soc.md) · [통합사회2](subjects/soc2.md) · [통합과학1](subjects/sci.md) · [통합과학2](subjects/sci2.md) · [한국사1](subjects/his.md) · [한국사2](subjects/his2.md) · [과학탐구실험1](subjects/lab1.md) · [과학탐구실험2](subjects/lab2.md) |
-| 일반선택 | [화법과 언어](subjects/hwaeon.md) · [독서와 작문](subjects/dokjak.md) · [문학](subjects/lit.md) · [대수](subjects/alg.md) · [미적분Ⅰ](subjects/calc1.md) · [확률과 통계](subjects/prob.md) · [영어Ⅰ](subjects/eng1.md) · [영어Ⅱ](subjects/eng2.md) · [영어 독해와 작문](subjects/engrw.md) · [세계시민과 지리](subjects/wgeo.md) · [세계사](subjects/whis.md) · [사회와 문화](subjects/socul.md) · [물리학](subjects/phys.md) · [화학](subjects/chem.md) · [생명과학](subjects/bio.md) · [지구과학](subjects/earth.md) · [현대사회와 윤리](subjects/modeth.md) · [체육1](subjects/pe1.md) · [체육2](subjects/pe2.md) · [음악](subjects/music.md) · [미술](subjects/art.md) · [연극](subjects/drama.md) · [기술·가정](subjects/techhome.md) · [정보](subjects/info.md) · [한문](subjects/hanmun.md) · [진로와 직업](subjects/career.md) · [생태와 환경](subjects/ecoenv.md) |
-| 진로선택 | [주제 탐구 독서](subjects/jutam.md) · [문학과 영상](subjects/litfilm.md) · [직무 의사소통](subjects/jikui.md) · [기하](subjects/geom.md) · [미적분Ⅱ](subjects/calc2.md) · [경제 수학](subjects/econmath.md) · [인공지능 수학](subjects/aimath.md) · [직무 수학](subjects/jobmath.md) · [한국지리 탐구](subjects/hantam.md) · [도시의 미래 탐구](subjects/dotam.md) · [동아시아 역사 기행](subjects/dongyeok.md) · [정치](subjects/politics.md) · [법과 사회](subjects/law.md) · [경제](subjects/econ.md) · [윤리와 사상](subjects/ethics.md) · [인문학과 윤리](subjects/humeth.md) · [국제 관계의 이해](subjects/intl.md) · [영미 문학 읽기](subjects/litread.md) · [직무 영어](subjects/jobeng.md) · [영어 발표와 토론](subjects/engpd.md) · [심화 영어](subjects/adveng.md) · [심화 영어 독해와 작문](subjects/advengrw.md) · [역학과 에너지](subjects/mech.md) · [전자기와 양자](subjects/emq.md) · [물질과 에너지](subjects/mateng.md) · [화학 반응의 세계](subjects/chemrx.md) · [세포와 물질대사](subjects/cellmet.md) · [생물의 유전](subjects/genet.md) · [지구시스템과학](subjects/earthsys.md) · [행성우주과학](subjects/space.md) · [운동과 건강](subjects/exhealth.md) · [스포츠 문화](subjects/sportcul.md) · [스포츠 과학](subjects/sportsci.md) · [음악 연주와 창작](subjects/perfcomp.md) · [음악 감상과 비평](subjects/listencrit.md) · [미술 창작](subjects/artcreate.md) · [미술 감상과 비평](subjects/artcrit.md) · [로봇과 공학세계](subjects/robot.md) · [생활과학 탐구](subjects/lifesci.md) · [인공지능 기초](subjects/aibasic.md) · [데이터 과학](subjects/datasci.md) · [한문 고전 읽기](subjects/hanclassic.md) · [인간과 철학](subjects/philo.md) · [논리와 사고](subjects/logic.md) · [인간과 심리](subjects/psych.md) · [교육의 이해](subjects/edu.md) · [삶과 종교](subjects/religion.md) · [보건](subjects/health.md) |
-| 융합선택 | [독서 토론과 글쓰기](subjects/dokto.md) · [매체 의사소통](subjects/maeui.md) · [언어생활 탐구](subjects/eontam.md) · [수학과 문화](subjects/mathcul.md) · [실용 통계](subjects/prstat.md) · [수학과제 탐구](subjects/mathproj.md) · [과학의 역사와 문화](subjects/scihist.md) · [기후변화와 환경생태](subjects/climeco.md) · [융합과학 탐구](subjects/convsci.md) · [세계 문화와 영어](subjects/worldcul.md) · [실생활 영어 회화](subjects/lifeeng.md) · [미디어 영어](subjects/mediaeng.md) · [여행지리](subjects/travel.md) · [사회문제 탐구](subjects/socprob.md) · [금융과 경제생활](subjects/finance.md) · [기후변화와 지속가능한 세계](subjects/climsus.md) · [역사로 탐구하는 현대 세계](subjects/whmod.md) · [윤리문제 탐구](subjects/ethinq.md) · [스포츠 생활1](subjects/sportlife1.md) · [스포츠 생활2](subjects/sportlife2.md) · [음악과 미디어](subjects/musicmedia.md) · [미술과 매체](subjects/artmedia.md) · [창의 공학 설계](subjects/creaeng.md) · [지식 재산 일반](subjects/ipgen.md) · [생애 설계와 자립](subjects/lifeplan.md) · [아동발달과 부모](subjects/childdev.md) · [소프트웨어와 생활](subjects/swlife.md) · [언어생활과 한자](subjects/hanja.md) · [인간과 경제활동](subjects/humecon.md) · [논술](subjects/essay.md) |
+| 일반선택 | [화법과 언어](subjects/hwaeon.md) · [독서와 작문](subjects/dokjak.md) · [문학](subjects/lit.md) · [대수](subjects/alg.md) · [미적분Ⅰ](subjects/calc1.md) · [확률과 통계](subjects/prob.md) · [영어Ⅰ](subjects/eng1.md) · [영어Ⅱ](subjects/eng2.md) · [영어 독해와 작문](subjects/engrw.md) · [세계시민과 지리](subjects/wgeo.md) · [세계사](subjects/whis.md) · [사회와 문화](subjects/socul.md) · [물리학](subjects/phys.md) · [화학](subjects/chem.md) · [생명과학](subjects/bio.md) · [지구과학](subjects/earth.md) · [현대사회와 윤리](subjects/modeth.md) · [체육1](subjects/pe1.md) · [체육2](subjects/pe2.md) · [음악](subjects/music.md) · [미술](subjects/art.md) · [연극](subjects/drama.md) · [기술·가정](subjects/techhome.md) · [정보](subjects/info.md) · [한문](subjects/hanmun.md) · [진로와 직업](subjects/career.md) · [생태와 환경](subjects/ecoenv.md) · [독일어](subjects/ger.md) · [프랑스어](subjects/fre.md) · [스페인어](subjects/spa.md) · [중국어](subjects/chi.md) · [일본어](subjects/jpn.md) · [러시아어](subjects/rus.md) · [아랍어](subjects/ara.md) · [베트남어](subjects/vie.md) |
+| 진로선택 | [주제 탐구 독서](subjects/jutam.md) · [문학과 영상](subjects/litfilm.md) · [직무 의사소통](subjects/jikui.md) · [기하](subjects/geom.md) · [미적분Ⅱ](subjects/calc2.md) · [경제 수학](subjects/econmath.md) · [인공지능 수학](subjects/aimath.md) · [직무 수학](subjects/jobmath.md) · [한국지리 탐구](subjects/hantam.md) · [도시의 미래 탐구](subjects/dotam.md) · [동아시아 역사 기행](subjects/dongyeok.md) · [정치](subjects/politics.md) · [법과 사회](subjects/law.md) · [경제](subjects/econ.md) · [윤리와 사상](subjects/ethics.md) · [인문학과 윤리](subjects/humeth.md) · [국제 관계의 이해](subjects/intl.md) · [영미 문학 읽기](subjects/litread.md) · [직무 영어](subjects/jobeng.md) · [영어 발표와 토론](subjects/engpd.md) · [심화 영어](subjects/adveng.md) · [심화 영어 독해와 작문](subjects/advengrw.md) · [역학과 에너지](subjects/mech.md) · [전자기와 양자](subjects/emq.md) · [물질과 에너지](subjects/mateng.md) · [화학 반응의 세계](subjects/chemrx.md) · [세포와 물질대사](subjects/cellmet.md) · [생물의 유전](subjects/genet.md) · [지구시스템과학](subjects/earthsys.md) · [행성우주과학](subjects/space.md) · [운동과 건강](subjects/exhealth.md) · [스포츠 문화](subjects/sportcul.md) · [스포츠 과학](subjects/sportsci.md) · [음악 연주와 창작](subjects/perfcomp.md) · [음악 감상과 비평](subjects/listencrit.md) · [미술 창작](subjects/artcreate.md) · [미술 감상과 비평](subjects/artcrit.md) · [로봇과 공학세계](subjects/robot.md) · [생활과학 탐구](subjects/lifesci.md) · [인공지능 기초](subjects/aibasic.md) · [데이터 과학](subjects/datasci.md) · [한문 고전 읽기](subjects/hanclassic.md) · [인간과 철학](subjects/philo.md) · [논리와 사고](subjects/logic.md) · [인간과 심리](subjects/psych.md) · [교육의 이해](subjects/edu.md) · [삶과 종교](subjects/religion.md) · [보건](subjects/health.md) · [심화 독일어](subjects/geradv.md) · [독일어 회화](subjects/gerconv.md) · [심화 프랑스어](subjects/freadv.md) · [프랑스어 회화](subjects/freconv.md) · [심화 스페인어](subjects/spaadv.md) · [스페인어 회화](subjects/spaconv.md) · [심화 중국어](subjects/chiadv.md) · [중국어 회화](subjects/chiconv.md) · [심화 일본어](subjects/jpnadv.md) · [일본어 회화](subjects/jpnconv.md) · [심화 러시아어](subjects/rusadv.md) · [러시아어 회화](subjects/rusconv.md) · [심화 아랍어](subjects/araadv.md) · [아랍어 회화](subjects/araconv.md) · [심화 베트남어](subjects/vieadv.md) · [베트남어 회화](subjects/vieconv.md) |
+| 융합선택 | [독서 토론과 글쓰기](subjects/dokto.md) · [매체 의사소통](subjects/maeui.md) · [언어생활 탐구](subjects/eontam.md) · [수학과 문화](subjects/mathcul.md) · [실용 통계](subjects/prstat.md) · [수학과제 탐구](subjects/mathproj.md) · [과학의 역사와 문화](subjects/scihist.md) · [기후변화와 환경생태](subjects/climeco.md) · [융합과학 탐구](subjects/convsci.md) · [세계 문화와 영어](subjects/worldcul.md) · [실생활 영어 회화](subjects/lifeeng.md) · [미디어 영어](subjects/mediaeng.md) · [여행지리](subjects/travel.md) · [사회문제 탐구](subjects/socprob.md) · [금융과 경제생활](subjects/finance.md) · [기후변화와 지속가능한 세계](subjects/climsus.md) · [역사로 탐구하는 현대 세계](subjects/whmod.md) · [윤리문제 탐구](subjects/ethinq.md) · [스포츠 생활1](subjects/sportlife1.md) · [스포츠 생활2](subjects/sportlife2.md) · [음악과 미디어](subjects/musicmedia.md) · [미술과 매체](subjects/artmedia.md) · [창의 공학 설계](subjects/creaeng.md) · [지식 재산 일반](subjects/ipgen.md) · [생애 설계와 자립](subjects/lifeplan.md) · [아동발달과 부모](subjects/childdev.md) · [소프트웨어와 생활](subjects/swlife.md) · [언어생활과 한자](subjects/hanja.md) · [인간과 경제활동](subjects/humecon.md) · [논술](subjects/essay.md) · [독일어권 문화](subjects/gercul.md) · [프랑스어권 문화](subjects/frecul.md) · [스페인어권 문화](subjects/spacul.md) · [중국 문화](subjects/chicul.md) · [일본 문화](subjects/jpncul.md) · [러시아 문화](subjects/ruscul.md) · [아랍 문화](subjects/aracul.md) · [베트남 문화](subjects/viecul.md) |
 | 이 문서 안 | [두 축](#두-축) · [전 과목 공통 매트릭스](#전-과목-공통-매트릭스) · [탐구 첫걸음](#탐구-첫걸음) · [탐구 경로 예시](#탐구-경로-예시) · [과목 융합 탐구](#과목-융합-탐구) · [편제표](#2022-개정-일반고-편제표) · [활용 안내](#활용-안내) |
 
 ## 두 축
@@ -82,6 +82,14 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | 일반선택 | [한문](subjects/hanmun.md) | 14 | B4(개념적·분석) 3개, B2(개념적·이해) 2개 |
 | 일반선택 | [진로와 직업](subjects/career.md) | 15 | A4(사실적·분석) 3개, B2(개념적·이해) 3개 |
 | 일반선택 | [생태와 환경](subjects/ecoenv.md) | 21 | B2(개념적·이해) 6개, B4(개념적·분석) 6개 |
+| 일반선택 | [독일어](subjects/ger.md) | 18 | D3(메타인지·적용) 4개, C3(절차적·적용) 4개 |
+| 일반선택 | [프랑스어](subjects/fre.md) | 19 | C3(절차적·적용) 6개, D3(메타인지·적용) 4개 |
+| 일반선택 | [스페인어](subjects/spa.md) | 22 | C3(절차적·적용) 7개, B2(개념적·이해) 4개 |
+| 일반선택 | [중국어](subjects/chi.md) | 21 | C3(절차적·적용) 7개, B2(개념적·이해) 3개 |
+| 일반선택 | [일본어](subjects/jpn.md) | 22 | C3(절차적·적용) 6개, A2(사실적·이해) 4개 |
+| 일반선택 | [러시아어](subjects/rus.md) | 19 | B2(개념적·이해) 4개, C3(절차적·적용) 4개 |
+| 일반선택 | [아랍어](subjects/ara.md) | 20 | C3(절차적·적용) 7개, B2(개념적·이해) 4개 |
+| 일반선택 | [베트남어](subjects/vie.md) | 21 | C3(절차적·적용) 6개, A2(사실적·이해) 3개 |
 | 진로선택 | [주제 탐구 독서](subjects/jutam.md) | 7 | B2(개념적·이해) 1개, D6(메타인지·창안) 1개 |
 | 진로선택 | [문학과 영상](subjects/litfilm.md) | 10 | B4(개념적·분석) 2개, B6(개념적·창안) 2개 |
 | 진로선택 | [직무 의사소통](subjects/jikui.md) | 10 | C3(절차적·적용) 2개, B2(개념적·이해) 1개 |
@@ -130,6 +138,22 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | 진로선택 | [교육의 이해](subjects/edu.md) | 10 | B4(개념적·분석) 4개, B2(개념적·이해) 2개 |
 | 진로선택 | [삶과 종교](subjects/religion.md) | 14 | B2(개념적·이해) 3개, B3(개념적·적용) 2개 |
 | 진로선택 | [보건](subjects/health.md) | 26 | B4(개념적·분석) 8개, B2(개념적·이해) 4개 |
+| 진로선택 | [심화 독일어](subjects/geradv.md) | 18 | B2(개념적·이해) 5개, D3(메타인지·적용) 4개 |
+| 진로선택 | [독일어 회화](subjects/gerconv.md) | 10 | B2(개념적·이해) 5개, C3(절차적·적용) 2개 |
+| 진로선택 | [심화 프랑스어](subjects/freadv.md) | 20 | C3(절차적·적용) 7개, D3(메타인지·적용) 4개 |
+| 진로선택 | [프랑스어 회화](subjects/freconv.md) | 11 | C3(절차적·적용) 5개, B2(개념적·이해) 3개 |
+| 진로선택 | [심화 스페인어](subjects/spaadv.md) | 21 | B2(개념적·이해) 6개, C3(절차적·적용) 5개 |
+| 진로선택 | [스페인어 회화](subjects/spaconv.md) | 10 | B2(개념적·이해) 4개, C3(절차적·적용) 3개 |
+| 진로선택 | [심화 중국어](subjects/chiadv.md) | 22 | C3(절차적·적용) 8개, D3(메타인지·적용) 4개 |
+| 진로선택 | [중국어 회화](subjects/chiconv.md) | 11 | C3(절차적·적용) 4개, B2(개념적·이해) 2개 |
+| 진로선택 | [심화 일본어](subjects/jpnadv.md) | 22 | C3(절차적·적용) 7개, D3(메타인지·적용) 5개 |
+| 진로선택 | [일본어 회화](subjects/jpnconv.md) | 11 | C3(절차적·적용) 4개, B2(개념적·이해) 4개 |
+| 진로선택 | [심화 러시아어](subjects/rusadv.md) | 19 | B2(개념적·이해) 5개, D3(메타인지·적용) 5개 |
+| 진로선택 | [러시아어 회화](subjects/rusconv.md) | 10 | B2(개념적·이해) 5개, C3(절차적·적용) 2개 |
+| 진로선택 | [심화 아랍어](subjects/araadv.md) | 25 | C3(절차적·적용) 10개, B2(개념적·이해) 5개 |
+| 진로선택 | [아랍어 회화](subjects/araconv.md) | 13 | C3(절차적·적용) 6개, B2(개념적·이해) 4개 |
+| 진로선택 | [심화 베트남어](subjects/vieadv.md) | 20 | B2(개념적·이해) 5개, C3(절차적·적용) 4개 |
+| 진로선택 | [베트남어 회화](subjects/vieconv.md) | 10 | B2(개념적·이해) 5개, C3(절차적·적용) 2개 |
 | 융합선택 | [독서 토론과 글쓰기](subjects/dokto.md) | 7 | D3(메타인지·적용) 1개, C3(절차적·적용) 1개 |
 | 융합선택 | [매체 의사소통](subjects/maeui.md) | 7 | B4(개념적·분석) 3개, B2(개념적·이해) 1개 |
 | 융합선택 | [언어생활 탐구](subjects/eontam.md) | 7 | B4(개념적·분석) 2개, C3(절차적·적용) 1개 |
@@ -160,6 +184,14 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | 융합선택 | [언어생활과 한자](subjects/hanja.md) | 10 | B3(개념적·적용) 2개, B4(개념적·분석) 2개 |
 | 융합선택 | [인간과 경제활동](subjects/humecon.md) | 12 | B4(개념적·분석) 5개, B2(개념적·이해) 2개 |
 | 융합선택 | [논술](subjects/essay.md) | 12 | B4(개념적·분석) 2개, B2(개념적·이해) 2개 |
+| 융합선택 | [독일어권 문화](subjects/gercul.md) | 7 | A2(사실적·이해) 1개, C3(절차적·적용) 1개 |
+| 융합선택 | [프랑스어권 문화](subjects/frecul.md) | 7 | A2(사실적·이해) 1개, C3(절차적·적용) 1개 |
+| 융합선택 | [스페인어권 문화](subjects/spacul.md) | 7 | A2(사실적·이해) 1개, C3(절차적·적용) 1개 |
+| 융합선택 | [중국 문화](subjects/chicul.md) | 7 | C3(절차적·적용) 1개, A4(사실적·분석) 1개 |
+| 융합선택 | [일본 문화](subjects/jpncul.md) | 8 | B2(개념적·이해) 2개, A2(사실적·이해) 1개 |
+| 융합선택 | [러시아 문화](subjects/ruscul.md) | 7 | A2(사실적·이해) 2개, C3(절차적·적용) 1개 |
+| 융합선택 | [아랍 문화](subjects/aracul.md) | 8 | A2(사실적·이해) 1개, B2(개념적·이해) 1개 |
+| 융합선택 | [베트남 문화](subjects/viecul.md) | 7 | C3(절차적·적용) 2개, A2(사실적·이해) 1개 |
 
 ## 전 과목 공통 매트릭스
 
@@ -563,7 +595,7 @@ Anderson & Krathwohl(2001)의 개정 블룸 분류에서 **지식 차원(4)** ×
 | 예술 (체육·예술) | – | [음악](subjects/music.md) `A·B·C`, [미술](subjects/art.md) `A·B·C`, [연극](subjects/drama.md) `A·B·C` | [음악 연주와 창작](subjects/perfcomp.md) `A·B·C`, [음악 감상과 비평](subjects/listencrit.md) `A·B·C`, [미술 창작](subjects/artcreate.md) `A·B·C`, [미술 감상과 비평](subjects/artcrit.md) `A·B·C` | [음악과 미디어](subjects/musicmedia.md) `A·B·C`, [미술과 매체](subjects/artmedia.md) `A·B·C` |
 | 기술·가정 (생활·교양) | – | [기술·가정](subjects/techhome.md) `5등급` | [로봇과 공학세계](subjects/robot.md) `5등급`, [생활과학 탐구](subjects/lifesci.md) `5등급` | [창의 공학 설계](subjects/creaeng.md) `5등급`, [지식 재산 일반](subjects/ipgen.md) `5등급`, [생애 설계와 자립](subjects/lifeplan.md) `5등급`, [아동발달과 부모](subjects/childdev.md) `5등급` |
 | 정보 (생활·교양) | – | [정보](subjects/info.md) `5등급` | [인공지능 기초](subjects/aibasic.md) `5등급`, [데이터 과학](subjects/datasci.md) `5등급` | [소프트웨어와 생활](subjects/swlife.md) `5등급` |
-| 제2외국어 (생활·교양) | – | 독일어 `5등급`, 프랑스어 `5등급`, 스페인어 `5등급`, 중국어 `5등급`, 일본어 `5등급`, 러시아어 `5등급`, 아랍어 `5등급`, 베트남어 `5등급` | ○○어 회화 `5등급`, 심화 ○○어 `5등급` | ○○어권 문화 `5등급` |
+| 제2외국어 (생활·교양) | – | [독일어](subjects/ger.md) `5등급`, [프랑스어](subjects/fre.md) `5등급`, [스페인어](subjects/spa.md) `5등급`, [중국어](subjects/chi.md) `5등급`, [일본어](subjects/jpn.md) `5등급`, [러시아어](subjects/rus.md) `5등급`, [아랍어](subjects/ara.md) `5등급`, [베트남어](subjects/vie.md) `5등급` | ○○어 회화 `5등급`, 심화 ○○어 `5등급` | ○○어권 문화 `5등급` |
 | 한문 (생활·교양) | – | [한문](subjects/hanmun.md) `5등급` | [한문 고전 읽기](subjects/hanclassic.md) `5등급` | [언어생활과 한자](subjects/hanja.md) `5등급` |
 | 교양 (생활·교양) | – | [진로와 직업](subjects/career.md) `P`, [생태와 환경](subjects/ecoenv.md) `P` | [인간과 철학](subjects/philo.md) `P`, [논리와 사고](subjects/logic.md) `P`, [인간과 심리](subjects/psych.md) `P`, [교육의 이해](subjects/edu.md) `P`, [삶과 종교](subjects/religion.md) `P`, [보건](subjects/health.md) `P` | [인간과 경제활동](subjects/humecon.md) `P`, [논술](subjects/essay.md) `P` |
 

@@ -84,9 +84,17 @@ PLAN = [
 ]
 
 
+# 제2외국어 편제표의 ○○어 회화·심화 ○○어·○○어권 문화를 언어별 과목 이름으로 펼친다(원문 과목 이름)
+LANG_CULTURE = {"독일어": "독일어권 문화", "프랑스어": "프랑스어권 문화", "스페인어": "스페인어권 문화", "중국어": "중국 문화",
+                "일본어": "일본 문화", "러시아어": "러시아 문화", "아랍어": "아랍 문화", "베트남어": "베트남 문화"}
+
+
 def placed():
     """{과목 이름: 편제표 열}"""
-    return {nm: COLS[i] for _, _, cols in rows() for i, col in enumerate(cols) for nm, _ in col}
+    out = {nm: COLS[i] for _, _, cols in rows() for i, col in enumerate(cols) for nm, _ in col}
+    for lang, cul in LANG_CULTURE.items():
+        out.update({lang + " 회화": out["○○어 회화"], "심화 " + lang: out["심화 ○○어"], cul: out["○○어권 문화"]})
+    return out
 
 
 def rows():
