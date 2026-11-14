@@ -2,9 +2,9 @@
 // - 첫 화면(index.html)은 네트워크 먼저(항상 최신 데이터), 4초 안에 못 받거나 오프라인이면 저장본.
 // - 그 밖의 자원(아이콘, jsDelivr의 Pretendard 글꼴)은 저장본을 먼저 주고 뒤에서 새로 받는다.
 // 캐시는 같은 주소(github.io)의 다른 사이트와 함께 쓰이므로 이름 앞머리 'matrix-'인 것만 지운다.
-const CACHE = 'matrix-v1';
+const CACHE = 'matrix-v2';
 const HOME = new URL('./', self.registration.scope).href;
-const SHELL = [HOME, 'manifest.webmanifest', 'icons/icon-192.png'];
+const SHELL = [HOME, 'manifest.webmanifest', 'icons/icon-192.png', 'ios-hint.js'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE)

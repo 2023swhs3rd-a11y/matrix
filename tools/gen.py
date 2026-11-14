@@ -820,6 +820,7 @@ APP_HEAD = """<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://2023swhs3rd-a11y.github.io/matrix/">
 <script>if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});</script>
+<script src="ios-hint.js" defer></script>
 """
 os.makedirs(os.path.join(ROOT, 'app'), exist_ok=True)
 open(os.path.join(ROOT, 'app', 'index.html'), 'w').write('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<style>body{margin:0}</style>\n' + CSS.replace('%%FONT%%', APP_HEAD + CDN) + '</head>\n<body>\n' + page + '\n</body>\n</html>\n')
