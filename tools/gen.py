@@ -813,6 +813,16 @@ def embedded(text):
 
 page = body()
 open(os.path.join(ROOT, 'index.html'), 'w').write('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<style>body{margin:0}</style>\n' + CSS.replace('%%FONT%%', CDN) + '</head>\n<body>\n' + page + '\n</body>\n</html>\n')
+# 앱 전용 주소(/matrix/app/): 웹페이지(index.html)는 그대로 두고, 같은 화면에 홈 화면 설치 정보·서비스 워커 등록(app/sw.js, 오프라인 저장)만 더한다.
+APP_HEAD = """<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2b67a8">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://2023swhs3rd-a11y.github.io/matrix/">
+<script>if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});</script>
+"""
+os.makedirs(os.path.join(ROOT, 'app'), exist_ok=True)
+open(os.path.join(ROOT, 'app', 'index.html'), 'w').write('<!doctype html>\n<html lang="ko">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n<style>body{margin:0}</style>\n' + CSS.replace('%%FONT%%', APP_HEAD + CDN) + '</head>\n<body>\n' + page + '\n</body>\n</html>\n')
 if os.environ.get('PRETENDARD_WOFF2'):
     open('matrix.html', 'w').write(CSS.replace('%%FONT%%', embedded(CSS + page)) + page)
 
