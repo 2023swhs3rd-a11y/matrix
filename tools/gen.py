@@ -117,6 +117,11 @@ CSS = """
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M4 13c9-4 19-3 26 2v38c-7-5-17-6-26-2z' fill='%232b67a8'/><path d='M60 13c-9-4-19-3-26 2v38c7-5 17-6 26-2z' fill='%235b8fd0'/><circle cx='41' cy='36' r='12' fill='%23fff' stroke='%231d2733' stroke-width='5'/><path d='M50 45l9 9' stroke='%231d2733' stroke-width='7' stroke-linecap='round'/></svg>">
+<!-- 홈 화면 설치(PWA): 설치 정보·아이콘·서비스 워커(sw.js, 오프라인 저장). 파일로 직접 연 경우에는 등록하지 않는다. -->
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#2b67a8">
+<script>if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){})});</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 %%FONT%%
 <style>

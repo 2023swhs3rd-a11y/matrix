@@ -1,0 +1,17 @@
+{
+  "id": "/matrix/",
+  "name": "블룸 교과탐구활동 매트릭스",
+  "short_name": "탐구 매트릭스",
+  "description": "블룸의 개정 교육목표 분류 24칸에 2022 개정 교육과정 성취기준을 배치하고 과목별 탐구활동을 추천합니다.",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#2b67a8",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
