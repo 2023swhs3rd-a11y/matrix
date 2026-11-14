@@ -99,6 +99,16 @@ def adapt_path(steps, placed):
         used.add(c); out.append([c, st])
     return out
 E = html.escape
+
+def minimap():
+    # 작은 화면(640px 이하) 전용: 24칸을 기호만 적은 지도로 보여 주고, 누른 칸만 아래에 카드로 펼친다(큰 화면에서는 CSS로 숨김)
+    o = ['<div class="mm" id="mm" role="group" aria-label="24칸 지도"><span></span>']
+    o += [f'<b>{ko}</b>' for _, ko, *_ in PROCESSES]
+    for kc, ko, *_ in KNOWLEDGE:
+        o.append(f'<b class="r">{ko.replace(" 지식", "")}</b>')
+        o += [f'<button type="button" class="p{pc}" data-c="{kc}{pc}" aria-pressed="false">{kc}{pc}</button>' for pc, *_ in PROCESSES]
+    o.append('</div><div class="mm-bar"><b id="mm-title"></b><span><button type="button" id="mm-prev">‹ 이전</button><button type="button" id="mm-next">다음 ›</button></span></div>')
+    return ''.join(o)
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
 
 CSS = """
@@ -374,6 +384,7 @@ footer p{max-width:140ch}
 .pj-note{font-size:12.5px;color:var(--muted);margin-top:10px;display:grid;gap:4px;max-width:140ch}
 
 .swipe{display:none;font-size:12px;color:var(--muted);margin-bottom:6px}
+.mm,.mm-bar{display:none}
 /* 모바일: 탭 이름 줄임, 매트릭스 첫 열 고정·축소, 편제표는 교과별 카드로 */
 @media (max-width:640px){
   .wrap{padding-block:24px 48px;gap:28px}
@@ -388,6 +399,25 @@ footer p{max-width:140ch}
   .mx th.dim{padding:10px 8px}
   .mx th.dim .def{display:none}
   .mx th.dim .ko{font-size:15px}
+  /* 작은 화면: 넓은 표 대신 24칸 지도(.mm) + 고른 칸 하나(td.sel)만 카드로 */
+  .mm{display:grid;grid-template-columns:50px repeat(6,minmax(0,1fr));gap:4px;margin-bottom:12px;text-align:center}
+  .mm b{font-size:11.5px;font-weight:600;color:var(--muted);align-self:center}
+  .mm b.r{text-align:left}
+  .mm button{min-height:44px;padding:0;border:1px solid var(--line);border-radius:8px;font:inherit;font-size:12.5px;font-weight:700;color:var(--fg);cursor:pointer}
+  .mm button.p1{background:var(--l1)} .mm button.p2{background:var(--l2)} .mm button.p3{background:var(--l3)}
+  .mm button.p4{background:var(--l4)} .mm button.p5{background:var(--l5)} .mm button.p6{background:var(--l6)}
+  .mm button.na{background:var(--surface);color:var(--muted);opacity:.45;cursor:default}
+  .mm button.on{box-shadow:inset 0 0 0 3px var(--hl)}
+  .mm button[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:1px}
+  .mm-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+  .mm-bar b{font-family:var(--display);font-size:16px}
+  .mm-bar span{display:flex;gap:6px;flex:none}
+  .mm-bar button{min-height:40px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg);font:inherit;font-size:13px;cursor:pointer}
+  table#mx{min-width:0;display:block}
+  #mx thead,#mx th.dim{display:none}
+  #mx tbody,#mx tr{display:block}
+  #mx tbody td{display:none;border:0;padding:14px;font-size:15px;line-height:1.6}
+  #mx tbody td.sel{display:block}
   .pj-wrap{border:0;background:none;overflow:visible}
   .pj{min-width:0;background:none}
   .pj thead{display:none}
@@ -513,7 +543,7 @@ def body():
          '<p class="lead">지식 차원 4가지와 인지 과정 6가지를 교차한 24칸에 탐구활동을 추천합니다. 과목을 고르면 2022 개정 교육과정 성취기준을 칸에 배치하고, 그 성취기준에 맞춘 과목별 활동을 보여 줍니다.</p>',
          '</header>', *explore(),
          '<section aria-label="과목 선택" class="picker"><div class="areas" role="tablist" aria-label="교과" id="areas"></div><div class="panel" id="panel" hidden></div><form class="topic" id="topic-form" role="search" aria-label="주제로 활동 찾기"><label for="topic-q">주제로 찾기</label><input id="topic-q" type="search" placeholder="탐구 주제 (예: 미세플라스틱, 인공지능 윤리)" autocomplete="off"><select id="topic-f" aria-label="분야(교과)"><option value="">전체 교과</option><option>국어</option><option>수학</option><option>영어</option><option>사회</option><option>과학</option></select><button type="submit">활동 추천</button></form><p class="subject-note" id="subject-note"></p></section>',
-         '<section><p class="swipe">표를 옆으로 밀면 인지 과정 6단계를 모두 볼 수 있습니다. 왼쪽 지식 차원 열은 고정됩니다.</p><div class="scroller"><table class="mx" id="mx">', '<thead><tr><th class="corner" scope="col">지식 차원 ↓ / 인지 과정 →</th>']
+         '<section><p class="swipe">아래 지도에서 칸을 누르면 그 칸의 활동이 나옵니다.</p>' + minimap() + '<div class="scroller"><table class="mx" id="mx">', '<thead><tr><th class="corner" scope="col">지식 차원 ↓ / 인지 과정 →</th>']
     for code, ko, en, d, v in PROCESSES:
         o.append(f'<th scope="col"><span class="en">{code}. {en}</span><span class="ko">{ko}</span><span class="def">{E(d)}</span><span class="vb">{E(v)}</span></th>')
     o.append('</tr></thead><tbody>')
@@ -797,6 +827,35 @@ JS = r'''<script>
     if(on){mark(b.dataset.cells.split(' '));b.setAttribute('aria-pressed','true');}});
   renderFusion();
   window.addEventListener('hashchange',render);render();
+})();
+</script>
+<script>
+// 작은 화면용 24칸 지도: 표(#mx)의 칸 상태(빈 칸 na, 강조 on)를 그대로 따라가고, 고른 칸에 sel을 붙여 그 칸만 보이게 한다.
+(function(){
+  var mm=document.getElementById('mm');if(!mm)return;
+  var btns=[].slice.call(mm.querySelectorAll('button')),keys=btns.map(function(b){return b.dataset.c});
+  var title=document.getElementById('mm-title'),small=window.matchMedia('(max-width:640px)'),sel=null,prevOn='',queued=false;
+  function td(k){return document.getElementById('c-'+k)}
+  function ok(k){return !td(k).classList.contains('na')}
+  function pick(k){sel=k;
+    keys.forEach(function(x){td(x).classList.toggle('sel',x===k)});
+    btns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.c===k?'true':'false')});
+    title.textContent=k+' · '+DATA.names[k];}
+  function sync(){queued=false;var on=[];
+    btns.forEach(function(b){var t=td(b.dataset.c),na=t.classList.contains('na'),o=t.classList.contains('on');
+      b.classList.toggle('na',na);b.disabled=na;b.classList.toggle('on',o);if(o)on.push(b.dataset.c)});
+    var s=on.join(','),want=sel;
+    if(s&&s!==prevOn&&on.indexOf(sel)<0){want=on[0];if(small.matches)mm.scrollIntoView({behavior:'smooth',block:'start'});}
+    prevOn=s;
+    if(!want||!ok(want))want=keys.filter(ok)[0]||keys[0];
+    if(want!==sel||!td(want).classList.contains('sel'))pick(want);}
+  function step(d){var live=keys.filter(ok);if(!live.length)return;var i=live.indexOf(sel);pick(live[(i+d+live.length)%live.length]);}
+  mm.addEventListener('click',function(e){var b=e.target.closest('button');if(b&&!b.disabled)pick(b.dataset.c)});
+  document.getElementById('mm-prev').addEventListener('click',function(){step(-1)});
+  document.getElementById('mm-next').addEventListener('click',function(){step(1)});
+  new MutationObserver(function(){if(!queued){queued=true;requestAnimationFrame(sync)}})
+    .observe(document.querySelector('#mx tbody'),{subtree:true,childList:true,attributes:true,attributeFilter:['class']});
+  sync();
 })();
 </script>'''
 
